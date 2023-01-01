@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(uuid())
+  firstName String
+  lastName  String?
+  email     String    @unique
+  password  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+
+  company   Company? @relation(fields: [companyId], references: [id])
+  companyId String?
+
+  @@map("users")
+}
+
+model Company {
+  id        String    @id @default(uuid())
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+  ownerId   String
+
+  users           User[]
+  products        Product[]
+  categories      Category[]
+  productVariants ProductVariant[]
+
+  @@map("companies")
+}
+
+model Product {
+  id          String    @id @default(uuid())
+  name        String
+  price       Float
+  description String?   @db.VarChar(500)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime? @updatedAt
+
+  category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId String?
+
+  company   Company @relation(fields: [companyId], references: [id])
+  companyId String
+
+  variants ProductVariant[]
+
+  @@map("products")
+}
+
+model Category {
+  id        String    @id @default(uuid())
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+
+  products  Product[]
+  company   Company   @relation(fields: [companyId], references: [id])
+  companyId String
+
+  @@map("categories")
+}
+
+model ProductVariant {
+  id        String    @id @default(uuid())
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+
+  company   Company @relation(fields: [companyId], references: [id])
+  companyId String
+
+  @@map("product_variants")
+}
