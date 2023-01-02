@@ -8,6 +8,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { CompanyModule } from './company/company.module';
 import { CategoryModule } from './category/category.module';
 import { ProductModule } from './product/product.module';
+import { ProductVariantModule } from './product-variant/product-variant.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { ProductModule } from './product/product.module';
     CompanyModule,
     CategoryModule,
     ProductModule,
+    ProductVariantModule,
   ],
   providers: [
     AppService,

@@ -7,11 +7,13 @@ import {
 } from 'class-validator';
 import { Product } from '../entities/product.entity';
 
-export class CreateProductDto extends Product {
+export class UpdateProductDto extends Product {
   @IsString()
+  @IsOptional()
   name: string;
 
   @IsNumber()
+  @IsOptional()
   @IsPositive()
   price: number;
 

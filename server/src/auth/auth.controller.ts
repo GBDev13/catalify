@@ -16,6 +16,7 @@ import { UserService } from 'src/user/user.service';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { User } from 'src/user/entities/user.entity';
 import { CurrentUser } from './decorators/current-user.decorator';
+import { OnboardingDto } from './dto/onboarding.dto';
 
 @Controller('/auth')
 export class AuthController {
@@ -30,10 +31,10 @@ export class AuthController {
   }
 
   @IsPublic()
-  @Post('register')
+  @Post('onboarding')
   @HttpCode(HttpStatus.CREATED)
-  async register(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  async register(@Body() onboardingDto: OnboardingDto) {
+    return this.userService.onboard(onboardingDto);
   }
 
   @IsPublic()

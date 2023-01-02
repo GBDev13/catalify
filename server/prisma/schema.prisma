@@ -29,10 +29,13 @@ model Company {
   updatedAt DateTime? @updatedAt
   ownerId   String
 
-  users           User[]
-  products        Product[]
-  categories      Category[]
-  productVariants ProductVariant[]
+  themeColor String @default("#6366f1") @db.VarChar(7)
+
+  users                User[]
+  products             Product[]
+  categories           Category[]
+  productVariants      ProductVariant[]
+  ProductVariantOption ProductVariantOption[]
 
   @@map("companies")
 }
@@ -78,8 +81,24 @@ model ProductVariant {
   product   Product @relation(fields: [productId], references: [id])
   productId String
 
+  company   Company                @relation(fields: [companyId], references: [id])
+  companyId String
+  options   ProductVariantOption[]
+
+  @@map("product_variants")
+}
+
+model ProductVariantOption {
+  id        String    @id @default(uuid())
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+
+  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id])
+  productVariantId String
+
   company   Company @relation(fields: [companyId], references: [id])
   companyId String
 
-  @@map("product_variants")
+  @@map("product_variant_options")
 }
