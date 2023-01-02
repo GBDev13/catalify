@@ -18,7 +18,7 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   isLoading?: boolean
 }
 
-export const Button = ({ className, children, size = "MEDIUM", variant = "PRIMARY", isLoading, ...props }: ButtonProps) => {
+export const Button = ({ className, children, size = "MEDIUM", variant = "PRIMARY", isLoading, disabled, ...props }: ButtonProps) => {
   return (
     <button className={
       clsx("px-4 py-1 rounded transition-colors disabled:opacity-50 flex items-center justify-center", {
@@ -27,7 +27,9 @@ export const Button = ({ className, children, size = "MEDIUM", variant = "PRIMAR
         "bg-transparent border border-indigo-500 text-indigo-500 hover:bg-indigo-500 hover:text-slate-100": variant === ButtonVariant.OUTLINE,
         "opacity-50": isLoading
       }, className)
-    } {...props}>
+    }
+    disabled={disabled ?? isLoading}
+    {...props}>
       {isLoading ? (
         <svg aria-hidden="true" viewBox="0 0 100 101" fill="none" className={clsx("w-5 h-5 animate-spin", {
           "fill-slate-100 text-indigo-400": variant === ButtonVariant.PRIMARY,

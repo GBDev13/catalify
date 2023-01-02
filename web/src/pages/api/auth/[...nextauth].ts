@@ -25,9 +25,10 @@ export default NextAuth({
                       return response.data
                   }
 
+                  console.log('response', response)
+
                   return null;
                 } catch (err) {
-                  console.error(err)
                   return null;
                 }
             },

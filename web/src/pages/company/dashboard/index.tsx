@@ -8,7 +8,9 @@ export default function CompanyDashboard() {
       <pre>
         {JSON.stringify(session, null, 2)}
       </pre>
-      <button onClick={() => signOut()}>sign out</button>
+      <button onClick={() => signOut({
+        callbackUrl: '/login'
+      })}>sign out</button>
       <h1>Company Dashboard</h1>
     </div>
   )
