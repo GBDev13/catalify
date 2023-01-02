@@ -1,5 +1,5 @@
 import clsx from "clsx"
-import { ButtonHTMLAttributes } from "react"
+import { ButtonHTMLAttributes, forwardRef } from "react"
 
 enum ButtonSize {
   SMALL = "SMALL",
@@ -10,6 +10,7 @@ enum ButtonSize {
 enum ButtonVariant {
   PRIMARY = "PRIMARY",
   OUTLINE = "OUTLINE",
+  TEXT = "TEXT",
 }
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -18,18 +19,22 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   isLoading?: boolean
 }
 
-export const Button = ({ className, children, size = "MEDIUM", variant = "PRIMARY", isLoading, disabled, ...props }: ButtonProps) => {
+
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({ className, children, size = "MEDIUM", variant = "PRIMARY", isLoading, disabled, ...props }, ref) => {
   return (
     <button className={
       clsx("px-4 py-1 rounded transition-colors disabled:opacity-50 flex items-center justify-center", {
-        "py-2 w-full max-w-[200px] h-fit min-h-[42px]": size === ButtonSize.MEDIUM,
+        "py-2 w-full max-w-[200px] h-fit min-h-[42px] gap-1.5 md:max-w-max md:min-w-[200px]": size === ButtonSize.MEDIUM && variant !== ButtonVariant.TEXT,
         "bg-indigo-500 text-slate-100 hover:bg-indigo-400": variant === ButtonVariant.PRIMARY,
         "bg-transparent border border-indigo-500 text-indigo-500 hover:bg-indigo-500 hover:text-slate-100": variant === ButtonVariant.OUTLINE,
+        "text-slate-600 hover:text-indigo-500 !p-2": variant === ButtonVariant.TEXT,
         "opacity-50": isLoading
       }, className)
     }
     disabled={disabled ?? isLoading}
-    {...props}>
+    {...props}
+    ref={ref}
+    >
       {isLoading ? (
         <svg aria-hidden="true" viewBox="0 0 100 101" fill="none" className={clsx("w-5 h-5 animate-spin", {
           "fill-slate-100 text-indigo-400": variant === ButtonVariant.PRIMARY,
@@ -41,4 +46,6 @@ export const Button = ({ className, children, size = "MEDIUM", variant = "PRIMAR
       ) : children}
     </button>
   )
-}
+})
+
+Button.displayName = "Button"

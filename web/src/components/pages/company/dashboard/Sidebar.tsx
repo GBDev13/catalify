@@ -1,10 +1,10 @@
 import clsx from 'clsx'
-import { useSession } from 'next-auth/react'
+import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { MouseEvent, useEffect, useState } from 'react'
 import { BiBookHeart } from 'react-icons/bi'
-import { FiSettings, FiHome, FiShoppingCart } from 'react-icons/fi'
+import { FiSettings, FiHome, FiShoppingCart, FiLogOut } from 'react-icons/fi'
 import { HiOutlineChevronUp } from 'react-icons/hi'
 import { Divider } from 'src/components/ui/Divider'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -59,8 +59,8 @@ const SidebarItem = ({ item }: SidebarItemProps) => {
 
   return (
     <div>
-      <Link href={item.path} className={clsx("flex items-center gap-3 p-4 rounded-md", {
-        "bg-indigo-700 font-semibold": isActive
+      <Link href={item.path} className={clsx("flex items-center gap-3 p-4 rounded-md hover:bg-indigo-700/50 transition-colors", {
+        "bg-indigo-700 font-semibold rounded-b-none": isActive
       })} onClick={handleOnClick}>
         {item.icon}
         <span>{item.label}</span>
@@ -75,7 +75,7 @@ const SidebarItem = ({ item }: SidebarItemProps) => {
       <AnimatePresence>
       {submenuOpen && (
         <motion.div
-          className="overflow-hidden flex flex-col bg-indigo-600/20 rounded"
+          className="overflow-hidden flex flex-col bg-indigo-600/20 rounded rounded-t-none"
           initial={{
             height: 0,
           }}
@@ -90,12 +90,13 @@ const SidebarItem = ({ item }: SidebarItemProps) => {
             ease: "easeInOut"
           }}
         >
-          {item.subItems?.map(subItem => {
+          {item.subItems?.map((subItem, i) => {
             const isSubActive = router.pathname === subItem.path
 
             return (
               <Link key={subItem.label} href={subItem.path} className={clsx("p-2 hover:bg-indigo-700 rounded-md transition-all", {
-                "bg-indigo-700/60": isSubActive
+                "bg-indigo-700/60": isSubActive,
+                "rounded-t-none": i === 0,
               })}>
                 {subItem.label}
               </Link>
@@ -110,8 +111,15 @@ const SidebarItem = ({ item }: SidebarItemProps) => {
 
 export const Sidebar = () => {
   const { data: session } = useSession()
+
+  const handleSignOut = () => {
+    signOut({
+      callbackUrl: "/login"
+    })
+  }
+
   return (
-    <aside className="h-screen bg-indigo-800 text-indigo-100 flex flex-col min-w-[250px]">
+    <aside className="h-screen bg-indigo-800 text-indigo-100 flex flex-col min-w-[250px] z-10">
       <div className="flex items-center justify-center gap-2 pt-4 text-xl">
         <BiBookHeart />
         <h2>Cataloguei</h2>
@@ -129,9 +137,15 @@ export const Sidebar = () => {
           <strong className="text-sm font-normal">{`${session?.user?.firstName} ${session?.user?.lastName ?? ''}`}</strong>
           <button className="bg-green-400 text-slate-200 p-1 rounded text-xs">CONTA GRÁTIS</button>
         </div>
-        <button>
-          <FiSettings />
-        </button>
+
+        <div className="flex items-center gap-2">
+          <button>
+            <FiSettings />
+          </button>
+          <button onClick={handleSignOut}>
+            <FiLogOut />
+          </button>
+        </div>
       </div>
     </aside>
   )

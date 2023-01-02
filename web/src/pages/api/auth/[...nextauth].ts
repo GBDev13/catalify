@@ -1,6 +1,6 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { api } from "../../../lib/axios";
+import api from "../../../lib/axios";
 import jwt_decode from "jwt-decode";
 
 export default NextAuth({
@@ -58,6 +58,7 @@ export default NextAuth({
             session.user.firstName = parsed.firstName;
             session.user.lastName = parsed.lastName;
             session.user.email = parsed.email;
+            session.user.access_token = String(token.accessToken);
             
             return session;
         },

@@ -1,7 +1,9 @@
+import { PageTitle } from "src/components/pages/shared/PageTitle";
+
 export default function CompanyProductsCategories() {
   return (
-    <div>
-      <h1>categorias</h1>
-    </div>
+    <PageTitle title="Categorias">
+      
+    </PageTitle>
   )
 }

@@ -27,7 +27,7 @@ export const Table = <T extends object>({ data, columns, showFooter = false, sho
                {table.getHeaderGroups().map((headerGroup) => (
                  <tr key={headerGroup.id}>
                    {headerGroup.headers.map((header) => (
-                     <th key={header.id} className="px-6 py-4 text-sm font-medium text-gray-900">
+                     <th key={header.id} className="px-6 py-4 text-sm font-medium text-gray-900" style={{ width: header.getSize() }}>
                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                      </th>
                    ))}
@@ -38,7 +38,7 @@ export const Table = <T extends object>({ data, columns, showFooter = false, sho
                {table.getRowModel().rows.map((row) => (
                  <tr key={row.id} className='border-b" bg-slate-50'>
                    {row.getVisibleCells().map((cell) => (
-                     <td className="whitespace-nowrap px-6 py-4 text-sm font-light text-gray-900" key={cell.id}>
+                     <td className="whitespace-nowrap px-6 py-4 text-sm font-light text-gray-900" key={cell.id} style={{ width: cell.column.getSize() }}>
                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
                      </td>
                    ))}
