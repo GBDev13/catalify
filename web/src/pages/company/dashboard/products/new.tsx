@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
 import { useForm } from "react-hook-form";
@@ -11,6 +12,7 @@ import { ControlledEditor } from "src/components/ui/Editor/controlled";
 import { ControlledInput } from "src/components/ui/Input/controlled";
 import { ControlledSelect } from "src/components/ui/Select/controlled";
 import { productsKey } from "src/constants/query-keys";
+import { useUnsavedChangesWarning } from "src/hooks/useUnsavedChangesWarning";
 import { getCategories } from "src/services/products";
 import { useCompany } from "src/store/company";
 import { z } from "zod";
@@ -48,7 +50,7 @@ type NewProductFormData = z.infer<typeof newProductFormSchema>
 export default function NewProduct() {
   const router = useRouter()
 
-  const { control, handleSubmit, formState: { isSubmitting }} = useForm<NewProductFormData>({
+  const { control, handleSubmit, formState: { isSubmitting, isDirty }} = useForm<NewProductFormData>({
     resolver: zodResolver(newProductFormSchema),
     defaultValues: {
       price: 0,
@@ -78,13 +80,20 @@ export default function NewProduct() {
     }))
   }, [categories])
 
+  useUnsavedChangesWarning(isDirty)
+
+  const finalSlashIndex = router.asPath.lastIndexOf('/')
+  const previousPath = router.asPath.slice(0, finalSlashIndex)
+
   return (
     <>
       <PageTitle title="Adicionar Produto">
-        <Button size="SMALL" variant="OUTLINE" onClick={() => router.back()}>
-          <FiArrowLeft />
-          Voltar
-        </Button>
+        <Link passHref href={previousPath}>
+          <Button size="SMALL" variant="OUTLINE">
+            <FiArrowLeft />
+            Voltar
+          </Button>
+        </Link>
       </PageTitle>
 
       <form className="grid grid-cols-2 gap-16 bg-slate-100 p-8 rounded" onSubmit={handleSubmit(onSubmit)}>

@@ -72,6 +72,7 @@ export const Editor = ({ label, content, onContentUpdated, error }: EditorProps)
         })}>
           <button
             onClick={() => editor.chain().focus().toggleBold().run()}
+            tabIndex={-1}
             disabled={
               !editor.can()
                 .chain()
@@ -87,6 +88,7 @@ export const Editor = ({ label, content, onContentUpdated, error }: EditorProps)
           </button>
           <button
             onClick={() => editor.chain().focus().toggleItalic().run()}
+            tabIndex={-1}
             disabled={
               !editor.can()
                 .chain()
@@ -102,6 +104,7 @@ export const Editor = ({ label, content, onContentUpdated, error }: EditorProps)
           </button>
           <button
             onClick={() => editor.chain().focus().toggleBulletList().run()}
+            tabIndex={-1}
             className={clsx("hover:indigo-500", {
               "text-indigo-500": editor.isActive('bulletList')
             })}
@@ -110,6 +113,7 @@ export const Editor = ({ label, content, onContentUpdated, error }: EditorProps)
           </button>
           <button
             onClick={() => editor.chain().focus().toggleOrderedList().run()}
+            tabIndex={-1}
             className={clsx("hover:indigo-500", {
               "text-indigo-500": editor.isActive('orderedList')
             })}
