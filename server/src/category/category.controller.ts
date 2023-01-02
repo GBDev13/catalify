@@ -1,14 +1,17 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
   Param,
   Post,
+  Put,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
+import { UpdateCategoryDto } from './dto/update-category-dto';
 
 @Controller('/category')
 export class CategoryController {
@@ -21,6 +24,21 @@ export class CategoryController {
     @Param('companyId') companyId: string,
   ) {
     return this.categoryService.create(createCategoryDto, companyId);
+  }
+
+  @Put('/:companyId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async update(
+    @Body() updateDto: UpdateCategoryDto,
+    @Param('companyId') companyId: string,
+  ) {
+    return this.categoryService.update(updateDto, companyId);
+  }
+
+  @Delete('/:companyId/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async delete(@Param('id') id: string, @Param('companyId') companyId: string) {
+    return this.categoryService.delete(id, companyId);
   }
 
   @Get('/:companyId')

@@ -1,5 +1,6 @@
 export const productsKey = {
-  all: ['products']
+  all: ['products'],
+  categories: ['categories'],
 }
 
 export const companyKeys = {

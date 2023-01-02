@@ -4,7 +4,6 @@ import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { productsKey } from "src/constants/query-keys";
 import { getProducts } from "src/services/products";
-import { useSession } from "next-auth/react";
 import { useCompany } from "src/store/company";
 import { formatCurrency } from "src/helpers/formay-currency";
 import { PageTitle } from "src/components/pages/shared/PageTitle";
@@ -38,8 +37,8 @@ export default function CompanyProducts() {
       },
       {
         header: 'Categoria',
-        cell: (row) => row.renderValue(),
-        accessorKey: 'category.name',
+        cell: (row) => row.row.original?.name ?? 'Sem categoria',
+        accessorKey: 'category',
         footer: 'Categoria'
       },
       {
