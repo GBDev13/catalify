@@ -1,17 +1,11 @@
-import { signOut, useSession } from "next-auth/react"
+
 
 export default function CompanyDashboard() {
-  const { data: session } = useSession()
-
   return (
-    <div>
-      <pre>
-        {JSON.stringify(session, null, 2)}
-      </pre>
-      <button onClick={() => signOut({
-        callbackUrl: '/login'
-      })}>sign out</button>
-      <h1>Company Dashboard</h1>
+    <div className="p-4 w-full">
+      <header>
+        <h1>dashboard</h1>
+      </header>
     </div>
   )
 }
