@@ -25,6 +25,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({ className, c
     <button className={
       clsx("px-4 py-1 rounded transition-colors disabled:opacity-50 flex items-center justify-center", {
         "py-2 w-full max-w-[200px] h-fit min-h-[42px] gap-1.5 md:max-w-max md:min-w-[200px]": size === ButtonSize.MEDIUM && variant !== ButtonVariant.TEXT,
+        "py-2 w-full max-w-[100px] h-fit min-h-[42px] gap-1.5 md:max-w-max md:min-w-[100px]": size === ButtonSize.SMALL && variant !== ButtonVariant.TEXT,
         "w-full min-h-[42px] gap-1.5": size === ButtonSize.WIDE && variant !== ButtonVariant.TEXT,
         "bg-indigo-500 text-slate-100 hover:bg-indigo-400": variant === ButtonVariant.PRIMARY,
         "bg-transparent border border-indigo-500 text-indigo-500 hover:bg-indigo-500 hover:text-slate-100": variant === ButtonVariant.OUTLINE,

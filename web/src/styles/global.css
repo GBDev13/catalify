@@ -7,3 +7,35 @@
     @apply bg-slate-200 text-slate-800
   }
 }
+
+.react-select__control {
+  @apply !bg-slate-100 !border-slate-200 
+}
+
+.hasError .react-select__control {
+  @apply !border-red-400
+}
+
+.react-select__control--is-focused {
+  @apply !border-indigo-500
+}
+
+.react-select__menu {
+  @apply !bg-slate-100 !border-slate-200
+}
+
+.react-select__option {
+  @apply !text-sm transition-colors
+}
+
+.react-select__option--is-focused, .react-select__option--is-selected {
+  @apply !bg-indigo-500 !text-white
+}
+
+.react-select__placeholder {
+  @apply !text-slate-400 !text-sm
+}
+
+.react-select__single-value {
+  @apply !text-slate-800 !text-sm
+}

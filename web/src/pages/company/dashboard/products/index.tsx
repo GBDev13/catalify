@@ -10,6 +10,7 @@ import { PageTitle } from "src/components/pages/shared/PageTitle";
 import { Button } from "src/components/ui/Button";
 import { FiDownload, FiEdit, FiPlusCircle, FiTrash } from "react-icons/fi";
 import { Tooltip } from "src/components/ui/Tooltip";
+import Link from "next/link";
 
 export default function CompanyProducts() {
   const { company } = useCompany()
@@ -72,10 +73,12 @@ export default function CompanyProducts() {
             <FiDownload size={20} />
             Importar Produtos
           </Button>
-          <Button>
-            <FiPlusCircle size={20} />
-            Adicionar Produto
-          </Button>
+          <Link passHref href="./products/new">
+            <Button>
+              <FiPlusCircle size={20} />
+              Adicionar Produto
+            </Button>
+          </Link>
         </div>
       </PageTitle>
 

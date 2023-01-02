@@ -12,7 +12,7 @@ export const ControlledInput = ({ fieldName, control, ...inputProps }: Controlle
     <Controller
       name={fieldName}
       control={control}
-      render={({ field, fieldState }) => <Input error={fieldState?.error} {...inputProps} {...field} />}
+      render={({ field, fieldState }) => <Input error={fieldState?.error} {...inputProps} {...field} onChange={({ target }) => field.onChange(target.type === 'number' ? Number(target.value) : target.value)} />}
     />
   )
 }

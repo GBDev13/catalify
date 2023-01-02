@@ -5,7 +5,7 @@ export const getProducts = async (companyId: string) => {
   return data
 }
 
-export const getCategories = async (companyId: string) => {
+export const getCategories = async (companyId: string): Promise<Products.Category[]> => {
   const { data } = await api.get(`/category/${companyId}`)
   return data
 }

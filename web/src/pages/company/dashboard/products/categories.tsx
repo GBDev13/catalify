@@ -17,7 +17,7 @@ export default function CompanyProductsCategories() {
   const { company } = useCompany()
   const companyId = company?.id
 
-  const { data: products } = useQuery(productsKey.categories, () => getCategories(companyId!), {
+  const { data: categories } = useQuery(productsKey.categories, () => getCategories(companyId!), {
     enabled: !!companyId
   })
 
@@ -83,7 +83,7 @@ export default function CompanyProductsCategories() {
         </CreateCategoryModal>
       </PageTitle>
 
-      <Table columns={cols} data={products ?? []} />
+      <Table columns={cols} data={categories ?? []} />
     </>
   )
 }

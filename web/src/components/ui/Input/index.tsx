@@ -8,7 +8,7 @@ type InputProps = InputHTMLAttributes<HTMLInputElement> & {
   error?: ErrorOption
 }
 
-export const Input = forwardRef<HTMLInputElement, InputProps>(({ type = 'text', className, label, id, error, ...props }, ref) => {
+export const Input = forwardRef<HTMLInputElement, InputProps>(({ type = 'text', className, label, name, error, ...props }, ref) => {
   const hasError = !!error;
 
   const isPassword = type === 'password'
@@ -18,14 +18,15 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({ type = 'text', 
   return (
     <div className={className ? className : undefined}>
       {label && (
-        <label htmlFor={id} className="block text-xs font-medium text-slate-500 mb-1">
+        <label htmlFor={name} className="block text-xs font-medium text-slate-500 mb-1">
           {label}
         </label>
       )}
 
       <div className="relative">
         <input
-          id={id}
+          id={name}
+          name={name}
           className={clsx("w-full rounded-md border-slate-200 sm:text-sm bg-slate-100 focus:border-indigo-500 transition-colors placeholder:text-slate-400", {
             "border-red-400": hasError,
             "pr-8": isPassword
