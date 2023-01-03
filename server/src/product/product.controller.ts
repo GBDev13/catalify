@@ -1,13 +1,17 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
   Param,
   Post,
   Put,
+  UploadedFiles,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductService } from './product.service';
@@ -17,12 +21,17 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Post('/:companyId')
+  @UseInterceptors(FilesInterceptor('images'))
   @HttpCode(HttpStatus.CREATED)
   async register(
     @Body() createProductDto: CreateProductDto,
+    @UploadedFiles() images: Express.Multer.File[],
     @Param('companyId') companyId: string,
   ) {
-    return this.productService.create(createProductDto, companyId);
+    return this.productService.create(
+      { ...createProductDto, images },
+      companyId,
+    );
   }
 
   @Put('/:companyId/:productId')
@@ -59,5 +68,14 @@ export class ProductController {
           }
         : null,
     }));
+  }
+
+  @Delete('/:companyId/:productId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async delete(
+    @Param('companyId') companyId: string,
+    @Param('productId') productId: string,
+  ) {
+    return this.productService.delete(companyId, productId);
   }
 }

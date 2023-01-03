@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import {
   IsNumber,
   IsOptional,
@@ -11,6 +12,7 @@ export class CreateProductDto extends Product {
   @IsString()
   name: string;
 
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   @IsPositive()
   price: number;

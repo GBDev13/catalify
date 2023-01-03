@@ -1,9 +1,9 @@
 import { Table } from "src/components/ui/Table"
 import { ColumnDef } from '@tanstack/react-table';
 import { useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { productsKey } from "src/constants/query-keys";
-import { getProducts } from "src/services/products";
+import { deleteProduct, getProducts } from "src/services/products";
 import { useCompany } from "src/store/company";
 import { formatCurrency } from "src/helpers/formay-currency";
 import { PageTitle } from "src/components/pages/shared/PageTitle";
@@ -11,6 +11,8 @@ import { Button } from "src/components/ui/Button";
 import { FiDownload, FiEdit, FiPlusCircle, FiTrash } from "react-icons/fi";
 import { Tooltip } from "src/components/ui/Tooltip";
 import Link from "next/link";
+import { ConfirmationPopover } from "src/components/pages/shared/ConfirmationPopover";
+import toast from "react-hot-toast";
 
 export default function CompanyProducts() {
   const { company } = useCompany()
@@ -18,6 +20,18 @@ export default function CompanyProducts() {
 
   const { data: products } = useQuery(productsKey.all, () => getProducts(companyId!), {
     enabled: !!companyId
+  })
+
+  const queryClient = useQueryClient()
+
+  const { mutate: handleDeleteProduct } = useMutation((productId: string) => toast.promise(deleteProduct(productId, companyId!), {
+    loading: 'Deletando produto...',
+    success: 'Produto deletado com sucesso!',
+    error: 'Erro ao deletar produto'
+  }), {
+    onSuccess: () => {
+      queryClient.invalidateQueries(productsKey.all)
+    }
   })
 
   const cols = useMemo<ColumnDef<Products.Product>[]>(
@@ -53,11 +67,17 @@ export default function CompanyProducts() {
                 <FiEdit size={20} />
               </Button>
             </Tooltip>
-            <Tooltip content="Excluir produto">
-              <Button variant="TEXT" onClick={() => console.log('remove', row.getValue())}>
-                <FiTrash size={20} />
-              </Button>
-            </Tooltip>
+
+
+            <ConfirmationPopover onConfirm={() => handleDeleteProduct(String(row.getValue()))} message="Tem certeza que deseja deletar este produto?">
+              <div>
+                <Tooltip content="Excluir produto">
+                  <Button variant="TEXT">
+                    <FiTrash size={20} />
+                  </Button>
+                </Tooltip>
+              </div>
+            </ConfirmationPopover>
           </div>
         )
       }

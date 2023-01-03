@@ -1,9 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { FiArrowLeft } from "react-icons/fi";
 import { PageTitle } from "src/components/pages/shared/PageTitle";
 import { Button } from "src/components/ui/Button";
@@ -13,9 +14,12 @@ import { ControlledInput } from "src/components/ui/Input/controlled";
 import { ControlledSelect } from "src/components/ui/Select/controlled";
 import { productsKey } from "src/constants/query-keys";
 import { useUnsavedChangesWarning } from "src/hooks/useUnsavedChangesWarning";
-import { getCategories } from "src/services/products";
+import { createProduct, CreateProductDto, getCategories } from "src/services/products";
 import { useCompany } from "src/store/company";
 import { z } from "zod";
+
+const MAX_FILE_SIZE = 500000;
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
 const newProductFormSchema = z.object({
   name: z.string({
@@ -42,30 +46,47 @@ const newProductFormSchema = z.object({
     label: z.string(),
   })
   .nullable()
-  .default(null)
+  .default(null),
+  images: z.custom<FileList>()
 })
 
 type NewProductFormData = z.infer<typeof newProductFormSchema>
 
 export default function NewProduct() {
   const router = useRouter()
+  const { company } = useCompany()
+  const companyId = company?.id
 
-  const { control, handleSubmit, formState: { isSubmitting, isDirty }} = useForm<NewProductFormData>({
+  const { control, handleSubmit, reset, formState: { isSubmitting, isDirty }} = useForm<NewProductFormData>({
     resolver: zodResolver(newProductFormSchema),
     defaultValues: {
       price: 0,
     }
   })
 
-  const onSubmit = (data: NewProductFormData) => {
-    console.log({
-      ...data,
+  const queryClient = useQueryClient()
+
+  const { mutateAsync: handleCreateProduct } = useMutation((data: CreateProductDto) => toast.promise(createProduct(data, companyId!), {
+    loading: 'Criando produto...',
+    success: 'Produto criado com sucesso!',
+    error: 'Erro ao criar produto',
+  }), {
+    onSuccess: () => {
+      reset()
+      queryClient.invalidateQueries(productsKey.all)
+      router.push('/company/dashboard/products')
+    }
+  })
+
+  const onSubmit = async (data: NewProductFormData) => {
+    await handleCreateProduct({
+      categoryId: data.category?.value,
+      description: data.description,
+      images: data.images,
+      name: data.name,
       price: data.price / 100,
-      categoryId: data.category?.value
     })
   }
-  const { company } = useCompany()
-  const companyId = company?.id
 
   const { data: categories } = useQuery(productsKey.categories, () => getCategories(companyId!), {
     enabled: !!companyId
@@ -80,7 +101,7 @@ export default function NewProduct() {
     }))
   }, [categories])
 
-  useUnsavedChangesWarning(isDirty)
+  useUnsavedChangesWarning(isDirty && !isSubmitting)
 
   const finalSlashIndex = router.asPath.lastIndexOf('/')
   const previousPath = router.asPath.slice(0, finalSlashIndex)
@@ -110,6 +131,22 @@ export default function NewProduct() {
 
         <div>
           <h4 className="text-2xl font-semibold text-slate-500 border-b border-b-slate-300 pb-4">Fotos do Produto</h4>
+            <Controller
+              control={control}
+              name="images"
+              render={({ field: { onChange, value } }) => (
+                <div className="flex flex-col gap-4">
+                  <label className="text-slate-500 font-semibold text-sm">Fotos do Produto</label>
+                  <input
+                    type="file"
+                    multiple
+                    onChange={(e) => {
+                      onChange(e.target.files)
+                    }}
+                  />
+                </div>
+              )}
+            />
         </div>
 
         <Button isLoading={isSubmitting} type="submit" className="col-span-full ml-auto">Criar Produto</Button>

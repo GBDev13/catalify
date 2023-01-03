@@ -50,7 +50,6 @@ export const Editor = ({ label, content, onContentUpdated, error }: EditorProps)
       onContentUpdated(editor.getHTML())
     },
     content,
-    autofocus: 'end'
   })
 
   if(!editor) return null

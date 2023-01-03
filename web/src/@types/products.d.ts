@@ -7,6 +7,7 @@ declare namespace Products {
   export type Product = {
     id: string
     name: string
+    description: string
     price: number
     category: Products.Category
   }

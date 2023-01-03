@@ -56,6 +56,8 @@ model Product {
 
   variants ProductVariant[]
 
+  pictures File[]
+
   @@map("products")
 }
 
@@ -101,4 +103,16 @@ model ProductVariantOption {
   companyId String
 
   @@map("product_variant_options")
+}
+
+model File {
+  id        String   @id @default(uuid())
+  fileName  String
+  fileUrl   String
+  key       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  product   Product? @relation(fields: [productId], references: [id])
+  productId String?
 }

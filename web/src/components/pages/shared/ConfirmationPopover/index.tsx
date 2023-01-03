@@ -13,13 +13,18 @@ type ConfirmationPopoverProps = Omit<ConfirmationContentProps, 'onCancel'> & {
 }
 
 const ConfirmationContent = ({ message, onConfirm, onCancel }: ConfirmationContentProps) => {
+  const handleConfirm = () => {
+    onConfirm()
+    onCancel()
+  }
+  
   return (
     <div className="max-w-[200px]">
       <p className="text-xs text-center mb-2">{message}</p>
 
       <div className="grid grid-cols-2 gap-1">
         <Button size="WIDE" className="text-sm min-h-0 py-1.5" variant="OUTLINE" onClick={onCancel}>Cancelar</Button>
-        <Button size="WIDE" className="text-sm min-h-0 py-1.5" onClick={onConfirm}>Confirmar</Button>
+        <Button size="WIDE" className="text-sm min-h-0 py-1.5" onClick={handleConfirm}>Confirmar</Button>
       </div>
     </div>
   )
