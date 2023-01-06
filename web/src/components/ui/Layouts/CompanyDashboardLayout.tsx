@@ -25,7 +25,7 @@ export const CompanyDashboardLayout = ({ children }: CompanyDashboardLayout) => 
         onExitComplete={() => window.scrollTo(0, 0)}
       >
         <motion.div
-          className="h-screen overflow-y-auto flex-1 p-8"
+          className="h-screen overflow-y-auto flex-1 p-3 md:p-8"
           variants={variants}
           initial="hidden"
           animate="enter"

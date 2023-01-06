@@ -23,7 +23,7 @@ export const deleteCategory = async (categoryId: string, companyId: string) => {
 }
 
 export type CreateProductDto = Omit<Products.Product, 'category' | 'id'> & {
-  images: FileList
+  images: File[]
   categoryId?: string
 }
 
@@ -35,7 +35,7 @@ export const createProduct = async (createProductDto: CreateProductDto, companyI
   formData.append('price', createProductDto.price.toString())
 
   if(createProductDto.images) {
-    Array.from(createProductDto.images).forEach((image) => {
+    createProductDto.images.forEach((image) => {
       formData.append(`images`, image)
     })
   }

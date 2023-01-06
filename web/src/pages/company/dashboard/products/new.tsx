@@ -10,6 +10,8 @@ import { PageTitle } from "src/components/pages/shared/PageTitle";
 import { Button } from "src/components/ui/Button";
 import { ControlledCurrencyInput } from "src/components/ui/CurrencyInput/controlled";
 import { ControlledEditor } from "src/components/ui/Editor/controlled";
+import { FileUpload } from "src/components/ui/FileUpload";
+import { ControlledFileUpload } from "src/components/ui/FileUpload/controlled";
 import { ControlledInput } from "src/components/ui/Input/controlled";
 import { ControlledSelect } from "src/components/ui/Select/controlled";
 import { productsKey } from "src/constants/query-keys";
@@ -47,7 +49,11 @@ const newProductFormSchema = z.object({
   })
   .nullable()
   .default(null),
-  images: z.custom<FileList>()
+  images: z.array(z.custom<File>(), {
+    required_error: "É necessário enviar pelo menos uma imagem",
+  }).min(1, {
+    message: "É necessário enviar pelo menos uma imagem"
+  })
 })
 
 type NewProductFormData = z.infer<typeof newProductFormSchema>
@@ -117,7 +123,7 @@ export default function NewProduct() {
         </Link>
       </PageTitle>
 
-      <form className="grid grid-cols-2 gap-16 bg-slate-100 p-8 rounded" onSubmit={handleSubmit(onSubmit)}>
+      <form className="grid bg-slate-100 p-8 rounded grid-cols-1 gap-6 lg:gap-16 lg:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
         <div>
           <h4 className="text-2xl font-semibold text-slate-500 border-b border-b-slate-300 pb-4 mb-6">Informações do Produto</h4>
           
@@ -130,23 +136,13 @@ export default function NewProduct() {
         </div>
 
         <div>
-          <h4 className="text-2xl font-semibold text-slate-500 border-b border-b-slate-300 pb-4">Fotos do Produto</h4>
-            <Controller
-              control={control}
-              name="images"
-              render={({ field: { onChange, value } }) => (
-                <div className="flex flex-col gap-4">
-                  <label className="text-slate-500 font-semibold text-sm">Fotos do Produto</label>
-                  <input
-                    type="file"
-                    multiple
-                    onChange={(e) => {
-                      onChange(e.target.files)
-                    }}
-                  />
-                </div>
-              )}
-            />
+          <h4 className="text-2xl font-semibold text-slate-500 border-b border-b-slate-300 pb-4 mb-6">Fotos do Produto</h4>
+          <ControlledFileUpload control={control} fieldName="images" withPreview isMultiple maxFiles={5} acceptedTypes={{
+            'image/jpeg': ['image/jpeg'],
+            'image/jpg': ['image/jpg'],
+            'image/png': ['image/png'],
+            'image/webp': ['image/webp'],
+          }} maxSize={5242880} />
         </div>
 
         <Button isLoading={isSubmitting} type="submit" className="col-span-full ml-auto">Criar Produto</Button>
