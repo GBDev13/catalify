@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   HttpCode,
+  HttpException,
   HttpStatus,
   Param,
   Post,
@@ -12,7 +13,8 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { CreateProductDto } from './dto/create-product.dto';
+import { Validator } from 'class-validator';
+import { CreateProductDto, VariationDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductService } from './product.service';
 
@@ -28,6 +30,31 @@ export class ProductController {
     @UploadedFiles() images: Express.Multer.File[],
     @Param('companyId') companyId: string,
   ) {
+    if (createProductDto?.variations) {
+      const parsedVariations = JSON.parse(createProductDto.variations);
+
+      const variations: VariationDto[] = [];
+
+      const validator = new Validator();
+
+      for (const variation of parsedVariations) {
+        const newOne = new VariationDto();
+        newOne.name = variation.name;
+        newOne.options = variation.options;
+        const variationsIsValid = await validator.validate(variations);
+
+        if (variationsIsValid.length > 0) {
+          throw new HttpException(
+            {
+              status: HttpStatus.BAD_REQUEST,
+              error: 'Variations are not valid',
+            },
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+      }
+    }
+
     return this.productService.create(
       { ...createProductDto, images },
       companyId,

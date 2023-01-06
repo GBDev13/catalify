@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { FileService } from 'src/file/file.service';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateProductDto } from './dto/create-product.dto';
+import { CreateProductDto, VariationDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
 
@@ -29,7 +29,7 @@ export class ProductService {
       );
     }
 
-    const { images, ...dto } = createProductDto;
+    const { images, variations, ...dto } = createProductDto;
 
     const createdProduct = await this.prisma.product.create({
       data: {
@@ -37,6 +37,31 @@ export class ProductService {
         companyId,
       },
     });
+
+    if (variations) {
+      const typedVariations = JSON.parse(
+        variations,
+      ) as unknown as VariationDto[];
+
+      await Promise.all(
+        typedVariations.map(async (variation) => {
+          const createdVariation = await this.prisma.productVariant.create({
+            data: {
+              name: variation.name,
+              productId: createdProduct.id,
+              companyId,
+            },
+          });
+          await this.prisma.productVariantOption.createMany({
+            data: variation.options.map((option) => ({
+              companyId,
+              name: option,
+              productVariantId: createdVariation.id,
+            })),
+          });
+        }),
+      );
+    }
 
     if (images) {
       await Promise.all(

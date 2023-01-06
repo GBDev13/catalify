@@ -82,6 +82,7 @@ export const Editor = ({ label, content, onContentUpdated, error }: EditorProps)
             className={clsx("hover:indigo-500", {
               "text-indigo-500": editor.isActive('bold')
             })}
+            type="button"
           >
             <FiBold />
           </button>
@@ -98,6 +99,7 @@ export const Editor = ({ label, content, onContentUpdated, error }: EditorProps)
             className={clsx("hover:indigo-500", {
               "text-indigo-500": editor.isActive('italic')
             })}
+            type="button"
           >
             <FiItalic />
           </button>
@@ -107,6 +109,7 @@ export const Editor = ({ label, content, onContentUpdated, error }: EditorProps)
             className={clsx("hover:indigo-500", {
               "text-indigo-500": editor.isActive('bulletList')
             })}
+            type="button"
           >
             <FiList />
           </button>
@@ -116,6 +119,7 @@ export const Editor = ({ label, content, onContentUpdated, error }: EditorProps)
             className={clsx("hover:indigo-500", {
               "text-indigo-500": editor.isActive('orderedList')
             })}
+            type="button"
           >
             <TfiListOl />
           </button>

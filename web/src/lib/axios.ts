@@ -18,15 +18,6 @@ const ApiClient = () => {
     return request;
   });
 
-  instance.interceptors.response.use(
-    (response) => {
-      return response;
-    },
-    (error) => {
-      console.log(`error`, error);
-    },
-  );
-
   return instance;
 };
 

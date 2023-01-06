@@ -3,14 +3,15 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { FiArrowLeft } from "react-icons/fi";
+import ProductVariations from "src/components/pages/company/dashboard/products/product-variations";
 import { PageTitle } from "src/components/pages/shared/PageTitle";
 import { Button } from "src/components/ui/Button";
+import { ControlledCheckbox } from "src/components/ui/Checkbox/controlled";
 import { ControlledCurrencyInput } from "src/components/ui/CurrencyInput/controlled";
 import { ControlledEditor } from "src/components/ui/Editor/controlled";
-import { FileUpload } from "src/components/ui/FileUpload";
 import { ControlledFileUpload } from "src/components/ui/FileUpload/controlled";
 import { ControlledInput } from "src/components/ui/Input/controlled";
 import { ControlledSelect } from "src/components/ui/Select/controlled";
@@ -19,9 +20,6 @@ import { useUnsavedChangesWarning } from "src/hooks/useUnsavedChangesWarning";
 import { createProduct, CreateProductDto, getCategories } from "src/services/products";
 import { useCompany } from "src/store/company";
 import { z } from "zod";
-
-const MAX_FILE_SIZE = 500000;
-const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
 const newProductFormSchema = z.object({
   name: z.string({
@@ -53,22 +51,47 @@ const newProductFormSchema = z.object({
     required_error: "É necessário enviar pelo menos uma imagem",
   }).min(1, {
     message: "É necessário enviar pelo menos uma imagem"
+  }),
+  hasVariations: z.boolean().optional(),
+  variations: z.array(z.object({
+    name: z.string({
+      required_error: "O nome da variação é obrigatório",
+    }).min(3, {
+      message: "O nome da variação deve ter no mínimo 3 caracteres",
+    }).max(50, {
+      message: "O nome da variação deve ter no máximo 50 caracteres",
+    }),
+    options: z.array(z.object({
+      value: z.string({
+        required_error: "O valor da opção é obrigatório",
+      }).min(1, {
+        message: "O nome da variação deve ter no mínimo 3 caracteres",
+      }).max(50, {
+        message: "O nome da variação deve ter no máximo 50 caracteres",
+      }),
+    })),
+  })).max(5, {
+    message: "O produto pode ter no máximo 5 variações",
   })
 })
 
-type NewProductFormData = z.infer<typeof newProductFormSchema>
+export type NewProductFormData = z.infer<typeof newProductFormSchema>
 
 export default function NewProduct() {
   const router = useRouter()
   const { company } = useCompany()
   const companyId = company?.id
 
-  const { control, handleSubmit, reset, formState: { isSubmitting, isDirty }} = useForm<NewProductFormData>({
+  const methods = useForm<NewProductFormData>({
     resolver: zodResolver(newProductFormSchema),
     defaultValues: {
       price: 0,
+      variations: [],
     }
   })
+
+  const { control, handleSubmit, reset, formState: { errors, isSubmitting, isDirty }} = methods
+  console.log(errors)
 
   const queryClient = useQueryClient()
 
@@ -91,6 +114,10 @@ export default function NewProduct() {
       images: data.images,
       name: data.name,
       price: data.price / 100,
+      variations: data.variations.length > 0 ? data.variations.map(variation => ({
+        name: variation.name,
+        options: variation.options.map(option => option.value),
+      })) : undefined
     })
   }
 
@@ -112,6 +139,8 @@ export default function NewProduct() {
   const finalSlashIndex = router.asPath.lastIndexOf('/')
   const previousPath = router.asPath.slice(0, finalSlashIndex)
 
+  const hasVariations = !!methods.watch('hasVariations')
+
   return (
     <>
       <PageTitle title="Adicionar Produto">
@@ -123,21 +152,32 @@ export default function NewProduct() {
         </Link>
       </PageTitle>
 
-      <form className="grid bg-slate-100 p-8 rounded grid-cols-1 gap-6 lg:gap-16 lg:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
+      <form className="grid bg-slate-100 rounded grid-cols-1 gap-6 p-4 md:p- lg:gap-16 lg:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
         <div>
           <h4 className="text-2xl font-semibold text-slate-500 border-b border-b-slate-300 pb-4 mb-6">Informações do Produto</h4>
           
-          <div className="flex flex-col gap-4">
-            <ControlledInput control={control} fieldName="name" label="Nome do Produto" placeholder="Camiseta" />
-            <ControlledEditor control={control} fieldName="description" label="Descrição do Produto" />
-            <ControlledCurrencyInput control={control} fieldName="price" label="Preço do Produto" />
-            <ControlledSelect control={control} fieldName="category" label="Categoria (Opcional)" options={categoriesOptions} />
-          </div>
+          <FormProvider {...methods}>
+            <div className="flex flex-col gap-4">
+              <ControlledInput control={control} fieldName="name" label="Nome do Produto" placeholder="Camiseta" />
+              <ControlledEditor control={control} fieldName="description" label="Descrição do Produto" />
+              <ControlledCurrencyInput control={control} fieldName="price" label="Preço do Produto" />
+              <ControlledSelect control={control} fieldName="category" label="Categoria (Opcional)" options={categoriesOptions} />
+
+              <div className="mt-2">
+                <ControlledCheckbox fieldName="hasVariations" control={control} label="O produto possui variações?" />
+              </div>
+
+              {hasVariations && (
+                <ProductVariations />
+              )}
+
+            </div>
+          </FormProvider>
         </div>
 
         <div>
           <h4 className="text-2xl font-semibold text-slate-500 border-b border-b-slate-300 pb-4 mb-6">Fotos do Produto</h4>
-          <ControlledFileUpload control={control} fieldName="images" withPreview isMultiple maxFiles={5} acceptedTypes={{
+          <ControlledFileUpload control={control} fieldName="images" withPreview isMultiple maxFiles={4} acceptedTypes={{
             'image/jpeg': ['image/jpeg'],
             'image/jpg': ['image/jpg'],
             'image/png': ['image/png'],

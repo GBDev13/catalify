@@ -51,7 +51,7 @@ model Product {
   category   Category? @relation(fields: [categoryId], references: [id])
   categoryId String?
 
-  company   Company @relation(fields: [companyId], references: [id])
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
   companyId String
 
   variants ProductVariant[]
@@ -68,7 +68,7 @@ model Category {
   updatedAt DateTime? @updatedAt
 
   products  Product[]
-  company   Company   @relation(fields: [companyId], references: [id])
+  company   Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
   companyId String
 
   @@map("categories")
@@ -80,10 +80,10 @@ model ProductVariant {
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
 
-  product   Product @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId String
 
-  company   Company                @relation(fields: [companyId], references: [id])
+  company   Company                @relation(fields: [companyId], references: [id], onDelete: Cascade)
   companyId String
   options   ProductVariantOption[]
 
@@ -96,10 +96,10 @@ model ProductVariantOption {
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
 
-  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id])
+  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
   productVariantId String
 
-  company   Company @relation(fields: [companyId], references: [id])
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
   companyId String
 
   @@map("product_variant_options")

@@ -25,24 +25,36 @@ export const deleteCategory = async (categoryId: string, companyId: string) => {
 export type CreateProductDto = Omit<Products.Product, 'category' | 'id'> & {
   images: File[]
   categoryId?: string
+  variations?: Products.Variation[]
 }
 
 export const createProduct = async (createProductDto: CreateProductDto, companyId: string) => {
-  const formData = new FormData()
+  try {
+    const formData = new FormData()
 
-  formData.append('name', createProductDto.name)
-  formData.append('description', createProductDto.description)
-  formData.append('price', createProductDto.price.toString())
+    formData.append('name', createProductDto.name)
+    formData.append('description', createProductDto.description)
+    formData.append('price', createProductDto.price.toString())
 
-  if(createProductDto.images) {
-    createProductDto.images.forEach((image) => {
-      formData.append(`images`, image)
-    })
+    if(createProductDto?.variations) {
+      formData.append('variations', JSON.stringify(createProductDto.variations))
+    }
+
+    if(createProductDto.images) {
+      createProductDto.images.forEach((image) => {
+        formData.append(`images`, image)
+      })
+    }
+
+    const response = await api.post(`/product/${companyId}`, formData)
+
+    return response
+  } catch (err) {
+    return err
   }
-
-  return api.post(`/product/${companyId}`, formData)
 }
 
 export const deleteProduct = async (productId: string, companyId: string) => {
-  return api.delete(`/product/${companyId}/${productId}`)
+  const res = await api.delete(`/product/${companyId}/${productId}`)
+  return res
 }

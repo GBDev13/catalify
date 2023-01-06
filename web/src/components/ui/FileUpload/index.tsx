@@ -70,8 +70,8 @@ export const FileUpload = ({ acceptedTypes, maxSize, maxFiles = 1, onDrop, submi
         <span className="text-red-400 text-xs mt-2">{error}</span>
       )}
 
-      {submittedFiles && withPreview && onRemove && (
-        <div className="grid grid-cols-4 gap-2 mt-4">
+      {withPreview && onRemove && (
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(110px,1fr))] gap-2 mt-4">
           {previewArray?.map((file, index) => (
             <div key={`preview-${index}`} className="relative">
               <button onClick={() => onRemove(index)} type="button" className="bg-white shadow-md rounded-full w-8 h-8 flex items-center justify-center text-slate-600 bottom-2 right-2 absolute hover:bg-indigo-500 hover:text-white transition-colors">
@@ -79,6 +79,10 @@ export const FileUpload = ({ acceptedTypes, maxSize, maxFiles = 1, onDrop, submi
               </button>
               <img className="w-full h-[100px] rounded object-cover overflow-hidden bg-slate-300 border border-slate-400" src={file} />
             </div>
+          ))}
+
+          {Array.from({ length: maxFiles - (submittedFiles?.length || 0) }).fill("").map((_, index) => (
+            <div key={`preview-placeholder-${index}`} className="w-full h-[100px] rounded bg-slate-200" />
           ))}
         </div>
       )}

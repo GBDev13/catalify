@@ -11,4 +11,9 @@ declare namespace Products {
     price: number
     category: Products.Category
   }
+
+  export type Variation = {
+    name: string
+    options: string[]
+  }
 }

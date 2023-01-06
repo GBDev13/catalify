@@ -25,9 +25,9 @@ export default function CompanyProducts() {
   const queryClient = useQueryClient()
 
   const { mutate: handleDeleteProduct } = useMutation((productId: string) => toast.promise(deleteProduct(productId, companyId!), {
-    loading: 'Deletando produto...',
-    success: 'Produto deletado com sucesso!',
-    error: 'Erro ao deletar produto'
+    loading: 'Removendo produto...',
+    success: 'Produto removido com sucesso!',
+    error: 'Erro ao remover produto'
   }), {
     onSuccess: () => {
       queryClient.invalidateQueries(productsKey.all)
@@ -71,7 +71,7 @@ export default function CompanyProducts() {
 
             <ConfirmationPopover onConfirm={() => handleDeleteProduct(String(row.getValue()))} message="Tem certeza que deseja deletar este produto?">
               <div>
-                <Tooltip content="Excluir produto">
+                <Tooltip content="Remover produto">
                   <Button variant="TEXT">
                     <FiTrash size={20} />
                   </Button>
