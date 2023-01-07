@@ -2,18 +2,20 @@ import { ComponentProps } from 'react'
 import { Controller } from 'react-hook-form'
 import { FileUpload } from '.'
 
-type ControlledInputProps = Omit<ComponentProps<typeof FileUpload>, 'onDrop'> & {
+type ControlledInputProps = Omit<ComponentProps<typeof FileUpload>, 'onDrop' | 'onRemove'> & {
   fieldName: string
   control: any
+  onRemove?: (removed: File) => void
 }
 
-export const ControlledFileUpload = ({ fieldName, control, ...inputProps }: ControlledInputProps) => {
+export const ControlledFileUpload = ({ fieldName, control, onRemove, ...inputProps }: ControlledInputProps) => {
   return (
     <Controller
       name={fieldName}
       control={control}
       render={({ field, fieldState }) => {
         const handleRemoveFile = (index: number) => {
+          if(onRemove) onRemove(field.value[index])
           // @ts-ignore
           field.onChange(field?.value?.filter((_, i) => i !== index) ?? [])
         }

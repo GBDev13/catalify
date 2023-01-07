@@ -17,9 +17,10 @@ type EditorProps = {
   content: string
   onContentUpdated: (content: string) => void
   error?: ErrorOption
+  initialContent?: string
 }
 
-export const Editor = ({ label, content, onContentUpdated, error }: EditorProps) => {
+export const Editor = ({ label, content, onContentUpdated, initialContent, error }: EditorProps) => {
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -52,6 +53,10 @@ export const Editor = ({ label, content, onContentUpdated, error }: EditorProps)
     },
     content,
   })
+
+  useEffect(() => {
+    if(editor && initialContent) editor.commands.setContent(initialContent)
+  }, [editor, initialContent])
 
   if(!editor) return null
 

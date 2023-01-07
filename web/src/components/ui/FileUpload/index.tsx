@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { useMemo } from "react";
 import { Accept, useDropzone } from "react-dropzone";
-import { FiCheckCircle, FiTrash, FiUploadCloud } from "react-icons/fi";
+import { FiTrash, FiUploadCloud } from "react-icons/fi";
 
 type FileUploadProps = {
   acceptedTypes: Accept
@@ -18,12 +18,15 @@ type FileUploadProps = {
 export const FileUpload = ({ acceptedTypes, maxSize, maxFiles = 1, onDrop, submittedFiles, error, withPreview, isMultiple, onRemove }: FileUploadProps) => {
   const hasError = !!error;
 
+  const isDisabled = submittedFiles && submittedFiles?.length >= maxFiles;
+
   const { getRootProps, getInputProps, isDragActive, isDragReject } = useDropzone({
     onDrop,
     accept: acceptedTypes,
     maxFiles,
     maxSize,
-    multiple: isMultiple
+    multiple: isMultiple,
+    disabled: isDisabled
   });
 
   const supportedTypesText = useMemo(() => {
@@ -40,8 +43,9 @@ export const FileUpload = ({ acceptedTypes, maxSize, maxFiles = 1, onDrop, submi
 
   return (
     <>
-      <div className={clsx("w-full border-slate-200 bg-slate-100 border text-center py-4 rounded text-slate-600 transition-colors hover:border-indigo-500", {
+      <div className={clsx("w-full cursor-pointer border-slate-200 bg-slate-100 border text-center py-4 rounded text-slate-600 transition-colors hover:border-indigo-500", {
         "!border-red-400 text-red-400": hasError || isDragReject,
+        "opacity-80 hover:!border-red-400 !cursor-not-allowed": isDisabled
       })}>
         <div className="justify-center items-center flex flex-col" {...getRootProps()}>
           <FiUploadCloud size={35} />

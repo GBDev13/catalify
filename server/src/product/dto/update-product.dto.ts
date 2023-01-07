@@ -1,10 +1,12 @@
 import { Transform } from 'class-transformer';
 import {
+  IsArray,
   IsNumber,
   IsOptional,
   IsPositive,
   IsString,
   MaxLength,
+  ValidateIf,
 } from 'class-validator';
 
 export class UpdateProductDto {
@@ -16,6 +18,13 @@ export class UpdateProductDto {
   @IsNumber()
   @IsPositive()
   price: number;
+
+  type: 'array' | 'string';
+
+  @ValidateIf((object, value) => object.type === 'array')
+  @IsArray()
+  @IsString({ each: true })
+  imagesToRemove: string[] | string;
 
   @IsString()
   @IsOptional()

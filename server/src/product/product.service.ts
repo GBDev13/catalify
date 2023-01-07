@@ -36,16 +36,12 @@ export class ProductService {
 
     const { images, variations, ...dto } = createProductDto;
 
-    console.log('dto', dto);
-
     const createdProduct = await this.prisma.product.create({
       data: {
         ...dto,
         companyId,
       },
     });
-
-    console.log(createdProduct);
 
     if (variations) {
       const typedVariations = JSON.parse(
@@ -72,17 +68,17 @@ export class ProductService {
       );
     }
 
-    // if (images) {
-    //   await Promise.all(
-    //     images.map(async (image) => {
-    //       return await this.fileService.uploadFile(
-    //         image.buffer,
-    //         image.originalname,
-    //         createdProduct.id,
-    //       );
-    //     }),
-    //   );
-    // }
+    if (images) {
+      await Promise.all(
+        images.map(async (image) => {
+          return await this.fileService.uploadFile(
+            image.buffer,
+            image.originalname,
+            createdProduct.id,
+          );
+        }),
+      );
+    }
 
     return createdProduct;
   }
@@ -106,7 +102,7 @@ export class ProductService {
   }
 
   async update(
-    updateProductDto: UpdateProductDto,
+    updateProductDto: UpdateProductDto & { images: Express.Multer.File[] },
     companyId: string,
     productId: string,
   ) {
@@ -130,7 +126,26 @@ export class ProductService {
       );
     }
 
-    const { variations, ...updateDto } = updateProductDto;
+    const { variations, images, imagesToRemove, ...updateDto } =
+      updateProductDto;
+
+    if (imagesToRemove) {
+      await this.fileService.deleteFilesByIds(
+        typeof imagesToRemove === 'string' ? [imagesToRemove] : imagesToRemove,
+      );
+    }
+
+    if (images) {
+      await Promise.all(
+        images.map(async (image) => {
+          return await this.fileService.uploadFile(
+            image.buffer,
+            image.originalname,
+            productId,
+          );
+        }),
+      );
+    }
 
     if (variations) {
       const parsedVariations = JSON.parse(
@@ -149,7 +164,10 @@ export class ProductService {
       where: {
         id: productId,
       },
-      data: updateDto,
+      data: {
+        ...updateDto,
+        categoryId: updateDto?.categoryId || null,
+      },
     });
 
     return updatedProduct;
@@ -215,7 +233,11 @@ export class ProductService {
             },
           },
         },
-        pictures: true,
+        pictures: {
+          orderBy: {
+            createdAt: 'asc',
+          },
+        },
       },
     });
 

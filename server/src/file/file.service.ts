@@ -32,6 +32,22 @@ export class FileService {
     return fileStored;
   }
 
+  async deleteFilesByIds(ids: string[]) {
+    const files = await this.prisma.file.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
+
+    const deleteResults = await Promise.all(
+      files.map((file) => this.deleteFile(file.key)),
+    );
+
+    return deleteResults;
+  }
+
   async deleteFile(key: string) {
     const s3 = new S3();
     const deleteResult = await s3
@@ -40,6 +56,18 @@ export class FileService {
         Key: key,
       })
       .promise();
+
+    const file = await this.prisma.file.findFirst({
+      where: {
+        key,
+      },
+    });
+
+    await this.prisma.file.delete({
+      where: {
+        id: file.id,
+      },
+    });
 
     return deleteResult;
   }

@@ -23,7 +23,7 @@ export const deleteCategory = async (categoryId: string, companyId: string) => {
   return api.delete(`/category/${companyId}/${categoryId}`)
 }
 
-export type CreateProductDto = Omit<Products.Product, 'category' | 'id' | 'variants'> & {
+export type CreateProductDto = Omit<Products.Product, 'category' | 'id' | 'variants' | 'pictures'> & {
   images: File[]
   categoryId?: string
   variations?: Products.Variation[]
@@ -57,9 +57,11 @@ export const createProduct = async (createProductDto: CreateProductDto, companyI
   }
 }
 
-export type EditProductDto = Omit<Products.Product, 'category' | 'id' | 'variants'> & {
+export type EditProductDto = Omit<Products.Product, 'category' | 'id' | 'variants' | 'pictures'> & {
   variations?: ParseEditedResponse
   categoryId?: string
+  images: File[]
+  imagesToRemove: string[]
 }
 
 export const editProduct = async (productId: string, companyId: string, editProductDto: EditProductDto) => {
@@ -71,6 +73,20 @@ export const editProduct = async (productId: string, companyId: string, editProd
     formData.append('description', editProductDto.description)
     if (editProductDto?.categoryId) formData.append('categoryId', editProductDto.categoryId)
     if(editProductDto?.variations) formData.append('variations', JSON.stringify(editProductDto.variations))
+
+    console.log(editProductDto.images)
+
+    if(editProductDto.imagesToRemove?.length > 0) {
+      editProductDto.imagesToRemove.forEach((image) => {
+        formData.append('imagesToRemove', image)
+      })
+    }
+
+    if(editProductDto.images) {
+      editProductDto.images.forEach((image) => {
+        formData.append(`images`, image)
+      })
+    }
 
     const response = await api.put(`/product/${companyId}/${productId}`, formData)
 

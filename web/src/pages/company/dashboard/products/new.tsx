@@ -168,7 +168,7 @@ export default function NewProduct() {
                 <ControlledInput control={control} fieldName="name" label="Nome do Produto" placeholder="Camiseta" />
                 <ControlledEditor control={control} fieldName="description" label="Descrição do Produto" />
                 <ControlledCurrencyInput control={control} fieldName="price" label="Preço do Produto" />
-                <ControlledSelect control={control} fieldName="category" label="Categoria (Opcional)" options={categoriesOptions} />
+                <ControlledSelect isClearable control={control} fieldName="category" label="Categoria (Opcional)" options={categoriesOptions} />
 
                 <div className="mt-2">
                   <ControlledCheckbox fieldName="hasVariations" control={control} label="O produto possui variações?" />

@@ -18,6 +18,11 @@ declare namespace Products {
     }[]
   }
 
+  export type Picture = {
+    id: string
+    url: string
+  }
+
   export type Product = {
     id: string
     name: string
@@ -25,6 +30,7 @@ declare namespace Products {
     price: number
     category: Products.Category
     variants: Products.Variant[]
+    pictures: Products.Picture[]
   }
   
 }

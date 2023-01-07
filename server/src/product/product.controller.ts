@@ -66,10 +66,15 @@ export class ProductController {
   @HttpCode(HttpStatus.OK)
   async update(
     @Body() updateProductDto: UpdateProductDto,
+    @UploadedFiles() images: Express.Multer.File[],
     @Param('companyId') companyId: string,
     @Param('productId') productId: string,
   ) {
-    return this.productService.update(updateProductDto, companyId, productId);
+    return this.productService.update(
+      { ...updateProductDto, images },
+      companyId,
+      productId,
+    );
   }
 
   @Get('/:companyId')
@@ -107,6 +112,10 @@ export class ProductController {
       price: product.price,
       description: product.description,
       createdAt: product.createdAt,
+      pictures: product.pictures.map((picture) => ({
+        id: picture.id,
+        url: picture.fileUrl,
+      })),
       variants: product.variants.map((variant) => ({
         id: variant.id,
         name: variant.name,
