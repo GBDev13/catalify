@@ -1,3 +1,4 @@
+import { ParseEditedResponse } from "src/helpers/on-change-existent-variations"
 import api from "src/lib/axios"
 
 export const getProducts = async (companyId: string) => {
@@ -22,7 +23,7 @@ export const deleteCategory = async (categoryId: string, companyId: string) => {
   return api.delete(`/category/${companyId}/${categoryId}`)
 }
 
-export type CreateProductDto = Omit<Products.Product, 'category' | 'id'> & {
+export type CreateProductDto = Omit<Products.Product, 'category' | 'id' | 'variants'> & {
   images: File[]
   categoryId?: string
   variations?: Products.Variation[]
@@ -35,6 +36,8 @@ export const createProduct = async (createProductDto: CreateProductDto, companyI
     formData.append('name', createProductDto.name)
     formData.append('description', createProductDto.description)
     formData.append('price', createProductDto.price.toString())
+
+    if (createProductDto?.categoryId) formData.append('categoryId', createProductDto.categoryId)
 
     if(createProductDto?.variations) {
       formData.append('variations', JSON.stringify(createProductDto.variations))
@@ -54,7 +57,35 @@ export const createProduct = async (createProductDto: CreateProductDto, companyI
   }
 }
 
+export type EditProductDto = Omit<Products.Product, 'category' | 'id' | 'variants'> & {
+  variations?: ParseEditedResponse
+  categoryId?: string
+}
+
+export const editProduct = async (productId: string, companyId: string, editProductDto: EditProductDto) => {
+  try {
+    const formData = new FormData()
+
+    formData.append('name', editProductDto.name)
+    formData.append('price', editProductDto.price.toString())
+    formData.append('description', editProductDto.description)
+    if (editProductDto?.categoryId) formData.append('categoryId', editProductDto.categoryId)
+    if(editProductDto?.variations) formData.append('variations', JSON.stringify(editProductDto.variations))
+
+    const response = await api.put(`/product/${companyId}/${productId}`, formData)
+
+    return response
+  } catch (err) {
+    return err
+  }
+}
+
 export const deleteProduct = async (productId: string, companyId: string) => {
   const res = await api.delete(`/product/${companyId}/${productId}`)
   return res
+}
+
+export const getProductById = async (productId: string) => {
+  const { data } = await api.get<Products.Product>(`/product/details/${productId}`)
+  return data
 }

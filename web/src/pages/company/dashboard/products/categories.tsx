@@ -83,7 +83,10 @@ export default function CompanyProductsCategories() {
         </CreateCategoryModal>
       </PageTitle>
 
-      <Table columns={cols} data={categories ?? []} />
+      <Table emptyState={{
+        title: 'Sem categorias',
+        description: 'Assim que você adicionar uma categoria, ela aparecerá aqui',
+      }}  columns={cols} data={categories ?? []} />
     </>
   )
 }

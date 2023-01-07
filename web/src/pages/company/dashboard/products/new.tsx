@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { FiArrowLeft } from "react-icons/fi";
@@ -69,7 +69,9 @@ const newProductFormSchema = z.object({
       }).max(50, {
         message: "O nome da variação deve ter no máximo 50 caracteres",
       }),
-    })),
+    })).max(10, {
+      message: "A variação pode ter no máximo 10 opções",
+    }),
   })).max(5, {
     message: "O produto pode ter no máximo 5 variações",
   })
@@ -90,8 +92,7 @@ export default function NewProduct() {
     }
   })
 
-  const { control, handleSubmit, reset, formState: { errors, isSubmitting, isDirty }} = methods
-  console.log(errors)
+  const { control, handleSubmit, reset, setValue, formState: { isSubmitting, isDirty }} = methods
 
   const queryClient = useQueryClient()
 
@@ -141,6 +142,12 @@ export default function NewProduct() {
 
   const hasVariations = !!methods.watch('hasVariations')
 
+  useEffect(() => {
+    if(!hasVariations) {
+      setValue('variations', [])
+    }
+  }, [hasVariations, setValue])
+
   return (
     <>
       <PageTitle title="Adicionar Produto">
@@ -152,41 +159,39 @@ export default function NewProduct() {
         </Link>
       </PageTitle>
 
-      <form className="grid bg-slate-100 rounded grid-cols-1 gap-6 p-4 md:p- lg:gap-16 lg:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <h4 className="text-2xl font-semibold text-slate-500 border-b border-b-slate-300 pb-4 mb-6">Informações do Produto</h4>
-          
-          <FormProvider {...methods}>
-            <div className="flex flex-col gap-4">
-              <ControlledInput control={control} fieldName="name" label="Nome do Produto" placeholder="Camiseta" />
-              <ControlledEditor control={control} fieldName="description" label="Descrição do Produto" />
-              <ControlledCurrencyInput control={control} fieldName="price" label="Preço do Produto" />
-              <ControlledSelect control={control} fieldName="category" label="Categoria (Opcional)" options={categoriesOptions} />
+      <FormProvider {...methods}>
+        <form className="grid bg-slate-100 rounded grid-cols-1 gap-6 p-4 lg:gap-16 lg:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
+          <div>
+            <h4 className="text-2xl font-semibold text-slate-500 border-b border-b-slate-300 pb-4 mb-6">Informações do Produto</h4>
+            
+              <div className="flex flex-col gap-4">
+                <ControlledInput control={control} fieldName="name" label="Nome do Produto" placeholder="Camiseta" />
+                <ControlledEditor control={control} fieldName="description" label="Descrição do Produto" />
+                <ControlledCurrencyInput control={control} fieldName="price" label="Preço do Produto" />
+                <ControlledSelect control={control} fieldName="category" label="Categoria (Opcional)" options={categoriesOptions} />
 
-              <div className="mt-2">
-                <ControlledCheckbox fieldName="hasVariations" control={control} label="O produto possui variações?" />
+                <div className="mt-2">
+                  <ControlledCheckbox fieldName="hasVariations" control={control} label="O produto possui variações?" />
+                </div>
+
               </div>
+          </div>
 
-              {hasVariations && (
-                <ProductVariations />
-              )}
+          <div className="flex flex-col gap-4">
+            <h4 className="text-2xl font-semibold text-slate-500 border-b border-b-slate-300 pb-4 mb-6">Fotos do Produto</h4>
+            <ControlledFileUpload control={control} fieldName="images" withPreview isMultiple maxFiles={4} acceptedTypes={{
+              'image/jpeg': ['image/jpeg'],
+              'image/jpg': ['image/jpg'],
+              'image/png': ['image/png'],
+              'image/webp': ['image/webp'],
+            }} maxSize={5242880} />
+            
+            {hasVariations && <ProductVariations />}
+          </div>
 
-            </div>
-          </FormProvider>
-        </div>
-
-        <div>
-          <h4 className="text-2xl font-semibold text-slate-500 border-b border-b-slate-300 pb-4 mb-6">Fotos do Produto</h4>
-          <ControlledFileUpload control={control} fieldName="images" withPreview isMultiple maxFiles={4} acceptedTypes={{
-            'image/jpeg': ['image/jpeg'],
-            'image/jpg': ['image/jpg'],
-            'image/png': ['image/png'],
-            'image/webp': ['image/webp'],
-          }} maxSize={5242880} />
-        </div>
-
-        <Button isLoading={isSubmitting} type="submit" className="col-span-full ml-auto">Criar Produto</Button>
-      </form>
+          <Button isLoading={isSubmitting} type="submit" className="col-span-full ml-auto">Criar Produto</Button>
+        </form>
+      </FormProvider>
     </>
   )
 }

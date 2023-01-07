@@ -1,8 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { FileService } from 'src/file/file.service';
+import { ProductVariantService } from 'src/product-variant/product-variant.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateProductDto, VariationDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
+import {
+  UpdateProductDto,
+  UpdateProductVariations,
+} from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
 
 @Injectable()
@@ -10,6 +14,7 @@ export class ProductService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly fileService: FileService,
+    private readonly productVariantService: ProductVariantService,
   ) {}
 
   async create(
@@ -31,12 +36,16 @@ export class ProductService {
 
     const { images, variations, ...dto } = createProductDto;
 
+    console.log('dto', dto);
+
     const createdProduct = await this.prisma.product.create({
       data: {
         ...dto,
         companyId,
       },
     });
+
+    console.log(createdProduct);
 
     if (variations) {
       const typedVariations = JSON.parse(
@@ -63,17 +72,17 @@ export class ProductService {
       );
     }
 
-    if (images) {
-      await Promise.all(
-        images.map(async (image) => {
-          return await this.fileService.uploadFile(
-            image.buffer,
-            image.originalname,
-            createdProduct.id,
-          );
-        }),
-      );
-    }
+    // if (images) {
+    //   await Promise.all(
+    //     images.map(async (image) => {
+    //       return await this.fileService.uploadFile(
+    //         image.buffer,
+    //         image.originalname,
+    //         createdProduct.id,
+    //       );
+    //     }),
+    //   );
+    // }
 
     return createdProduct;
   }
@@ -121,11 +130,26 @@ export class ProductService {
       );
     }
 
+    const { variations, ...updateDto } = updateProductDto;
+
+    if (variations) {
+      const parsedVariations = JSON.parse(
+        variations,
+      ) as unknown as UpdateProductVariations;
+      await this.productVariantService.addVariations(
+        parsedVariations,
+        companyId,
+        productId,
+      );
+      await this.productVariantService.updateVariations(parsedVariations);
+      await this.productVariantService.deleteVariations(parsedVariations);
+    }
+
     const updatedProduct = await this.prisma.product.update({
       where: {
         id: productId,
       },
-      data: updateProductDto,
+      data: updateDto,
     });
 
     return updatedProduct;
@@ -170,5 +194,31 @@ export class ProductService {
     });
 
     return deletedProduct;
+  }
+
+  async getById(productId: string) {
+    const product = await this.prisma.product.findUnique({
+      where: {
+        id: productId,
+      },
+      include: {
+        category: true,
+        variants: {
+          orderBy: {
+            createdAt: 'asc',
+          },
+          include: {
+            options: {
+              orderBy: {
+                createdAt: 'asc',
+              },
+            },
+          },
+        },
+        pictures: true,
+      },
+    });
+
+    return product;
   }
 }

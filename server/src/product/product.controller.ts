@@ -62,6 +62,7 @@ export class ProductController {
   }
 
   @Put('/:companyId/:productId')
+  @UseInterceptors(FilesInterceptor('images'))
   @HttpCode(HttpStatus.OK)
   async update(
     @Body() updateProductDto: UpdateProductDto,
@@ -95,6 +96,32 @@ export class ProductController {
           }
         : null,
     }));
+  }
+
+  @Get('/details/:productId')
+  async getProductById(@Param('productId') productId: string) {
+    const product = await this.productService.getById(productId);
+    return {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      description: product.description,
+      createdAt: product.createdAt,
+      variants: product.variants.map((variant) => ({
+        id: variant.id,
+        name: variant.name,
+        options: variant.options.map((option) => ({
+          id: option.id,
+          name: option.name,
+        })),
+      })),
+      category: product?.category
+        ? {
+            id: product.category.id,
+            name: product.category.name,
+          }
+        : null,
+    };
   }
 
   @Delete('/:companyId/:productId')

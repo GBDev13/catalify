@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import {
   IsNumber,
   IsOptional,
@@ -5,15 +6,14 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
-import { Product } from '../entities/product.entity';
 
-export class UpdateProductDto extends Product {
+export class UpdateProductDto {
   @IsString()
   @IsOptional()
   name: string;
 
+  @Transform(({ value }) => Number(value))
   @IsNumber()
-  @IsOptional()
   @IsPositive()
   price: number;
 
@@ -25,4 +25,31 @@ export class UpdateProductDto extends Product {
   @IsString()
   @IsOptional()
   categoryId: string;
+
+  @IsString()
+  @IsOptional()
+  variations: string;
 }
+
+type ChangeType = 'variation' | 'option';
+type ActionType = 'remove' | 'change';
+
+export type UpdateProductVariations = {
+  edited: {
+    id: string;
+    type: ChangeType;
+    newValue: string;
+  }[];
+  removed: {
+    id: string;
+    type: ChangeType;
+    actionType: ActionType;
+  }[];
+  added: {
+    type: ChangeType;
+    name?: string;
+    options?: string[];
+    variationId?: string;
+    value?: string;
+  }[];
+};

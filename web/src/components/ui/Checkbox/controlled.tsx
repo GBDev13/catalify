@@ -12,7 +12,7 @@ export const ControlledCheckbox = ({ fieldName, control, ...inputProps }: Contro
     <Controller
       name={fieldName}
       control={control}
-      render={({ field, fieldState }) => <Checkbox error={fieldState?.error} {...inputProps} {...field} onCheckedChange={(value) => field.onChange(value === true)} />}
+      render={({ field, fieldState }) => <Checkbox error={fieldState?.error} {...inputProps} {...field} checked={field.value} onCheckedChange={(value) => field.onChange(value === true)} />}
     />
   )
 }

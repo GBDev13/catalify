@@ -10,6 +10,7 @@ import OrderedList from "@tiptap/extension-ordered-list";
 import { TfiListOl } from 'react-icons/tfi'
 import clsx from 'clsx'
 import { ErrorOption } from 'react-hook-form'
+import { useEffect } from 'react'
 
 type EditorProps = {
   label?: string

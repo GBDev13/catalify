@@ -7,9 +7,13 @@ interface ReactTableProps<T extends object> {
   columns: ColumnDef<T>[];
   showFooter?: boolean;
   showNavigation?: boolean;
+  emptyState?: {
+    title: string;
+    description: string;
+  }
 }
 
-export const Table = <T extends object>({ data, columns, showFooter = false, showNavigation = true, }: ReactTableProps<T>) => {
+export const Table = <T extends object>({ data, columns, emptyState, showFooter = false, showNavigation = true, }: ReactTableProps<T>) => {
  const table = useReactTable({
    data,
    columns,
@@ -22,6 +26,7 @@ export const Table = <T extends object>({ data, columns, showFooter = false, sho
      <div className="overflow-x-auto">
        <div className="inline-block min-w-full">
          <div className="overflow-hidden bg-slate-50 rounded">
+
            <table className="min-w-full text-left">
              <thead className="border-b bg-slate-100">
                {table.getHeaderGroups().map((headerGroup) => (
@@ -61,6 +66,14 @@ export const Table = <T extends object>({ data, columns, showFooter = false, sho
                </tfoot>
              ) : null}
            </table>
+
+            {data.length <= 0 && emptyState && (
+              <div className="w-full flex items-center justify-center flex-col py-14">
+                <img className="w-[200px]" src="/images/empty-table.png" /> 
+                <h3 className="text-indigo-500 font-semibold text-2xl mt-4 mb-2">{emptyState.title}</h3>
+                <p className="text-sm text-slate-500">{emptyState.description}</p>
+              </div>
+            )}
 
            {showNavigation ? (
              <section className="p-4 flex items-center justify-end gap-8 border-t">

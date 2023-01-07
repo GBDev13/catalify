@@ -52,7 +52,7 @@ export default function CompanyProducts() {
       },
       {
         header: 'Categoria',
-        cell: (row) => row.row.original?.name ?? 'Sem categoria',
+        cell: (row) => row.row.original?.category?.name ?? 'Sem categoria',
         accessorKey: 'category',
         footer: 'Categoria'
       },
@@ -63,9 +63,11 @@ export default function CompanyProducts() {
         cell: (row) => (
           <div className="flex items-center">
             <Tooltip content="Editar produto">
-              <Button variant="TEXT" onClick={() => console.log('edit', row.getValue())}>
-                <FiEdit size={20} />
-              </Button>
+              <Link href={`./products/edit/${String(row.getValue())}`}>
+                <Button variant="TEXT">
+                  <FiEdit size={20} />
+                </Button>
+              </Link>
             </Tooltip>
 
 
@@ -102,7 +104,10 @@ export default function CompanyProducts() {
         </div>
       </PageTitle>
 
-      <Table columns={cols} data={products ?? []} />
+      <Table emptyState={{
+        title: 'Sem produtos',
+        description: 'Assim que você adicionar um produto, ele aparecerá aqui',
+      }} columns={cols} data={products ?? []} />
     </>
   )
 }
