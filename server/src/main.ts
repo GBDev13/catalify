@@ -1,6 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { json } from 'body-parser';
 
 const port = process.env.PORT || 8000;
 
@@ -10,6 +11,7 @@ const port = process.env.PORT || 8000;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.use(json({ limit: '5mb' }));
 
   // Pipes
   app.useGlobalPipes(

@@ -40,16 +40,37 @@ export class UserService {
   }
 
   async onboard(onboardingDto: OnboardingDto) {
-    const user = await this.create(onboardingDto.user);
-    const company = await this.companyService.create(
-      onboardingDto.company,
-      user,
-    );
+    let userId: string;
 
-    return {
-      user,
-      company,
-    };
+    try {
+      const user = await this.create(onboardingDto.user);
+
+      userId = user.id;
+
+      const company = await this.companyService.create(
+        onboardingDto.company,
+        user,
+      );
+
+      return {
+        user,
+        company,
+      };
+    } catch (error) {
+      if (userId) {
+        await this.deleteUserIfExists(userId);
+      }
+
+      throw error;
+    }
+  }
+
+  async deleteUserIfExists(id: string) {
+    const user = await this.prisma.user.findUnique({ where: { id } });
+
+    if (user) {
+      await this.prisma.user.delete({ where: { id } });
+    }
   }
 
   findByEmail(email: string) {

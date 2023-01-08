@@ -5,4 +5,5 @@ export class Company implements Prisma.CompanyUncheckedCreateInput {
   name: string;
   ownerId: string;
   themeColor: string;
+  slug: string;
 }

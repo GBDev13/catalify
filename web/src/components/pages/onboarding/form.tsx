@@ -58,7 +58,9 @@ export const OnboardingForm = ({ step, setStep }: OnboardingFormProps) => {
         },
         company: {
           name: data.company.companyName,
-          themeColor: data.company.color
+          themeColor: data.company.color,
+          slug: data.company.slug,
+          logo: data.company?.logo?.length ? data.company.logo[0] : undefined
         }
       })
     } catch (err) {

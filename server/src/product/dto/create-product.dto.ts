@@ -23,6 +23,12 @@ export class CreateProductDto extends Product {
   @IsPositive()
   price: number;
 
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @IsPositive()
+  @IsOptional()
+  promoPrice: number;
+
   @IsString()
   @IsOptional()
   @MaxLength(500)

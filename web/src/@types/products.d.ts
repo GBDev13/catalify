@@ -2,6 +2,7 @@ declare namespace Products {
   export type Category = {
     id: string
     name: string
+    slug: string
   }
 
   export type Variation = {
@@ -28,9 +29,19 @@ declare namespace Products {
     name: string
     description: string
     price: number
+    promoPrice?: number
     category: Products.Category
     variants: Products.Variant[]
     pictures: Products.Picture[]
+  }
+
+  export type CatalogProduct = {
+    id: string
+    slug: string
+    name: string
+    price: number
+    promoPrice: number
+    picture: string
   }
   
 }

@@ -45,7 +45,21 @@ export default function CompanyProducts() {
       {
         header: 'Preço',
         cell(props) {
+          const promoPrice = props.row.original?.promoPrice;
+          if (promoPrice) return (
+            <div className="flex flex-col w-full">
+              <span className="text-gray-500 text-xs line-through">{formatCurrency(props.getValue() as number)}</span>
+              <span>{formatCurrency(promoPrice)}</span>
+            </div>
+          )
+
           return formatCurrency(props.getValue() as number)
+        },
+        sortingFn: (a, b) => {
+          const aPrice = a.original?.promoPrice ?? a.original?.price
+          const bPrice = b.original?.promoPrice ?? b.original?.price
+
+          return aPrice - bPrice
         },
         accessorKey: 'price',
         footer: 'Preço'
@@ -60,6 +74,7 @@ export default function CompanyProducts() {
         header: 'Ações',
         size: 80,
         accessorKey: 'id',
+        enableSorting: false,
         cell: (row) => (
           <div className="flex items-center">
             <Tooltip content="Editar produto">

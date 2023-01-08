@@ -37,6 +37,8 @@ export const createProduct = async (createProductDto: CreateProductDto, companyI
     formData.append('description', createProductDto.description)
     formData.append('price', createProductDto.price.toString())
 
+    if(createProductDto?.promoPrice) formData.append('promoPrice', createProductDto.promoPrice.toString())
+
     if (createProductDto?.categoryId) formData.append('categoryId', createProductDto.categoryId)
 
     if(createProductDto?.variations) {
@@ -71,10 +73,9 @@ export const editProduct = async (productId: string, companyId: string, editProd
     formData.append('name', editProductDto.name)
     formData.append('price', editProductDto.price.toString())
     formData.append('description', editProductDto.description)
+    if (editProductDto?.promoPrice) formData.append('promoPrice', editProductDto.promoPrice.toString())
     if (editProductDto?.categoryId) formData.append('categoryId', editProductDto.categoryId)
     if(editProductDto?.variations) formData.append('variations', JSON.stringify(editProductDto.variations))
-
-    console.log(editProductDto.images)
 
     if(editProductDto.imagesToRemove?.length > 0) {
       editProductDto.imagesToRemove.forEach((image) => {

@@ -1,9 +1,11 @@
-import { forwardRef, useState } from "react"
+import { forwardRef, useEffect, useState } from "react"
 import { ErrorOption } from "react-hook-form";
 import clsx from 'clsx'
 import * as Popover from '@radix-ui/react-popover';
 import { CiPalette } from 'react-icons/ci'
 import { makeColors } from "../../../helpers/make-colors";
+import { Button } from "../Button";
+import { ChromePicker } from 'react-color'
 
 type InputProps = {
   error?: ErrorOption
@@ -19,12 +21,26 @@ export const ColorPicker = forwardRef<HTMLInputElement, InputProps>(({ label, er
 
   const [open, setOpen] = useState(false)
 
-  const handleSelectColor = (color: string) => {
+  const handleSelectColor = (color: string, close = true) => {
     onChange(color)
-    setOpen(false)
+    if(close) setOpen(false)
   }
 
   const selectedColor = value
+
+  const [colorType, setColorType] = useState<'theme' | 'custom'>('theme')
+
+  const handleToggleColorType = () => {
+    setColorType(colorType === 'theme' ? 'custom' : 'theme')
+  }
+
+  const [selectedColorPicker, setSelectedColorPicker] = useState('')
+
+  useEffect(() => {
+    if(colorType === 'theme') {
+      setSelectedColorPicker(selectedColor)
+    }
+  }, [colorType, selectedColor, value])
 
   return (
     <div>
@@ -51,14 +67,24 @@ export const ColorPicker = forwardRef<HTMLInputElement, InputProps>(({ label, er
             <CiPalette size={20} />
           </Popover.Trigger>
           <Popover.Portal>
-            <Popover.Content sideOffset={10} className="bg-white rounded p-2 shadow-md max-h-[300px] overflow-y-auto grid grid-cols-[repeat(10,1fr)] gap-1">
+            <Popover.Content sideOffset={10} className="bg-white rounded p-2 shadow-md min-w-[245px] max-h-[300px] overflow-y-auto grid grid-cols-[repeat(10,1fr)] gap-1">
               <Popover.Arrow className="fill-white" />
 
-              {availableColors.map(color => (
+              <Button type="button" className="col-span-full text-sm min-h-0 mb-2" size="WIDE" onClick={handleToggleColorType}>
+                {colorType === 'custom' ? 'Cor pré-definida' : 'Cor personalizada'}
+              </Button>
+
+              {colorType === 'theme' && availableColors.map(color => (
                 <button onClick={() => handleSelectColor(color)} key={color} className={clsx("w-4 h-4 rounded", {
                   "ring-2 ring-indigo-500": selectedColor === color
                 })} style={{ background: color }} />
               ))}
+
+              {colorType === 'custom' && (
+                <div className="col-span-full">
+                  <ChromePicker disableAlpha className="!shadow-none" color={selectedColorPicker} onChange={(color) => setSelectedColorPicker(color.hex)} onChangeComplete={(color) => handleSelectColor(color.hex, false)} />
+                </div>
+              )}
 
             </Popover.Content>
           </Popover.Portal>

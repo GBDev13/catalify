@@ -10,6 +10,7 @@ import { CategoryModule } from './category/category.module';
 import { ProductModule } from './product/product.module';
 import { ProductVariantModule } from './product-variant/product-variant.module';
 import { FileModule } from './file/file.module';
+import { CatalogModule } from './catalog/catalog.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { FileModule } from './file/file.module';
     ProductModule,
     ProductVariantModule,
     FileModule,
+    CatalogModule,
   ],
   providers: [
     AppService,

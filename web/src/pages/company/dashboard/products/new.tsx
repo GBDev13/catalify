@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import clsx from "clsx";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useMemo } from "react";
@@ -15,6 +16,7 @@ import { ControlledEditor } from "src/components/ui/Editor/controlled";
 import { ControlledFileUpload } from "src/components/ui/FileUpload/controlled";
 import { ControlledInput } from "src/components/ui/Input/controlled";
 import { ControlledSelect } from "src/components/ui/Select/controlled";
+import { IMAGE_TYPES } from "src/constants/constants";
 import { productsKey } from "src/constants/query-keys";
 import { useUnsavedChangesWarning } from "src/hooks/useUnsavedChangesWarning";
 import { createProduct, CreateProductDto, getCategories } from "src/services/products";
@@ -53,6 +55,8 @@ const newProductFormSchema = z.object({
     message: "É necessário enviar pelo menos uma imagem"
   }),
   hasVariations: z.boolean().optional(),
+  hasPromoPrice: z.boolean().optional(),
+  promoPrice: z.number().optional(),
   variations: z.array(z.object({
     name: z.string({
       required_error: "O nome da variação é obrigatório",
@@ -75,6 +79,24 @@ const newProductFormSchema = z.object({
   })).max(5, {
     message: "O produto pode ter no máximo 5 variações",
   })
+}).superRefine(({ price, promoPrice, hasPromoPrice }, ctx) => {
+  if (!hasPromoPrice) return
+  
+  if(!promoPrice || promoPrice <= 0) {
+    ctx.addIssue({
+      code: "custom",
+      message: "O preço promocional é obrigatório",
+      path: ["promoPrice"]
+    });
+    return 
+  }
+  if (promoPrice >= price) {
+    ctx.addIssue({
+      code: "custom",
+      message: "O preço promocional deve ser menor que o preço original",
+      path: ["promoPrice"]
+    });
+  }
 })
 
 export type NewProductFormData = z.infer<typeof newProductFormSchema>
@@ -88,6 +110,7 @@ export default function NewProduct() {
     resolver: zodResolver(newProductFormSchema),
     defaultValues: {
       price: 0,
+      promoPrice: 0,
       variations: [],
     }
   })
@@ -115,7 +138,8 @@ export default function NewProduct() {
       images: data.images,
       name: data.name,
       price: data.price / 100,
-      variations: data.variations.length > 0 ? data.variations.map(variation => ({
+      promoPrice: data?.promoPrice ? data.promoPrice / 100 : undefined,
+      variations: data.variations?.length > 0 ? data.variations?.map(variation => ({
         name: variation.name,
         options: variation.options.map(option => option.value),
       })) : undefined
@@ -141,12 +165,19 @@ export default function NewProduct() {
   const previousPath = router.asPath.slice(0, finalSlashIndex)
 
   const hasVariations = !!methods.watch('hasVariations')
+  const hasPromoPrice = !!methods.watch('hasPromoPrice')
 
   useEffect(() => {
     if(!hasVariations) {
       setValue('variations', [])
     }
   }, [hasVariations, setValue])
+
+  useEffect(() => {
+    if(!hasPromoPrice) {
+      setValue('promoPrice', 0)
+    }
+  }, [hasPromoPrice, setValue])
 
   return (
     <>
@@ -167,7 +198,19 @@ export default function NewProduct() {
               <div className="flex flex-col gap-4">
                 <ControlledInput control={control} fieldName="name" label="Nome do Produto" placeholder="Camiseta" />
                 <ControlledEditor control={control} fieldName="description" label="Descrição do Produto" />
-                <ControlledCurrencyInput control={control} fieldName="price" label="Preço do Produto" />
+                <div className={clsx({
+                  "grid grid-cols-2 gap-2": hasPromoPrice,
+                })}>
+                  <ControlledCurrencyInput control={control} fieldName="price" label="Preço do Produto" />
+                  {hasPromoPrice && (
+                    <ControlledCurrencyInput control={control} fieldName="promoPrice" label="Preço Promocional" />
+                  )}
+                </div>
+
+                <div className="my-2">
+                  <ControlledCheckbox fieldName="hasPromoPrice" control={control} label="O produto possui está em promoção?" />
+                </div>
+
                 <ControlledSelect isClearable control={control} fieldName="category" label="Categoria (Opcional)" options={categoriesOptions} />
 
                 <div className="mt-2">
@@ -179,12 +222,7 @@ export default function NewProduct() {
 
           <div className="flex flex-col gap-4">
             <h4 className="text-2xl font-semibold text-slate-500 border-b border-b-slate-300 pb-4 mb-6">Fotos do Produto</h4>
-            <ControlledFileUpload control={control} fieldName="images" withPreview isMultiple maxFiles={4} acceptedTypes={{
-              'image/jpeg': ['image/jpeg'],
-              'image/jpg': ['image/jpg'],
-              'image/png': ['image/png'],
-              'image/webp': ['image/webp'],
-            }} maxSize={5242880} />
+            <ControlledFileUpload control={control} fieldName="images" withPreview isMultiple maxFiles={4} acceptedTypes={IMAGE_TYPES} maxSize={5242880} />
             
             {hasVariations && <ProductVariations />}
           </div>

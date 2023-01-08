@@ -2,13 +2,16 @@ import { forwardRef, InputHTMLAttributes, useState } from "react"
 import { ErrorOption } from "react-hook-form";
 import clsx from 'clsx'
 import { HiOutlineEyeOff, HiOutlineEye } from 'react-icons/hi'
+import { Tooltip } from "../Tooltip";
+import { BsQuestionCircle } from "react-icons/bs";
 
 type InputProps = InputHTMLAttributes<HTMLInputElement> & {
   label?: string
+  tip?: string
   error?: ErrorOption
 }
 
-export const Input = forwardRef<HTMLInputElement, InputProps>(({ type = 'text', className, label, name, error, ...props }, ref) => {
+export const Input = forwardRef<HTMLInputElement, InputProps>(({ type = 'text', className, label, tip, name, error, ...props }, ref) => {
   const hasError = !!error;
 
   const isPassword = type === 'password'
@@ -18,8 +21,15 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({ type = 'text', 
   return (
     <div className={className ? className : undefined}>
       {label && (
-        <label htmlFor={name} className="block text-xs font-medium text-slate-500 mb-1">
+        <label htmlFor={name} className="flex gap-1.5 text-xs font-medium text-slate-500 mb-1">
           {label}
+          {tip && (
+            <Tooltip content={tip} maxWidth={290}>
+              <div>
+                <BsQuestionCircle size={15} />
+              </div>
+            </Tooltip>
+          )}
         </label>
       )}
 

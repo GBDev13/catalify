@@ -1,7 +1,9 @@
-import { getCoreRowModel, useReactTable, flexRender, getPaginationRowModel } from '@tanstack/react-table';
+import { getCoreRowModel, useReactTable, flexRender, getPaginationRowModel, SortingState, getSortedRowModel, InitialTableState } from '@tanstack/react-table';
 import type { ColumnDef } from '@tanstack/react-table';
 import { PaginationButton } from './pagination-button';
-
+import { useState } from 'react';
+import clsx from 'clsx';
+import { BsSortDown, BsSortUp } from 'react-icons/bs'
 interface ReactTableProps<T extends object> {
   data: T[];
   columns: ColumnDef<T>[];
@@ -11,13 +13,22 @@ interface ReactTableProps<T extends object> {
     title: string;
     description: string;
   }
+  initialState?: InitialTableState
 }
 
-export const Table = <T extends object>({ data, columns, emptyState, showFooter = false, showNavigation = true, }: ReactTableProps<T>) => {
- const table = useReactTable({
+export const Table = <T extends object>({ data, columns, emptyState, showFooter = false, showNavigation = true, initialState }: ReactTableProps<T>) => {
+  const [sorting, setSorting] = useState<SortingState>([])
+
+  const table = useReactTable({
    data,
    columns,
+   state: {
+     sorting,
+   },
+   initialState: initialState,
+   onSortingChange: setSorting,
    getCoreRowModel: getCoreRowModel(),
+   getSortedRowModel: getSortedRowModel(),
    getPaginationRowModel: getPaginationRowModel(),
  });
 
@@ -32,8 +43,25 @@ export const Table = <T extends object>({ data, columns, emptyState, showFooter 
                {table.getHeaderGroups().map((headerGroup) => (
                  <tr key={headerGroup.id}>
                    {headerGroup.headers.map((header) => (
-                     <th key={header.id} className="px-6 py-4 text-sm font-medium text-gray-900" style={{ width: header.getSize() }}>
-                       {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                     <th
+                     key={header.id}
+                     className={clsx("px-6 py-4 text-sm font-medium text-gray-900", {
+                      "cursor-pointer select-none hover:bg-slate-200/40": header.column.getCanSort(),
+                     })}
+                     style={{ width: header.getSize() }}
+                     onClick={header.column.getToggleSortingHandler()}
+                     >
+                       <div
+                        className="flex items-center gap-2"
+                       >
+                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                        <div className="text-indigo-500">
+                          {{
+                              asc: <BsSortUp size={18} />,
+                              desc: <BsSortDown size={18} />,
+                            }[header.column.getIsSorted() as string] ?? null}
+                        </div>
+                       </div>
                      </th>
                    ))}
                  </tr>

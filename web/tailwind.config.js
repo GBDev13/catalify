@@ -8,11 +8,17 @@ module.exports = {
     extend: {
       fontFamily: {
         sans: ["Poppins", "sans-serif"],
+      },
+      colors: {
+        primary: "var(--color-primary)",
+        primaryLight: "var(--color-primary-light)",
+        readable: "var(--color-readable)",
       }
     },
   },
   plugins: [
     require('@tailwindcss/typography'),
-    require('@tailwindcss/forms')
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/line-clamp')
   ]
 }

@@ -13,9 +13,10 @@ type FileUploadProps = {
   error?: string;
   isMultiple?: boolean;
   onRemove?: (index: number) => void;
+  previewMode?: 'INSIDE' | 'OUTSIDE'
 }
 
-export const FileUpload = ({ acceptedTypes, maxSize, maxFiles = 1, onDrop, submittedFiles, error, withPreview, isMultiple, onRemove }: FileUploadProps) => {
+export const FileUpload = ({ acceptedTypes, maxSize, maxFiles = 1, onDrop, submittedFiles, error, withPreview, isMultiple, onRemove, previewMode = 'OUTSIDE' }: FileUploadProps) => {
   const hasError = !!error;
 
   const isDisabled = submittedFiles && submittedFiles?.length >= maxFiles;
@@ -39,42 +40,54 @@ export const FileUpload = ({ acceptedTypes, maxSize, maxFiles = 1, onDrop, submi
     }
   }, [submittedFiles])
 
-  const limitText = `Tamanho máximo de ${Math.round(maxSize / 1000000)}MB por arquivo. Máximo de ${maxFiles} arquivo(s).`
+  const limitText = `Tamanho máximo de ${Math.round(maxSize / 1000000)}MB${maxFiles > 1 ? ' por arquivo' : ''}. Máximo de ${maxFiles} arquivo(s).`
+
+  const handleClear = () => {
+    if (onRemove) onDrop([])
+  }
 
   return (
     <>
       <div className={clsx("w-full cursor-pointer border-slate-200 bg-slate-100 border text-center py-4 rounded text-slate-600 transition-colors hover:border-indigo-500", {
         "!border-red-400 text-red-400": hasError || isDragReject,
-        "opacity-80 hover:!border-red-400 !cursor-not-allowed": isDisabled
+        "opacity-80 hover:!border-red-400 !cursor-not-allowed": isDisabled && previewMode === 'OUTSIDE'
       })}>
-        <div className="justify-center items-center flex flex-col" {...getRootProps()}>
-          <FiUploadCloud size={35} />
-          <span className="py-2">
-            <input type="file" {...getInputProps()} />
-            {isDragActive ? (
-              isDragReject ? (
-                <p className="text-red font-semiBold">Formato não aceito</p>
+        {withPreview && previewMode === 'INSIDE' && submittedFiles?.length && previewArray?.length ? (
+          <div className="flex items-center justify-center flex-col">
+            <strong className="font-semibold text-indigo-500">Arquivo aceito</strong>
+            <img className="w-20 h-20 object-contain" src={previewArray[0]} />
+            <button type="button" className="underline text-slate-500 text-sm hover:text-indigo-500" onClick={handleClear}>Remover arquivo</button>
+          </div>
+        ) : (
+          <div className="justify-center items-center flex flex-col" {...getRootProps()}>
+            <FiUploadCloud size={35} />
+            <span className="py-2">
+              <input type="file" {...getInputProps()} />
+              {isDragActive ? (
+                isDragReject ? (
+                  <p className="text-red font-semiBold">Formato não aceito</p>
+                ) : (
+                  <p className="font-semiBold">Solte o arquivo aqui...</p>
+                )
               ) : (
-                <p className="font-semiBold">Solte o arquivo aqui...</p>
-              )
-            ) : (
-              <p className="text-charcoal font-semiBold">
-                Arraste e solte ou clique para selecionar
-              </p>
-            )}
-          </span>
-          <p className="text-xs text-slate-500 font-light">{limitText}</p>
-          <p className="text-xs text-slate-500 font-light">
-            {`Formatos aceitos: ${supportedTypesText}`}
-          </p>
-        </div>
+                <p className="text-charcoal font-semiBold">
+                  Arraste e solte ou clique para selecionar
+                </p>
+              )}
+            </span>
+            <p className="text-xs text-slate-500 font-light">{limitText}</p>
+            <p className="text-xs text-slate-500 font-light">
+              {`Formatos aceitos: ${supportedTypesText}`}
+            </p>
+          </div>
+        )}
       </div>
 
       {hasError && (
         <span className="text-red-400 text-xs mt-2">{error}</span>
       )}
 
-      {withPreview && onRemove && (
+      {withPreview && onRemove && previewMode === 'OUTSIDE' && (
         <div className="grid grid-cols-[repeat(auto-fit,minmax(110px,1fr))] gap-2 mt-4">
           {previewArray?.map((file, index) => (
             <div key={`preview-${index}`} className="relative">

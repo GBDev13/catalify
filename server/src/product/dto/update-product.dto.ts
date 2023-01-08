@@ -19,6 +19,12 @@ export class UpdateProductDto {
   @IsPositive()
   price: number;
 
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @IsPositive()
+  @IsOptional()
+  promoPrice: number;
+
   type: 'array' | 'string';
 
   @ValidateIf((object, value) => object.type === 'array')

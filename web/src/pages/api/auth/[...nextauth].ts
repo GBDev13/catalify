@@ -21,11 +21,8 @@ export default NextAuth({
                   const response = await api.post("/auth/login", credentials)
                   
                   if (response.data.user) {
-                    console.log('login', response.data.user)
                       return response.data
                   }
-
-                  console.log('response', response)
 
                   return null;
                 } catch (err) {

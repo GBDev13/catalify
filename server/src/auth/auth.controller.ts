@@ -34,6 +34,7 @@ export class AuthController {
   @Post('onboarding')
   @HttpCode(HttpStatus.CREATED)
   async register(@Body() onboardingDto: OnboardingDto) {
+    console.log('chegou no controller');
     return this.userService.onboard(onboardingDto);
   }
 

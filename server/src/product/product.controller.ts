@@ -86,6 +86,7 @@ export class ProductController {
       price: product.price,
       description: product.description,
       createdAt: product.createdAt,
+      promoPrice: product?.promoPrice,
       variants: product.variants.map((variant) => ({
         id: variant.id,
         name: variant.name,
@@ -112,6 +113,7 @@ export class ProductController {
       price: product.price,
       description: product.description,
       createdAt: product.createdAt,
+      promoPrice: product?.promoPrice,
       pictures: product.pictures.map((picture) => ({
         id: picture.id,
         url: picture.fileUrl,

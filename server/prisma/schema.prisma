@@ -24,6 +24,7 @@ model User {
 
 model Company {
   id        String    @id @default(uuid())
+  slug      String    @unique
   name      String
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
@@ -37,13 +38,18 @@ model Company {
   productVariants      ProductVariant[]
   ProductVariantOption ProductVariantOption[]
 
+  logo   File?   @relation(fields: [logoId], references: [id])
+  logoId String?
+
   @@map("companies")
 }
 
 model Product {
   id          String    @id @default(uuid())
+  slug        String?   @default("product-slug")
   name        String
   price       Float
+  promoPrice  Float?
   description String?   @db.VarChar(500)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime? @updatedAt
@@ -63,6 +69,7 @@ model Product {
 
 model Category {
   id        String    @id @default(uuid())
+  slug      String?
   name      String
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
@@ -115,4 +122,6 @@ model File {
 
   product   Product? @relation(fields: [productId], references: [id])
   productId String?
+
+  company Company[]
 }

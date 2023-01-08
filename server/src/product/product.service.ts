@@ -167,6 +167,7 @@ export class ProductService {
       data: {
         ...updateDto,
         categoryId: updateDto?.categoryId || null,
+        promoPrice: updateDto?.promoPrice || null,
       },
     });
 
