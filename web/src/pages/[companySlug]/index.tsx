@@ -12,15 +12,15 @@ export default function CompanyHome() {
   const { query } = useRouter()
   const slug = query.companySlug as string
 
-  const { data: products } = useQuery(catalogKeys.companyProducts(slug), () => getCompanyCatalogProducts(slug), {
+  const { data: productsList } = useQuery(catalogKeys.companyProducts(slug), () => getCompanyCatalogProducts(slug), {
     enabled: !!slug
   })
 
   return (
     <CatalogLayout>
       <HomeBanners />
-      {/* <ProductsList title="Destaques" /> */}
-      {products?.length && <ProductsList products={products} title="Recentes" />}
+      {productsList?.highlights?.length && <ProductsList products={productsList?.highlights} title="Destaques" />}
+      {productsList?.products?.length && <ProductsList products={productsList?.products} title="Novidades" />}
       <Link href={`/${slug}/produtos`} className="mx-auto mt-10">
         <button className="bg-primary text-white px-4 py-2 rounded-full hover:brightness-105 transition-all">Ver todos os produtos</button>
       </Link>

@@ -1,6 +1,7 @@
 import { Transform } from 'class-transformer';
 import {
   IsArray,
+  IsBoolean,
   IsNumber,
   IsOptional,
   IsPositive,

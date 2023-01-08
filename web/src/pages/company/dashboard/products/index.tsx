@@ -3,7 +3,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { useMemo } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { productsKey } from "src/constants/query-keys";
-import { deleteProduct, getProducts } from "src/services/products";
+import { deleteProduct, getProducts, toggleHighlight } from "src/services/products";
 import { useCompany } from "src/store/company";
 import { formatCurrency } from "src/helpers/formay-currency";
 import { PageTitle } from "src/components/pages/shared/PageTitle";
@@ -13,6 +13,8 @@ import { Tooltip } from "src/components/ui/Tooltip";
 import Link from "next/link";
 import { ConfirmationPopover } from "src/components/pages/shared/ConfirmationPopover";
 import toast from "react-hot-toast";
+import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
+import clsx from "clsx";
 
 export default function CompanyProducts() {
   const { company } = useCompany()
@@ -32,6 +34,26 @@ export default function CompanyProducts() {
     onSuccess: () => {
       queryClient.invalidateQueries(productsKey.all)
     }
+  })
+
+  const { mutate: handleHighlightProduct } = useMutation((productId: string) => toast.promise(toggleHighlight(productId, companyId!), {
+    loading: 'Alterando destaque...',
+    success: 'Destaque alterado com sucesso!',
+    error: 'Erro ao alterar destaque'
+  }), {
+    onSuccess(_, productId) {
+      queryClient.setQueryData<Products.Product[]>(productsKey.all, (oldData) => {
+        return oldData?.map(item => {
+          if(item.id === productId) {
+            return {
+              ...item,
+              isHighlighted: !item.isHighlighted
+            }
+          }
+          return item
+        })
+      })
+    },
   })
 
   const cols = useMemo<ColumnDef<Products.Product>[]>(
@@ -75,28 +97,40 @@ export default function CompanyProducts() {
         size: 80,
         accessorKey: 'id',
         enableSorting: false,
-        cell: (row) => (
-          <div className="flex items-center">
-            <Tooltip content="Editar produto">
-              <Link href={`./products/edit/${String(row.getValue())}`}>
-                <Button variant="TEXT">
-                  <FiEdit size={20} />
-                </Button>
-              </Link>
-            </Tooltip>
+        cell: (row) => {
+          const isHighlighted = row.row.original?.isHighlighted
+          const productId = String(row.getValue());
 
-
-            <ConfirmationPopover onConfirm={() => handleDeleteProduct(String(row.getValue()))} message="Tem certeza que deseja deletar este produto?">
-              <div>
-                <Tooltip content="Remover produto">
+          return (
+            <div className="flex items-center">
+              <Tooltip content={isHighlighted ? "Remover destaque" : "Destacar produto"}>
+                <button onClick={() => handleHighlightProduct(productId)} className={clsx("text-slate-500 p-2 hover:text-indigo-500", {
+                  "text-indigo-400": isHighlighted,
+                })}>
+                  {isHighlighted ? <AiFillStar size={25} /> : <AiOutlineStar size={25} />}
+                </button>
+              </Tooltip>
+              <Tooltip content="Editar produto">
+                <Link href={`./products/edit/${productId}`}>
                   <Button variant="TEXT">
-                    <FiTrash size={20} />
+                    <FiEdit size={20} />
                   </Button>
-                </Tooltip>
-              </div>
-            </ConfirmationPopover>
-          </div>
-        )
+                </Link>
+              </Tooltip>
+  
+  
+              <ConfirmationPopover onConfirm={() => handleDeleteProduct(productId)} message="Tem certeza que deseja deletar este produto?">
+                <div>
+                  <Tooltip content="Remover produto">
+                    <Button variant="TEXT">
+                      <FiTrash size={20} />
+                    </Button>
+                  </Tooltip>
+                </div>
+              </ConfirmationPopover>
+            </div>
+          )
+        }
       }
     ],
     []

@@ -7,6 +7,7 @@ import {
   HttpException,
   HttpStatus,
   Param,
+  Patch,
   Post,
   Put,
   UploadedFiles,
@@ -87,6 +88,7 @@ export class ProductController {
       description: product.description,
       createdAt: product.createdAt,
       promoPrice: product?.promoPrice,
+      isHighlighted: !!product?.isHighlighted,
       variants: product.variants.map((variant) => ({
         id: variant.id,
         name: variant.name,
@@ -142,5 +144,14 @@ export class ProductController {
     @Param('productId') productId: string,
   ) {
     return this.productService.delete(companyId, productId);
+  }
+
+  @Patch('/:companyId/:productId/highlight')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async toggleHighlight(
+    @Param('companyId') companyId: string,
+    @Param('productId') productId: string,
+  ) {
+    return this.productService.toggleHighlight(companyId, productId);
   }
 }

@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { productToWeb } from './parser/product-to-web';
 
 @Injectable()
 export class CatalogService {
@@ -75,15 +76,9 @@ export class CatalogService {
       },
     });
 
-    return products.map((product) => ({
-      id: product.id,
-      slug: product.slug,
-      name: product.name,
-      price: product.price,
-      promoPrice: product?.promoPrice,
-      picture: product?.pictures?.length
-        ? product.pictures[0]?.fileUrl
-        : undefined,
-    }));
+    return {
+      products: products.filter((x) => !x?.isHighlighted).map(productToWeb),
+      highlights: products.filter((x) => x?.isHighlighted).map(productToWeb),
+    };
   }
 }

@@ -1,5 +1,10 @@
 import api from "src/lib/axios"
 
+type CatalogProductsResponse = {
+  products: Products.CatalogProduct[]
+  highlights: Products.CatalogProduct[]
+}
+
 export const getCompanyCatalog = async (slug: string) => {
   const { data } = await api.get(`/catalog/${slug}`)
 
@@ -13,7 +18,7 @@ export const getCompanyCatalogCategories = async (slug: string) => {
 }
 
 export const getCompanyCatalogProducts = async (slug: string) => {
-  const { data } = await api.get<Products.CatalogProduct[]>(`/catalog/${slug}/products`)
+  const { data } = await api.get<CatalogProductsResponse>(`/catalog/${slug}/products`)
 
   return data
 }

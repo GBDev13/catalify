@@ -30,6 +30,7 @@ declare namespace Products {
     description: string
     price: number
     promoPrice?: number
+    isHighlighted?: boolean
     category: Products.Category
     variants: Products.Variant[]
     pictures: Products.Picture[]

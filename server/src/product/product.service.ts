@@ -244,4 +244,35 @@ export class ProductService {
 
     return product;
   }
+
+  async toggleHighlight(companyId: string, productId: string) {
+    const product = await this.prisma.product.findUnique({
+      where: {
+        id: productId,
+      },
+    });
+
+    if (!product) {
+      throw new HttpException(
+        'Este produto não existe',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (product.companyId !== companyId) {
+      throw new HttpException(
+        'Este produto não pertence a esta empresa',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    await this.prisma.product.update({
+      where: {
+        id: productId,
+      },
+      data: {
+        isHighlighted: !product.isHighlighted,
+      },
+    });
+  }
 }

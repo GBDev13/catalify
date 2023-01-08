@@ -106,3 +106,7 @@ export const getProductById = async (productId: string) => {
   const { data } = await api.get<Products.Product>(`/product/details/${productId}`)
   return data
 }
+
+export const toggleHighlight = async (productId: string, companyId: string) => {
+  return api.patch(`/product/${companyId}/${productId}/highlight`)
+}
