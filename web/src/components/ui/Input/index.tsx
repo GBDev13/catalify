@@ -4,6 +4,7 @@ import clsx from 'clsx'
 import { HiOutlineEyeOff, HiOutlineEye } from 'react-icons/hi'
 import { Tooltip } from "../Tooltip";
 import { BsQuestionCircle } from "react-icons/bs";
+import { TipIcon } from "../TipIcon";
 
 type InputProps = InputHTMLAttributes<HTMLInputElement> & {
   label?: string
@@ -23,13 +24,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({ type = 'text', 
       {label && (
         <label htmlFor={name} className="flex gap-1.5 text-xs font-medium text-slate-500 mb-1">
           {label}
-          {tip && (
-            <Tooltip content={tip} maxWidth={290}>
-              <div>
-                <BsQuestionCircle size={15} />
-              </div>
-            </Tooltip>
-          )}
+          {tip && <TipIcon tip={tip} />}
         </label>
       )}
 
@@ -39,7 +34,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({ type = 'text', 
           name={name}
           className={clsx("w-full rounded-md border-slate-200 sm:text-sm bg-slate-100 focus:border-indigo-500 transition-colors placeholder:text-slate-400", {
             "border-red-400": hasError,
-            "pr-8": isPassword
+            "pr-8": isPassword,
+            "bg-slate-100/70": props.disabled
           })}
           type={isPassword ? showPassword ? 'text' : 'password' : type}
           {...props}

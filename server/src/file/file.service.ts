@@ -38,20 +38,12 @@ export class FileService {
     }
   }
 
-  async uploadBase64File({
-    base64,
-    path = '',
-    fileName,
-    fileType,
-  }: UploadBase64FileDto) {
+  async uploadBase64File({ base64, fileName, fileType }: UploadBase64FileDto) {
     try {
-      console.log('filetype', fileType);
       const buffer = Buffer.from(
         base64.replace(/^data:image\/\w+;base64,/, ''),
         'base64',
       );
-
-      console.log('buffer', buffer);
 
       const s3 = new S3();
 
@@ -59,7 +51,7 @@ export class FileService {
         .upload({
           Bucket: process.env.AWS_BUCKET_NAME,
           Body: buffer,
-          Key: `${!!path?.trim() ? path + '/' : ''}${fileName}`,
+          Key: fileName,
           ACL: 'public-read',
           ContentEncoding: 'base64',
           ContentType: fileType,
@@ -84,37 +76,37 @@ export class FileService {
   }
 
   async deleteFilesByIds(ids: string[]) {
-    // const files = await this.prisma.file.findMany({
-    //   where: {
-    //     id: {
-    //       in: ids,
-    //     },
-    //   },
-    // });
-    // const deleteResults = await Promise.all(
-    //   files.map((file) => this.deleteFile(file.key)),
-    // );
-    // return deleteResults;
+    const files = await this.prisma.file.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
+    const deleteResults = await Promise.all(
+      files.map((file) => this.deleteFile(file.key)),
+    );
+    return deleteResults;
   }
 
   async deleteFile(key: string) {
-    // const s3 = new S3();
-    // const deleteResult = await s3
-    //   .deleteObject({
-    //     Bucket: process.env.AWS_BUCKET_NAME,
-    //     Key: key,
-    //   })
-    //   .promise();
-    // const file = await this.prisma.file.findFirst({
-    //   where: {
-    //     key,
-    //   },
-    // });
-    // await this.prisma.file.delete({
-    //   where: {
-    //     id: file.id,
-    //   },
-    // });
-    // return deleteResult;
+    const s3 = new S3();
+    const deleteResult = await s3
+      .deleteObject({
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: key,
+      })
+      .promise();
+    const file = await this.prisma.file.findFirst({
+      where: {
+        key,
+      },
+    });
+    await this.prisma.file.delete({
+      where: {
+        id: file.id,
+      },
+    });
+    return deleteResult;
   }
 }

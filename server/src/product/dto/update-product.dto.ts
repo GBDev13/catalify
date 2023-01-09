@@ -35,7 +35,7 @@ export class UpdateProductDto {
 
   @IsString()
   @IsOptional()
-  @MaxLength(500)
+  @MaxLength(800)
   description: string;
 
   @IsString()

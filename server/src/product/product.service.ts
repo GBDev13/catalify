@@ -21,66 +21,71 @@ export class ProductService {
     createProductDto: CreateProductDto & { images: Express.Multer.File[] },
     companyId: string,
   ): Promise<Product> {
-    const companyExists = await this.prisma.company.findUnique({
-      where: {
-        id: companyId,
-      },
-    });
+    try {
+      const companyExists = await this.prisma.company.findUnique({
+        where: {
+          id: companyId,
+        },
+      });
 
-    if (!companyExists) {
-      throw new HttpException(
-        'Esta empresa não existe',
-        HttpStatus.BAD_REQUEST,
-      );
+      if (!companyExists) {
+        throw new HttpException(
+          'Esta empresa não existe',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      const { images, variations, ...dto } = createProductDto;
+
+      const createdProduct = await this.prisma.product.create({
+        data: {
+          ...dto,
+          companyId,
+        },
+      });
+
+      if (variations) {
+        const typedVariations = JSON.parse(
+          variations,
+        ) as unknown as VariationDto[];
+
+        await Promise.all(
+          typedVariations.map(async (variation) => {
+            const createdVariation = await this.prisma.productVariant.create({
+              data: {
+                name: variation.name,
+                productId: createdProduct.id,
+                companyId,
+              },
+            });
+            await this.prisma.productVariantOption.createMany({
+              data: variation.options.map((option) => ({
+                companyId,
+                name: option,
+                productVariantId: createdVariation.id,
+              })),
+            });
+          }),
+        );
+      }
+
+      if (images) {
+        await Promise.all(
+          images.map(async (image) => {
+            return await this.fileService.uploadFile(
+              image.buffer,
+              image.originalname,
+              createdProduct.id,
+            );
+          }),
+        );
+      }
+
+      return createdProduct;
+    } catch (error) {
+      console.log('error during product creation', error);
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
-
-    const { images, variations, ...dto } = createProductDto;
-
-    const createdProduct = await this.prisma.product.create({
-      data: {
-        ...dto,
-        companyId,
-      },
-    });
-
-    if (variations) {
-      const typedVariations = JSON.parse(
-        variations,
-      ) as unknown as VariationDto[];
-
-      await Promise.all(
-        typedVariations.map(async (variation) => {
-          const createdVariation = await this.prisma.productVariant.create({
-            data: {
-              name: variation.name,
-              productId: createdProduct.id,
-              companyId,
-            },
-          });
-          await this.prisma.productVariantOption.createMany({
-            data: variation.options.map((option) => ({
-              companyId,
-              name: option,
-              productVariantId: createdVariation.id,
-            })),
-          });
-        }),
-      );
-    }
-
-    if (images) {
-      await Promise.all(
-        images.map(async (image) => {
-          return await this.fileService.uploadFile(
-            image.buffer,
-            image.originalname,
-            createdProduct.id,
-          );
-        }),
-      );
-    }
-
-    return createdProduct;
   }
 
   async getByCompanyId(companyId: string) {

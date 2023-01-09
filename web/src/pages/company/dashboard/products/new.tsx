@@ -16,7 +16,7 @@ import { ControlledEditor } from "src/components/ui/Editor/controlled";
 import { ControlledFileUpload } from "src/components/ui/FileUpload/controlled";
 import { ControlledInput } from "src/components/ui/Input/controlled";
 import { ControlledSelect } from "src/components/ui/Select/controlled";
-import { IMAGE_TYPES } from "src/constants/constants";
+import { IMAGE_MAX_SIZE, IMAGE_TYPES } from "src/constants/constants";
 import { productsKey } from "src/constants/query-keys";
 import { useUnsavedChangesWarning } from "src/hooks/useUnsavedChangesWarning";
 import { createProduct, CreateProductDto, getCategories } from "src/services/products";
@@ -35,8 +35,8 @@ const newProductFormSchema = z.object({
     required_error: "A descrição do produto é obrigatória",
   }).min(3, {
     message: "A descrição do produto deve ter no mínimo 3 caracteres",
-  }).max(500, {
-    message: "A descrição do produto deve ter no máximo 500 caracteres",
+  }).max(800, {
+    message: "A descrição do produto deve ter no máximo 800 caracteres",
   }),
   price: z.number({
     required_error: "O preço do produto é obrigatório",
@@ -81,7 +81,7 @@ const newProductFormSchema = z.object({
   })
 }).superRefine(({ price, promoPrice, hasPromoPrice }, ctx) => {
   if (!hasPromoPrice) return
-  
+
   if(!promoPrice || promoPrice <= 0) {
     ctx.addIssue({
       code: "custom",
@@ -222,7 +222,7 @@ export default function NewProduct() {
 
           <div className="flex flex-col gap-4">
             <h4 className="text-2xl font-semibold text-slate-500 border-b border-b-slate-300 pb-4 mb-6">Fotos do Produto</h4>
-            <ControlledFileUpload control={control} fieldName="images" withPreview isMultiple maxFiles={4} acceptedTypes={IMAGE_TYPES} maxSize={5242880} />
+            <ControlledFileUpload control={control} fieldName="images" withPreview isMultiple maxFiles={4} acceptedTypes={IMAGE_TYPES} maxSize={IMAGE_MAX_SIZE} />
             
             {hasVariations && <ProductVariations />}
           </div>

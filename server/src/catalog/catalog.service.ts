@@ -1,10 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { CompanyService } from 'src/company/company.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { productToWeb } from './parser/product-to-web';
 
 @Injectable()
 export class CatalogService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly companyService: CompanyService,
+  ) {}
 
   async getCompanyCatalog(companySlug: string) {
     const company = await this.prisma.company.findUnique({
@@ -13,6 +17,7 @@ export class CatalogService {
       },
       include: {
         logo: true,
+        links: true,
       },
     });
 
@@ -25,6 +30,7 @@ export class CatalogService {
       name: company.name,
       logo: company?.logo ? company.logo.fileUrl : undefined,
       slug: company.slug,
+      links: company.links.map((link) => link.url),
     };
   }
 
@@ -80,5 +86,19 @@ export class CatalogService {
       products: products.filter((x) => !x?.isHighlighted).map(productToWeb),
       highlights: products.filter((x) => x?.isHighlighted).map(productToWeb),
     };
+  }
+
+  async getCompanyCatalogBanners(companySlug: string) {
+    const company = await this.prisma.company.findUnique({
+      where: {
+        slug: companySlug,
+      },
+    });
+
+    if (!company) {
+      throw new HttpException('Empresa não encontrada', HttpStatus.NOT_FOUND);
+    }
+
+    return await this.companyService.getBanners(company.id);
   }
 }

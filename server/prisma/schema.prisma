@@ -41,6 +41,9 @@ model Company {
   logo   File?   @relation(fields: [logoId], references: [id])
   logoId String?
 
+  links   CompanyLinks[]
+  banners CompanyBanners[]
+
   @@map("companies")
 }
 
@@ -50,7 +53,7 @@ model Product {
   name        String
   price       Float
   promoPrice  Float?
-  description String?   @db.VarChar(500)
+  description String?   @db.VarChar(800)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime? @updatedAt
 
@@ -125,5 +128,33 @@ model File {
   product   Product? @relation(fields: [productId], references: [id])
   productId String?
 
-  company Company[]
+  company        Company[]
+  companyBanners CompanyBanners[]
+}
+
+model CompanyLinks {
+  id        String    @id @default(uuid())
+  url       String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId String
+
+  @@map("company_links")
+}
+
+model CompanyBanners {
+  id        String    @id @default(uuid())
+  url       String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+
+  picture   File   @relation(fields: [pictureId], references: [id], onDelete: Cascade)
+  pictureId String
+
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId String
+
+  @@map("company_banners")
 }

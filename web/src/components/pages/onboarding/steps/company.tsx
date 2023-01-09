@@ -7,7 +7,7 @@ import { OnboardingFormData } from "../form";
 import { ControlledColorPicker } from "../../../ui/ColorPicker/controlled";
 import tailwindColors from 'tailwindcss/colors'
 import { ControlledFileUpload } from "src/components/ui/FileUpload/controlled";
-import { IMAGE_TYPES } from "src/constants/constants";
+import { IMAGE_MAX_SIZE, IMAGE_TYPES } from "src/constants/constants";
 
 export const companyStepFormSchema = z.object({
   companyName: z.string({
@@ -70,7 +70,7 @@ export const CompanyStep = ({ onPrevStep, onSubmitForm }: CompanyStepProps) => {
 
         <div className="col-span-full">
         <label htmlFor="logo" className="block text-xs font-medium text-slate-500 mb-1">Logo da Empresa (opcional)</label>
-          <ControlledFileUpload withPreview previewMode="INSIDE" fieldName="logo" maxFiles={1} control={control} maxSize={5242880} acceptedTypes={IMAGE_TYPES} />
+          <ControlledFileUpload withPreview previewMode="INSIDE" fieldName="logo" maxFiles={1} control={control} maxSize={IMAGE_MAX_SIZE} acceptedTypes={IMAGE_TYPES} />
         </div>
 
         <div className="col-span-full flex justify-end gap-4">

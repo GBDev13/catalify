@@ -31,35 +31,46 @@ export class ProductController {
     @UploadedFiles() images: Express.Multer.File[],
     @Param('companyId') companyId: string,
   ) {
-    if (createProductDto?.variations) {
-      const parsedVariations = JSON.parse(createProductDto.variations);
+    try {
+      if (createProductDto?.variations) {
+        const parsedVariations = JSON.parse(createProductDto.variations);
 
-      const variations: VariationDto[] = [];
+        const variations: VariationDto[] = [];
 
-      const validator = new Validator();
+        const validator = new Validator();
 
-      for (const variation of parsedVariations) {
-        const newOne = new VariationDto();
-        newOne.name = variation.name;
-        newOne.options = variation.options;
-        const variationsIsValid = await validator.validate(variations);
+        for (const variation of parsedVariations) {
+          const newOne = new VariationDto();
+          newOne.name = variation.name;
+          newOne.options = variation.options;
+          const variationsIsValid = await validator.validate(variations);
 
-        if (variationsIsValid.length > 0) {
-          throw new HttpException(
-            {
-              status: HttpStatus.BAD_REQUEST,
-              error: 'Variations are not valid',
-            },
-            HttpStatus.BAD_REQUEST,
-          );
+          if (variationsIsValid.length > 0) {
+            throw new HttpException(
+              {
+                status: HttpStatus.BAD_REQUEST,
+                error: 'Variations are not valid',
+              },
+              HttpStatus.BAD_REQUEST,
+            );
+          }
         }
       }
-    }
 
-    return this.productService.create(
-      { ...createProductDto, images },
-      companyId,
-    );
+      return this.productService.create(
+        { ...createProductDto, images },
+        companyId,
+      );
+    } catch (error) {
+      console.log('error during product creation (CONTROLLER)', error);
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Product is not valid',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   @Put('/:companyId/:productId')

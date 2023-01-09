@@ -14,12 +14,13 @@ type FileUploadProps = {
   isMultiple?: boolean;
   onRemove?: (index: number) => void;
   previewMode?: 'INSIDE' | 'OUTSIDE'
+  disabled?: boolean;
 }
 
-export const FileUpload = ({ acceptedTypes, maxSize, maxFiles = 1, onDrop, submittedFiles, error, withPreview, isMultiple, onRemove, previewMode = 'OUTSIDE' }: FileUploadProps) => {
+export const FileUpload = ({ disabled, acceptedTypes, maxSize, maxFiles = 1, onDrop, submittedFiles, error, withPreview, isMultiple, onRemove, previewMode = 'OUTSIDE' }: FileUploadProps) => {
   const hasError = !!error;
 
-  const isDisabled = submittedFiles && submittedFiles?.length >= maxFiles;
+  const isDisabled = submittedFiles && submittedFiles?.length >= maxFiles || disabled;
 
   const { getRootProps, getInputProps, isDragActive, isDragReject } = useDropzone({
     onDrop,
@@ -48,15 +49,23 @@ export const FileUpload = ({ acceptedTypes, maxSize, maxFiles = 1, onDrop, submi
 
   return (
     <>
-      <div className={clsx("w-full cursor-pointer border-slate-200 bg-slate-100 border text-center py-4 rounded text-slate-600 transition-colors hover:border-indigo-500", {
+      <div className={clsx("w-full border-slate-200 bg-slate-100 border text-center py-4 rounded text-slate-600 transition-colors", {
+        "hover:border-indigo-500 cursor-pointer": !disabled,
         "!border-red-400 text-red-400": hasError || isDragReject,
-        "opacity-80 hover:!border-red-400 !cursor-not-allowed": isDisabled && previewMode === 'OUTSIDE'
+        "opacity-80 hover:!border-red-400 !cursor-not-allowed": isDisabled && previewMode === 'OUTSIDE',
+        "bg-slate-100/70": disabled
       })}>
         {withPreview && previewMode === 'INSIDE' && submittedFiles?.length && previewArray?.length ? (
           <div className="flex items-center justify-center flex-col">
-            <strong className="font-semibold text-indigo-500">Arquivo aceito</strong>
-            <img className="w-20 h-20 object-contain" src={previewArray[0]} />
-            <button type="button" className="underline text-slate-500 text-sm hover:text-indigo-500" onClick={handleClear}>Remover arquivo</button>
+            {disabled ? (
+              <img className="w-20 h-20 object-contain" src={previewArray[0]} />
+            ) : (
+              <>
+                <strong className="font-semibold text-indigo-500">Arquivo aceito</strong>
+                <img className="w-20 h-20 object-contain" src={previewArray[0]} />
+                <button type="button" className="underline text-slate-500 text-sm hover:text-indigo-500" onClick={handleClear}>Remover arquivo</button>
+              </>
+            )}
           </div>
         ) : (
           <div className="justify-center items-center flex flex-col" {...getRootProps()}>

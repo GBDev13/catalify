@@ -12,9 +12,10 @@ type InputProps = {
   label?: string
   onChange: (value: string) => void
   value: string
+  disabled?: boolean
 }
 
-export const ColorPicker = forwardRef<HTMLInputElement, InputProps>(({ label, error, onChange, value, ...props }, ref) => {
+export const ColorPicker = forwardRef<HTMLInputElement, InputProps>(({ disabled, label, error, onChange, value, ...props }, ref) => {
   const hasError = !!error;
 
   const availableColors = makeColors()
@@ -53,6 +54,7 @@ export const ColorPicker = forwardRef<HTMLInputElement, InputProps>(({ label, er
       <div
         className={clsx("w-full rounded-md border-slate-200 min-h-[38px] flex items-center justify-between px-3 sm:text-sm bg-slate-100 focus:border-indigo-500 transition-colors placeholder:text-slate-400", {
           "border-red-400": hasError,
+          "bg-slate-100/70": disabled
         })}
         {...props}
         ref={ref}
@@ -62,33 +64,35 @@ export const ColorPicker = forwardRef<HTMLInputElement, InputProps>(({ label, er
           <span>{selectedColor}</span>
         </div>
 
-        <Popover.Root onOpenChange={setOpen} open={open}>
-          <Popover.Trigger>
-            <CiPalette size={20} />
-          </Popover.Trigger>
-          <Popover.Portal>
-            <Popover.Content sideOffset={10} className="bg-white rounded p-2 shadow-md min-w-[245px] max-h-[300px] overflow-y-auto grid grid-cols-[repeat(10,1fr)] gap-1">
-              <Popover.Arrow className="fill-white" />
+        {!disabled && (
+          <Popover.Root onOpenChange={setOpen} open={open}>
+            <Popover.Trigger>
+              <CiPalette size={20} />
+            </Popover.Trigger>
+            <Popover.Portal>
+              <Popover.Content sideOffset={10} className="bg-white rounded p-2 shadow-md min-w-[245px] max-h-[300px] overflow-y-auto grid grid-cols-[repeat(10,1fr)] gap-1">
+                <Popover.Arrow className="fill-white" />
 
-              <Button type="button" className="col-span-full text-sm min-h-0 mb-2" size="WIDE" onClick={handleToggleColorType}>
-                {colorType === 'custom' ? 'Cor pré-definida' : 'Cor personalizada'}
-              </Button>
+                <Button type="button" className="col-span-full text-sm min-h-0 mb-2" size="WIDE" onClick={handleToggleColorType}>
+                  {colorType === 'custom' ? 'Cor pré-definida' : 'Cor personalizada'}
+                </Button>
 
-              {colorType === 'theme' && availableColors.map(color => (
-                <button onClick={() => handleSelectColor(color)} key={color} className={clsx("w-4 h-4 rounded", {
-                  "ring-2 ring-indigo-500": selectedColor === color
-                })} style={{ background: color }} />
-              ))}
+                {colorType === 'theme' && availableColors.map(color => (
+                  <button onClick={() => handleSelectColor(color)} key={color} className={clsx("w-4 h-4 rounded", {
+                    "ring-2 ring-indigo-500": selectedColor === color
+                  })} style={{ background: color }} />
+                ))}
 
-              {colorType === 'custom' && (
-                <div className="col-span-full">
-                  <ChromePicker disableAlpha className="!shadow-none" color={selectedColorPicker} onChange={(color) => setSelectedColorPicker(color.hex)} onChangeComplete={(color) => handleSelectColor(color.hex, false)} />
-                </div>
-              )}
+                {colorType === 'custom' && (
+                  <div className="col-span-full">
+                    <ChromePicker disableAlpha className="!shadow-none" color={selectedColorPicker} onChange={(color) => setSelectedColorPicker(color.hex)} onChangeComplete={(color) => handleSelectColor(color.hex, false)} />
+                  </div>
+                )}
 
-            </Popover.Content>
-          </Popover.Portal>
-        </Popover.Root>
+              </Popover.Content>
+            </Popover.Portal>
+          </Popover.Root>
+        )}
       </div>
 
       {hasError && (

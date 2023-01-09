@@ -2,16 +2,8 @@ import Link from 'next/link'
 import { getSocialIconByUrl } from 'src/helpers/get-social-icon-by-url'
 import { useCatalog } from 'src/store/catalog'
 
-const links = [
-  "https://web.whatsapp.com/",
-  "https://www.instagram.com/",
-  "https://www.facebook.com/",
-  "https://twitter.com/",
-  "https://gbdev.me"
-]
-
 export const Footer = () => {
-  const { name } = useCatalog(s => s.info)
+  const { name, links } = useCatalog(s => s.info)
   
   return (
    <footer className="w-full mt-auto">
@@ -20,7 +12,7 @@ export const Footer = () => {
         <h4 className="font-semibold text-3xl">{name}</h4>
 
         <div className="flex items-center gap-4">
-          {links.map((link, index) => (
+          {links?.map((link, index) => (
             <a key={index} href={link} target="_blank" className="hover:scale-90 duration-500 transition-all" rel="noreferrer">
               {getSocialIconByUrl(link)}
             </a>

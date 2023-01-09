@@ -22,7 +22,7 @@ export const Tooltip = ({ content, maxWidth, children }: TooltipProps) => {
         <AnimatePresence>
           {open && (
             <TooltipPrimitive.Portal forceMount>
-              <TooltipPrimitive.Content forceMount style={{ maxWidth }}>
+              <TooltipPrimitive.Content className="!z-[999]" forceMount style={{ maxWidth }}>
                 <motion.div className="text-sm bg-slate-300 shadow py-1 px-2 rounded" {...fadeAnim} transition={{ duration: 0.15 }}>
                   <TooltipPrimitive.Arrow className="fill-slate-300" />
                   {content}

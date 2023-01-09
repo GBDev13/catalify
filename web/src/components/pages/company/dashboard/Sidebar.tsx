@@ -5,7 +5,8 @@ import { useRouter } from 'next/router'
 import { MouseEvent, useEffect, useState } from 'react'
 import { BiBookHeart } from 'react-icons/bi'
 import { FiSettings, FiHome, FiShoppingCart, FiLogOut, FiMenu, FiX } from 'react-icons/fi'
-import { HiOutlineChevronUp } from 'react-icons/hi'
+import { CgWebsite } from 'react-icons/cg'
+import { HiOutlineChevronDown } from 'react-icons/hi'
 import { Divider } from 'src/components/ui/Divider'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useBreakpoint } from 'src/hooks/useBreakpoint'
@@ -29,6 +30,21 @@ const sidebarItems = [
       {
         label: "Categorias",
         path: "/company/dashboard/products/categories"
+      }
+    ]
+  },
+  {
+    icon: <CgWebsite size={20} />,
+    label: "Catálogo",
+    path: "/company/dashboard/catalog",
+    subItems: [
+      {
+        label: "Empresa",
+        path: "/company/dashboard/catalog/company"
+      },
+      {
+        label: "Customizações",
+        path: "/company/dashboard/catalog/customization"
       }
     ]
   }
@@ -70,7 +86,7 @@ const SidebarItem = ({ item }: SidebarItemProps) => {
           <div className={clsx("ml-auto transition-all", {
             "transform rotate-180": submenuOpen
           })}>
-            <HiOutlineChevronUp size={15} />
+            <HiOutlineChevronDown size={15} />
           </div>
         )}
       </Link>

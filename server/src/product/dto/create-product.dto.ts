@@ -31,7 +31,7 @@ export class CreateProductDto extends Product {
 
   @IsString()
   @IsOptional()
-  @MaxLength(500)
+  @MaxLength(800)
   description: string;
 
   @IsString()

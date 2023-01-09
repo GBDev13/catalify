@@ -33,12 +33,12 @@ export const Header = () => {
     <header className="w-full flex items-center justify-between py-8 flex-col sm:flex-row">
       <div className="flex items-center justify-between w-full">
         <Link href={`/${slug}`}>
-          {logo ? <img className="w-[170px]" src={logo} /> : <h1 className="text-2xl font-bold text-primary">{name}</h1>}
+          {logo ? <img className="w-full max-w-[170px] max-h-[70px] object-contain" src={logo} /> : <h1 className="text-2xl font-bold text-primary">{name}</h1>}
         </Link>
 
         <nav className="mr-auto items-center gap-4 hidden lg:gap-6 ml-4 lg:ml-10 sm:flex">
           <Link href={`/${slug}/produtos`} className="text-gray-500 hover:text-primary transition-colors">Produtos</Link>
-          {categories?.length && (
+          {categories && categories?.length > 0 && (
             <Popover className="!bg-white shadow-lg border border-gray-200" content={<CategoriesList />}>
               <button className="text-gray-500 flex items-center gap-2 group hover:text-primary transition-colors">Categorias <FiChevronDown className="group-data-[state='open']:rotate-180 transition-all" /></button>
             </Popover>

@@ -16,8 +16,8 @@ export const ProductsList = ({ products, title }: ProductsListProps) => {
     <section>
       <h3 className="text-3xl font-semibold text-primary my-10 text-center">{title}</h3>
 
-      <div className={clsx("grid gap-4 grid-cols-[repeat(auto-fit,minmax(250px,1fr))]", {
-        "grid-cols-1 lg:grid-cols-2 text-center": products.length === 1,
+      <div className={clsx("grid gap-4 grid-cols-[repeat(auto-fit,minmax(250px,1fr))] text-center", {
+        "grid-cols-1 lg:grid-cols-2": products.length === 1,
       })}>
         {products.map(product => {
           const promoPercentage = product.promoPrice ? Math.round((product.price - product.promoPrice) / product.price * 100) : null

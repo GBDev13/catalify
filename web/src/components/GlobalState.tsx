@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { useSession } from "next-auth/react"
+import { useRouter } from "next/router"
 import { ReactNode } from "react"
 import { companyKeys } from "src/constants/query-keys"
 import { getUserCompany } from "src/services/company"
@@ -15,8 +16,10 @@ export const GlobalState = ({ children }: GlobalStateProps) => {
 
   const { setCompany } = useCompany()
 
+  const router = useRouter()
+
   useQuery(companyKeys.userCompanyInfo(userId), getUserCompany, {
-    enabled: !!userId,
+    enabled: !!userId && router.pathname.startsWith('/company/dashboard'),
     onSuccess(data) {
       setCompany(data)
     },

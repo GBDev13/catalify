@@ -19,8 +19,8 @@ export default function CompanyHome() {
   return (
     <CatalogLayout>
       <HomeBanners />
-      {productsList?.highlights?.length && <ProductsList products={productsList?.highlights} title="Destaques" />}
-      {productsList?.products?.length && <ProductsList products={productsList?.products} title="Novidades" />}
+      {productsList?.highlights && productsList?.highlights.length > 0 && <ProductsList products={productsList?.highlights} title="Destaques" />}
+      {productsList?.products && productsList?.products.length > 0 && <ProductsList products={productsList?.products} title="Novidades" />}
       <Link href={`/${slug}/produtos`} className="mx-auto mt-10">
         <button className="bg-primary text-white px-4 py-2 rounded-full hover:brightness-105 transition-all">Ver todos os produtos</button>
       </Link>
