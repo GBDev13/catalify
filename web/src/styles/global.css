@@ -39,3 +39,11 @@
 .react-select__single-value {
   @apply !text-slate-800 !text-sm
 }
+
+.description.prose * {
+  @apply !text-gray-500
+}
+
+.description.prose a {
+  @apply !text-primary
+}

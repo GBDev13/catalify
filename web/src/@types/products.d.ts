@@ -45,4 +45,12 @@ declare namespace Products {
     picture: string
   }
   
+  export type CatalogProductDetails = Omit<CatalogProduct, 'picture'> & {
+    description: string
+    pictures: string[]
+    category?: {
+      name: string;
+      slug: string
+    }
+  }
 }

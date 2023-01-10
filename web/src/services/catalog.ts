@@ -28,3 +28,9 @@ export const getCompanyCatalogBanners = async (slug: string) => {
 
   return data
 }
+
+export const getCompanyCatalogProductBySlug = async (companySlug: string, productSlug: string) => {
+  const { data } = await api.get<Products.CatalogProductDetails>(`/catalog/${companySlug}/products/${productSlug}`)
+
+  return data
+}

@@ -15,4 +15,5 @@ export const catalogKeys = {
   companyCategories: (slug: string) => [slug, 'catalog-categories'],
   companyProducts: (slug: string) => [slug, 'catalog-products'],
   companyBanners: (slug: string) => [slug, 'catalog-banners'],
+  companyProduct: (productSlug: string) => [`product-${productSlug}`],
 }

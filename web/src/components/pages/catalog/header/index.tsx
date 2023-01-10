@@ -4,6 +4,7 @@ import { FiChevronDown, FiSearch, FiShoppingBag } from "react-icons/fi"
 import { Popover } from "src/components/ui/Popover"
 import { catalogKeys } from "src/constants/query-keys"
 import { getCompanyCatalogCategories } from "src/services/catalog"
+import { useCart } from "src/store/cart"
 import { useCatalog } from "src/store/catalog"
 
 const CategoriesList = () => {
@@ -29,6 +30,8 @@ export const Header = () => {
     enabled: !!slug,
   });
 
+  const { setCartIsOpen } = useCart();
+
   return (
     <header className="w-full flex items-center justify-between py-8 flex-col sm:flex-row">
       <div className="flex items-center justify-between w-full">
@@ -46,7 +49,7 @@ export const Header = () => {
         </nav>
 
 
-        <button className="sm:hidden w-10 h-10 rounded-full bg-primary text-readable flex items-center justify-center hover:brightness-105 transition-all">
+        <button onClick={() => setCartIsOpen(true)} className="sm:hidden w-10 h-10 rounded-full bg-primary text-readable flex items-center justify-center hover:brightness-105 transition-all">
           <FiShoppingBag size={20} />
         </button>
       </div>
@@ -64,7 +67,7 @@ export const Header = () => {
           <FiSearch size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 hover:text-primary transition-all cursor-pointer" />
         </div>
 
-        <button className="min-w-[40px] h-10 rounded-full bg-primary text-readable hidden sm:flex items-center justify-center hover:brightness-105 transition-all">
+        <button onClick={() => setCartIsOpen(true)} className="min-w-[40px] h-10 rounded-full bg-primary text-readable hidden sm:flex items-center justify-center hover:brightness-105 transition-all">
           <FiShoppingBag size={20} />
         </button>
       </section>

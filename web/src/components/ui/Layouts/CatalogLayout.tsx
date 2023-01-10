@@ -6,6 +6,7 @@ import { useCatalog } from "src/store/catalog";
 import { getCompanyCatalog } from "src/services/catalog";
 import { useQuery } from "@tanstack/react-query";
 import { catalogKeys } from "src/constants/query-keys";
+import { CartSidebar } from "src/components/pages/shared/CartSidebar";
 
 type CatalogLayoutProps = {
   children: ReactNode
@@ -26,6 +27,8 @@ export const CatalogLayout = ({ children }: CatalogLayoutProps) => {
 
   return (
     <main className="w-screen min-h-screen h-screen bg-white overflow-y-auto flex flex-col">
+      <CartSidebar />
+
       <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 flex flex-col">
         <Header />
         

@@ -13,6 +13,7 @@ module.exports = {
         primary: "var(--color-primary)",
         primaryLight: "var(--color-primary-light)",
         readable: "var(--color-readable)",
+        whatsapp: "#25D366"
       }
     },
   },

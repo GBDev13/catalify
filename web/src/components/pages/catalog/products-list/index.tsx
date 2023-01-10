@@ -3,6 +3,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { checkColorReadability } from "src/helpers/check-color-readability"
 import { formatPrice } from "src/helpers/format-price"
+import { getFormattedPrices } from "src/helpers/getFormattedPrices"
 import { useCatalog } from "src/store/catalog"
 
 type ProductsListProps = {
@@ -20,11 +21,7 @@ export const ProductsList = ({ products, title }: ProductsListProps) => {
         "grid-cols-1 lg:grid-cols-2": products.length === 1,
       })}>
         {products.map(product => {
-          const promoPercentage = product.promoPrice ? Math.round((product.price - product.promoPrice) / product.price * 100) : null
-
-          const formattedPrice = formatPrice(product.price)
-
-          const formattedPromoPrice = formatPrice(product?.promoPrice ?? 0)
+          const { formattedPrice, formattedPromoPrice, promoPercentage } = getFormattedPrices(product.price, product.promoPrice);
 
           const priceColor = colors?.primary ? checkColorReadability('#ffff', colors.primary, '#00000') : undefined
 

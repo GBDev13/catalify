@@ -45,9 +45,9 @@ export default function ProductVariations({ onChangeExistent }: ProductVariation
 
       <div className="grid mt-2 grid-cols-1 gap-2 sm:gap-4 sm:grid-cols-2">
         <VariantModelSelectorPopover onSelectModel={handleAddModelVariation}>
-          <Button className="min-h-0 py-2 text-sm" size="WIDE">Adicionar modelo</Button>
+          <Button className="min-h-0 py-2.5 text-sm" size="WIDE">Adicionar modelo</Button>
         </VariantModelSelectorPopover>
-        <Button type="button" onClick={handleAddVariation} className="min-h-0 py-2 text-sm" size="WIDE">Adicionar nova variação</Button>
+        <Button type="button" onClick={handleAddVariation} className="min-h-0 py-2.5 text-sm" size="WIDE">Adicionar nova variação</Button>
       </div>
 
       <section className="flex flex-col gap-8">

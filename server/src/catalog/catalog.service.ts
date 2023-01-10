@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CompanyService } from 'src/company/company.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { productToWeb } from './parser/product-to-web';
+import { productDetailedToWeb, productToWeb } from './parser/product-to-web';
 
 @Injectable()
 export class CatalogService {
@@ -100,5 +100,33 @@ export class CatalogService {
     }
 
     return await this.companyService.getBanners(company.id);
+  }
+
+  async getCompanyCatalogProductBySlug(
+    companySlug: string,
+    productSlug: string,
+  ) {
+    const product = await this.prisma.product.findFirst({
+      where: {
+        slug: productSlug,
+        company: {
+          slug: companySlug,
+        },
+      },
+      include: {
+        pictures: {
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
+        category: true,
+      },
+    });
+
+    if (!product) {
+      throw new HttpException('Produto não encontrado', HttpStatus.NOT_FOUND);
+    }
+
+    return productDetailedToWeb(product);
   }
 }

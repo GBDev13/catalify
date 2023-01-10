@@ -25,6 +25,18 @@ export class CatalogController {
   }
 
   @IsPublic()
+  @Get('/:companySlug/products/:productSlug')
+  getCompanyCatalogProduct(
+    @Param('companySlug') companySlug: string,
+    @Param('productSlug') productSlug: string,
+  ) {
+    return this.catalogService.getCompanyCatalogProductBySlug(
+      companySlug,
+      productSlug,
+    );
+  }
+
+  @IsPublic()
   @Get('/:companySlug/banners')
   getCompanyCatalogBanners(@Param('companySlug') companySlug: string) {
     return this.catalogService.getCompanyCatalogBanners(companySlug);
