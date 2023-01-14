@@ -16,7 +16,8 @@ import { useCatalog } from "src/store/catalog"
 export default function Produtos() {
   const [page, setPage] = useState(0);
 
-  const companySlug = useCatalog(state => state.info.slug);
+  const { info } = useCatalog();
+  const companySlug = info.slug;
 
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedOrder, setSelectedOrder] = useState("recent")
@@ -66,7 +67,7 @@ export default function Produtos() {
   const showingRightCount = (page + 1) * limit;
 
   return (
-    <CatalogLayout>
+    <CatalogLayout title="Produtos">
       <header className="flex items-center justify-between flex-col-reverse gap-2 sm:gap-0 sm:flex-row">
         <p className="text-sm text-gray-500">
           <strong className="font-semibold text-gray-600">{`Mostrando ${showingLeftCount} - ${showingRightCount >= total ? total : showingRightCount} `}</strong>

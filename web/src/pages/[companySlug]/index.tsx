@@ -7,6 +7,7 @@ import { ProductsList } from "src/components/pages/catalog/products-list";
 import { CatalogLayout } from "src/components/ui/Layouts/CatalogLayout";
 import { catalogKeys } from "src/constants/query-keys";
 import { getCompanyCatalog, getCompanyCatalogCategories, getCompanyCatalogProducts } from "src/services/catalog";
+import { useCatalog } from "src/store/catalog";
 
 export default function CompanyHome() {
   const { query } = useRouter()
@@ -16,8 +17,10 @@ export default function CompanyHome() {
     enabled: !!slug
   })
 
+  const { info } = useCatalog()
+
   return (
-    <CatalogLayout>
+    <CatalogLayout title="Início">
       <HomeBanners />
       {productsList?.highlights && productsList?.highlights.length > 0 && <ProductsList products={productsList?.highlights} title="Destaques" />}
       {productsList?.products && productsList?.products.length > 0 && <ProductsList products={productsList?.products} title="Novidades" />}

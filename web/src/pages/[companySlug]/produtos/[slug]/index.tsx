@@ -47,11 +47,11 @@ export default function Produto() {
   const pictures = productData?.pictures?.length ? productData.pictures : ['/images/product-placeholder.svg']
 
   return (
-    <CatalogLayout>
+    <CatalogLayout title={productData?.name!}>
       <div className="grid grid-cols-1 md:grid-cols-[1fr,1.4fr] gap-16 mt-16">
         <ProductSlider pictures={pictures} />
         <section className="md:mt-10">
-          {productData?.category && <Link href={`/${companySlug}/categorias/${productData?.category.slug}`} className="bg-primaryLight px-2 rounded-full text-sm mb-4 block w-fit">{productData?.category?.name?.toUpperCase()}</Link>}
+          {productData?.category && <Link href={`/${companySlug}/produtos/?category=${productData?.category.slug}`} shallow className="bg-primaryLight px-2 rounded-full text-sm mb-4 block w-fit">{productData?.category?.name?.toUpperCase()}</Link>}
           <h1 className="font-semibold text-2xl sm:text-4xl text-gray-700">{productData?.name}</h1>
           <div className="flex items-center gap-4 mt-5 text-gray-600">
             <strong className="font-semibold text-3xl">{formattedPromoPrice ?? formattedPrice}</strong>
