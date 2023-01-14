@@ -49,11 +49,7 @@ const newProductFormSchema = z.object({
   })
   .nullable()
   .default(null),
-  images: z.array(z.custom<File>(), {
-    required_error: "É necessário enviar pelo menos uma imagem",
-  }).min(1, {
-    message: "É necessário enviar pelo menos uma imagem"
-  }),
+  images: z.array(z.custom<File>()).optional(),
   hasVariations: z.boolean().optional(),
   hasPromoPrice: z.boolean().optional(),
   promoPrice: z.number().optional(),

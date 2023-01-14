@@ -26,7 +26,7 @@ export class ProductController {
   @Post('/:companyId')
   @UseInterceptors(FilesInterceptor('images'))
   @HttpCode(HttpStatus.CREATED)
-  async register(
+  async create(
     @Body() createProductDto: CreateProductDto,
     @UploadedFiles() images: Express.Multer.File[],
     @Param('companyId') companyId: string,

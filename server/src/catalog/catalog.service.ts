@@ -3,6 +3,17 @@ import { CompanyService } from 'src/company/company.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { productDetailedToWeb, productToWeb } from './parser/product-to-web';
 
+export type OrderOptions = 'recent' | 'lowerPrice' | 'higherPrice';
+
+type CatalogProductFilters = {
+  page: number;
+  categories?: string[];
+  order?: OrderOptions;
+  search?: string;
+};
+
+const PAGE_SIZE = 3;
+
 @Injectable()
 export class CatalogService {
   constructor(
@@ -128,5 +139,86 @@ export class CatalogService {
     }
 
     return productDetailedToWeb(product);
+  }
+
+  async getCompanyCatalogFilteredProducts(
+    companySlug: string,
+    filters: CatalogProductFilters,
+  ) {
+    const company = await this.prisma.company.findUnique({
+      where: {
+        slug: companySlug,
+      },
+    });
+
+    if (!company) {
+      throw new HttpException('Empresa não encontrada', HttpStatus.NOT_FOUND);
+    }
+
+    const { page, categories, order, search } = filters;
+
+    const orderMap = {
+      recent: {
+        createdAt: 'desc',
+      },
+      lowerPrice: [
+        {
+          promoPrice: 'asc',
+        },
+        {
+          price: 'asc',
+        },
+      ],
+      higherPrice: [
+        {
+          promoPrice: 'desc',
+        },
+        {
+          price: 'desc',
+        },
+      ],
+    } as any;
+
+    const whereQuery = {
+      companyId: company.id,
+      ...(!!search && {
+        name: {
+          search,
+        },
+      }),
+      ...(categories && {
+        category: {
+          slug: {
+            in: categories,
+          },
+        },
+      }),
+    };
+
+    const total = await this.prisma.product.count({
+      where: whereQuery,
+    });
+
+    const products = await this.prisma.product.findMany({
+      where: whereQuery,
+      orderBy: order ? orderMap[order] : undefined,
+      include: {
+        pictures: {
+          orderBy: {
+            createdAt: 'desc',
+          },
+          take: 1,
+        },
+      },
+      skip: page * PAGE_SIZE,
+      take: PAGE_SIZE,
+    });
+
+    return {
+      total,
+      offset: PAGE_SIZE * page,
+      limit: PAGE_SIZE,
+      products: products.map(productToWeb),
+    };
   }
 }

@@ -67,7 +67,7 @@ export const CartSidebar = () => {
 
               return (
                 <div key={item.id} className="flex gap-2">
-                  <img className="w-20 h-20 border border-gray-100 rounded-md" src={item.picture} />
+                  <img className="w-20 h-20 border border-gray-100 rounded-md" src={item?.picture ?? "/images/product-placeholder.svg"} />
       
                   <div className="flex flex-col">
                     <strong className="font-normal text-gray-500 truncate line-clamp-2">{`${item.quantity} x ${item.name}`}</strong>

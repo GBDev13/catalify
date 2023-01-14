@@ -33,7 +33,7 @@ declare namespace Products {
     isHighlighted?: boolean
     category: Products.Category
     variants: Products.Variant[]
-    pictures: Products.Picture[]
+    pictures?: Products.Picture[]
   }
 
   export type CatalogProduct = {
@@ -42,7 +42,7 @@ declare namespace Products {
     name: string
     price: number
     promoPrice: number
-    picture: string
+    picture?: string
   }
   
   export type CatalogProductDetails = Omit<CatalogProduct, 'picture'> & {

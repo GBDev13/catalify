@@ -7,27 +7,16 @@ import { catalogKeys } from "src/constants/query-keys"
 import { getCompanyCatalog, getCompanyCatalogCategories, getCompanyCatalogProductBySlug } from "src/services/catalog"
 import parse from 'html-react-parser';
 import { useRouter } from "next/router"
-import { useCompany } from "src/store/company"
 import Link from "next/link"
-import { formatPrice } from "src/helpers/format-price"
 import { getFormattedPrices } from "src/helpers/getFormattedPrices"
 import { useCart } from "src/store/cart"
 import { toast } from "react-hot-toast"
-
-const description = `
-<h2>Olha que top</h2>
-<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Iusto, adipisci <a href="htttps://google.com">testing cool like</a> ex possimus placeat optio eos, sapiente odio libero veritatis! Sit asperiores in repellendus? Sit delectus eligendi vero!</p>
-<ul>
-<li>teste 1</li>
-<li>teste 2</li>
-<li>teste 3</li>
-</ul>
-`
+import { useCatalog } from "src/store/catalog"
 
 export default function Produto() {
   const { query } = useRouter();
 
-  const companySlug = useCompany(state => state.company?.slug);
+  const companySlug = useCatalog(state => state.info.slug);
 
   const productSlug = query.slug as string;
 
@@ -55,10 +44,12 @@ export default function Produto() {
     console.log('buy')
   }
 
+  const pictures = productData?.pictures?.length ? productData.pictures : ['/images/product-placeholder.svg']
+
   return (
     <CatalogLayout>
       <div className="grid grid-cols-1 md:grid-cols-[1fr,1.4fr] gap-16 mt-16">
-        {productData?.pictures && productData.pictures.length > 0 && <ProductSlider pictures={productData?.pictures} />}
+        <ProductSlider pictures={pictures} />
         <section className="md:mt-10">
           {productData?.category && <Link href={`/${companySlug}/categorias/${productData?.category.slug}`} className="bg-primaryLight px-2 rounded-full text-sm mb-4 block w-fit">{productData?.category?.name?.toUpperCase()}</Link>}
           <h1 className="font-semibold text-2xl sm:text-4xl text-gray-700">{productData?.name}</h1>

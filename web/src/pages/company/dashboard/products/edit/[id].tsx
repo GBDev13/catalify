@@ -76,11 +76,7 @@ const editProductFormSchema = z.object({
   })
     .nullable()
     .default(null),
-  images: z.array(z.custom<File>(), {
-    required_error: "É necessário enviar pelo menos uma imagem",
-  }).min(1, {
-    message: "É necessário enviar pelo menos uma imagem"
-  }),
+  images: z.array(z.custom<File>()).optional(),
   hasVariations: z.boolean().optional(),
   hasPromoPrice: z.boolean().optional(),
   promoPrice: z.number().optional(),
@@ -146,9 +142,9 @@ export default function EditProduct() {
             value: option.name,
           }))
         })) ?? [],
-        images: await Promise.all(data.pictures.map(async (picture) => {
+        images: data?.pictures?.length ? await Promise.all(data.pictures.map(async (picture) => {
           return urlToFile(picture.url, picture.id)
-        }))
+        })) : []
       });
     }
   });
@@ -189,7 +185,7 @@ export default function EditProduct() {
           type: 'variation'
         }))
       } : parseEditedVariations(variationsChangesToSave, data.variations),
-      images: data.images.filter(image => !removedImages.includes(image.name) && !product?.pictures.some(x => x.id === image.name)),
+      images: data?.images ? data.images.filter(image => !removedImages.includes(image.name) && !product?.pictures?.some(x => x.id === image.name)) : undefined,
       imagesToRemove: removedImages,
       categoryId: data?.category?.value ?? undefined
     })

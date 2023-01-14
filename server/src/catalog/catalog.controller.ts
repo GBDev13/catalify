@@ -1,6 +1,6 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { IsPublic } from 'src/auth/decorators/is-public.decorator';
-import { CatalogService } from './catalog.service';
+import { CatalogService, OrderOptions } from './catalog.service';
 
 @Controller('catalog')
 export class CatalogController {
@@ -22,6 +22,23 @@ export class CatalogController {
   @Get('/:companySlug/products')
   getCompanyCatalogProducts(@Param('companySlug') companySlug: string) {
     return this.catalogService.getCompanyCatalogProducts(companySlug);
+  }
+
+  @IsPublic()
+  @Get('/:companySlug/filtered-products')
+  getCompanyCatalogFilteredProducts(
+    @Param('companySlug') companySlug: string,
+    @Query('page') page: number,
+    @Query('categories') categories: string[],
+    @Query('order') order: OrderOptions,
+    @Query('search') search: string,
+  ) {
+    return this.catalogService.getCompanyCatalogFilteredProducts(companySlug, {
+      page,
+      categories,
+      order,
+      search,
+    });
   }
 
   @IsPublic()

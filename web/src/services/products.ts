@@ -24,7 +24,7 @@ export const deleteCategory = async (categoryId: string, companyId: string) => {
 }
 
 export type CreateProductDto = Omit<Products.Product, 'category' | 'id' | 'variants' | 'pictures'> & {
-  images: File[]
+  images?: File[]
   categoryId?: string
   variations?: Products.Variation[]
 }
@@ -45,7 +45,7 @@ export const createProduct = async (createProductDto: CreateProductDto, companyI
       formData.append('variations', JSON.stringify(createProductDto.variations))
     }
 
-    if(createProductDto.images) {
+    if(createProductDto?.images) {
       createProductDto.images.forEach((image) => {
         formData.append(`images`, image)
       })
@@ -62,7 +62,7 @@ export const createProduct = async (createProductDto: CreateProductDto, companyI
 export type EditProductDto = Omit<Products.Product, 'category' | 'id' | 'variants' | 'pictures'> & {
   variations?: ParseEditedResponse
   categoryId?: string
-  images: File[]
+  images?: File[]
   imagesToRemove: string[]
 }
 
@@ -83,7 +83,7 @@ export const editProduct = async (productId: string, companyId: string, editProd
       })
     }
 
-    if(editProductDto.images) {
+    if(editProductDto?.images) {
       editProductDto.images.forEach((image) => {
         formData.append(`images`, image)
       })

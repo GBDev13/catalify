@@ -5,6 +5,13 @@ type CatalogProductsResponse = {
   highlights: Products.CatalogProduct[]
 }
 
+type CatalogFilteredProductsResponse = {
+  products: Products.CatalogProduct[]
+  limit: number
+  offset: number
+  total: number
+}
+
 export const getCompanyCatalog = async (slug: string) => {
   const { data } = await api.get(`/catalog/${slug}`)
 
@@ -31,6 +38,19 @@ export const getCompanyCatalogBanners = async (slug: string) => {
 
 export const getCompanyCatalogProductBySlug = async (companySlug: string, productSlug: string) => {
   const { data } = await api.get<Products.CatalogProductDetails>(`/catalog/${companySlug}/products/${productSlug}`)
+
+  return data
+}
+
+export const getCompanyCatalogFilteredProducts = async (slug: string, page: number, categories: string[], order: string, search: string) => {
+  const { data } = await api.get<CatalogFilteredProductsResponse>(`/catalog/${slug}/filtered-products`, {
+    params: {
+      page,
+      categories,
+      order,
+      search
+    }
+  })
 
   return data
 }

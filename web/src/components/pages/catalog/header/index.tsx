@@ -1,5 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import Link from "next/link"
+import { useRouter } from "next/router"
+import { FormEvent, useEffect, useState } from "react"
 import { FiChevronDown, FiSearch, FiShoppingBag } from "react-icons/fi"
 import { Popover } from "src/components/ui/Popover"
 import { catalogKeys } from "src/constants/query-keys"
@@ -17,7 +19,7 @@ const CategoriesList = () => {
   return (
     <div className="min-w-[170px] flex flex-col gap-2">
       {categories?.map(category => (
-        <Link key={category.slug} href={`/${slug}/categorias/${category.slug}`} className="text-gray-500 hover:text-primary transition-colors">{category.name}</Link>
+        <Link key={category.slug} href={`/${slug}/produtos/?category=${category.slug}`} shallow={true} className="text-gray-500 hover:text-primary transition-colors">{category.name}</Link>
       ))}
     </div>
   )
@@ -31,6 +33,23 @@ export const Header = () => {
   });
 
   const { setCartIsOpen } = useCart();
+
+  const [search, setSearch] = useState('');
+
+  const router = useRouter();
+
+  const initialValue = router.query.search as string;
+
+  useEffect(() => {
+    if (initialValue) {
+      setSearch(initialValue);
+    }
+  }, [initialValue])
+
+  const handleSearch = (e: FormEvent) => {
+    e.preventDefault()
+    router.push(`/${slug}/produtos${search.trim() ? `/?search=${search}` : ''}`, undefined, { shallow: true })
+  }
 
   return (
     <header className="w-full flex items-center justify-between py-8 flex-col sm:flex-row">
@@ -62,10 +81,17 @@ export const Header = () => {
       </nav>
 
       <section className="flex items-center gap-4 w-full sm:w-auto">
-        <div className="relative w-full">
-          <input placeholder="Pesquisar..." className="focus:outline-none h-9 pl-4 pr-10 text-sm placeholder:text-gray-400 w-full sm:w-[250px] rounded-full border border-primary" />
-          <FiSearch size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 hover:text-primary transition-all cursor-pointer" />
-        </div>
+        <form onSubmit={handleSearch} className="relative w-full">
+          <input
+            placeholder="Pesquisar..."
+            className="focus:outline-none h-9 pl-4 pr-10 text-sm placeholder:text-gray-400 w-full sm:w-[250px] rounded-full border border-primary"
+            onChange={({ target }) => setSearch(target.value)}
+            value={search}
+          />
+          <button onClick={handleSearch}>
+            <FiSearch size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 hover:text-primary transition-all cursor-pointer" />
+          </button>
+        </form>
 
         <button onClick={() => setCartIsOpen(true)} className="min-w-[40px] h-10 rounded-full bg-primary text-readable hidden sm:flex items-center justify-center hover:brightness-105 transition-all">
           <FiShoppingBag size={20} />
