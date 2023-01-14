@@ -27,6 +27,7 @@ model Company {
   id        String    @id @default(uuid())
   slug      String    @unique
   name      String
+  phone     String
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
   ownerId   String

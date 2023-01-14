@@ -8,6 +8,8 @@
   }
 }
 
+/* React Select */
+
 .react-select__control {
   @apply !bg-slate-100 !border-slate-200 
 }
@@ -46,4 +48,26 @@
 
 .description.prose a {
   @apply !text-primary
+}
+
+/* Phone input */
+
+.form-control  {
+  @apply !bg-slate-100 !rounded-md !text-sm !text-slate-800 !font-sans focus:ring-0 !border-slate-200 placeholder:text-slate-400 !h-[38px] !w-full
+}
+
+.form-control.error {
+  @apply ring-1 !ring-red-400
+}
+
+.form-control.disabled {
+  @apply !bg-slate-100/70
+}
+
+.flag-dropdown  {
+  @apply !bg-slate-100 !font-sans !border-slate-200
+}
+
+.country-list  {
+  @apply !bg-slate-100 !border-slate-200
 }

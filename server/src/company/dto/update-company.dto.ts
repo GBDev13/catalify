@@ -10,6 +10,9 @@ export class UpdateCompanyDto extends Company {
   themeColor: string;
 
   @IsString()
+  phone: string;
+
+  @IsString()
   @Matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
     message: 'Slug deve conter apenas letras minúsculas e números',
   })

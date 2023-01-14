@@ -11,9 +11,9 @@ import { Button } from "src/components/ui/Button";
 import { ControlledColorPicker } from "src/components/ui/ColorPicker/controlled";
 import { ControlledFileUpload } from "src/components/ui/FileUpload/controlled";
 import { ControlledInput } from "src/components/ui/Input/controlled";
+import { ControlledPhoneInput } from "src/components/ui/PhoneInput/controlled";
 import { IMAGE_MAX_SIZE, IMAGE_TYPES } from "src/constants/constants";
 import { catalogKeys, companyKeys } from "src/constants/query-keys";
-import { notify } from "src/helpers/toast";
 import { urlToFile } from "src/helpers/url-to-file";
 import { useUnsavedChangesWarning } from "src/hooks/useUnsavedChangesWarning";
 import { getCompanyCatalog } from "src/services/catalog";
@@ -28,7 +28,7 @@ export default function CatalogCompany() {
   const { company } = useCompany(s => s)
   const slug = company?.slug!
 
-  const { control, handleSubmit, reset, formState: { isSubmitting, isDirty, dirtyFields, errors } } = useForm<CatalogCompanyFormData>({
+  const { control, handleSubmit, reset, formState: { isSubmitting, isDirty, dirtyFields } } = useForm<CatalogCompanyFormData>({
     resolver: zodResolver(companyStepFormSchema),
   });
 
@@ -43,6 +43,7 @@ export default function CatalogCompany() {
         color: data.themeColor,
         companyName: data.name,
         slug: data.slug,
+        phone: data.phone,
         logo
       })
     }
@@ -63,7 +64,8 @@ export default function CatalogCompany() {
         color: catalogInfo.themeColor,
         companyName: catalogInfo.name,
         slug: catalogInfo.slug,
-        logo: defaultLogo
+        logo: defaultLogo,
+        phone: catalogInfo.phone
       })
     }
   }
@@ -79,6 +81,7 @@ export default function CatalogCompany() {
   }), {
     onSuccess: async () => {
       await queryClient.invalidateQueries(companyKeys.userCompanyInfo(session?.user?.id!))
+      await queryClient.invalidateQueries(catalogKeys.companyCatalog(slug))
       handleCancelEditing()
     }
   })
@@ -94,6 +97,7 @@ export default function CatalogCompany() {
         name: data.companyName,
         slug: data.slug,
         themeColor: data.color,
+        phone: data.phone,
         logo: dirtyFields?.logo ? data?.logo?.length ? data.logo[0] : null : undefined
       })
     } catch {}
@@ -116,6 +120,10 @@ export default function CatalogCompany() {
         <form className="w-full grid grid-cols-2 gap-4 mt-10" onSubmit={handleSubmit(onSubmit)}>
           <ControlledInput disabled={!isEditing} label="Nome da Empresa" placeholder="Empresa" fieldName="companyName" control={control} />
           <ControlledColorPicker disabled={!isEditing} control={control} fieldName="color" label="Cor principal da empresa" />
+
+          <div className="col-span-full">
+            <ControlledPhoneInput disabled={!isEditing} label="Whatsapp que irá receber os pedidos" fieldName="phone" control={control} />
+          </div>
 
           <ControlledInput disabled={!isEditing} tip="Texto que será usado para acessar sua loja através do link do navegador (ex: cataloguei.com/sualoja)" className="col-span-full" label="Slug da loja" placeholder="sualoja" fieldName="slug" control={control} />
 

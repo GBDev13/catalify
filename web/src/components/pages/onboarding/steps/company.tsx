@@ -8,6 +8,7 @@ import { ControlledColorPicker } from "../../../ui/ColorPicker/controlled";
 import tailwindColors from 'tailwindcss/colors'
 import { ControlledFileUpload } from "src/components/ui/FileUpload/controlled";
 import { IMAGE_MAX_SIZE, IMAGE_TYPES } from "src/constants/constants";
+import { ControlledPhoneInput } from "src/components/ui/PhoneInput/controlled";
 
 export const companyStepFormSchema = z.object({
   companyName: z.string({
@@ -19,6 +20,12 @@ export const companyStepFormSchema = z.object({
   }),
   color: z.string({
     required_error: "Cor é obrigatória"
+  }),
+  phone: z.string({
+    required_error: "Whatsapp é obrigatório",
+    invalid_type_error: "Whatsapp é obrigatório"
+  }).min(1, {
+    message: "Whatsapp é obrigatório"
   }),
   slug: z.string({
     required_error: "Slug é obrigatório"
@@ -66,10 +73,14 @@ export const CompanyStep = ({ onPrevStep, onSubmitForm }: CompanyStepProps) => {
         <ControlledInput label="Nome da Empresa" placeholder="Empresa" fieldName="companyName" control={control} />
         <ControlledColorPicker control={control} fieldName="color" label="Cor principal da empresa" />
 
+        <div className="col-span-full">
+          <ControlledPhoneInput label="Whatsapp que irá receber os pedidos" fieldName="phone" control={control} />
+        </div>
+
         <ControlledInput tip="Texto que será usado para acessar sua loja através do link do navegador (ex: cataloguei.com/sualoja)" className="col-span-full" label="Slug da loja" placeholder="sualoja" fieldName="slug" control={control} />
 
         <div className="col-span-full">
-        <label htmlFor="logo" className="block text-xs font-medium text-slate-500 mb-1">Logo da Empresa (opcional)</label>
+          <label htmlFor="logo" className="block text-xs font-medium text-slate-500 mb-1">Logo da Empresa (opcional)</label>
           <ControlledFileUpload withPreview previewMode="INSIDE" fieldName="logo" maxFiles={1} control={control} maxSize={IMAGE_MAX_SIZE} acceptedTypes={IMAGE_TYPES} />
         </div>
 

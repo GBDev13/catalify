@@ -12,6 +12,7 @@ type CreateAccountDto = {
     name: string
     themeColor: string
     slug: string
+    phone: string
     logo?: File
   }
 }

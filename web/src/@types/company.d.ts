@@ -5,6 +5,7 @@ declare namespace Company {
     name: string
     ownerId: string
     themeColor: string
+    phone: string
     logo?: string
   }
 

@@ -13,7 +13,7 @@ export const getSocialIconByUrl = (url: string) => {
     return <FaTwitter size={25} />
   }
 
-  if (url.includes('whatsapp')) {
+  if (url.includes('whatsapp') || url.includes('wa.me')) {
     return <FaWhatsapp size={25} />
   }
 

@@ -42,6 +42,7 @@ export class CatalogService {
       logo: company?.logo ? company.logo.fileUrl : undefined,
       slug: company.slug,
       links: company.links.map((link) => link.url),
+      phone: company.phone,
     };
   }
 

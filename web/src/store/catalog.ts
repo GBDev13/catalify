@@ -9,6 +9,7 @@ type CatalogInfo = {
   slug: string;
   name: string
   logo: string
+  phone: string
   links: string[]
 }
 
