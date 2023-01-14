@@ -11,6 +11,7 @@ import { ProductModule } from './product/product.module';
 import { ProductVariantModule } from './product-variant/product-variant.module';
 import { FileModule } from './file/file.module';
 import { CatalogModule } from './catalog/catalog.module';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { CatalogModule } from './catalog/catalog.module';
     ProductVariantModule,
     FileModule,
     CatalogModule,
+    OrderModule,
   ],
   providers: [
     AppService,

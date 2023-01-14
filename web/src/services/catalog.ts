@@ -54,3 +54,25 @@ export const getCompanyCatalogFilteredProducts = async (slug: string, page: numb
 
   return data
 }
+
+export type OrderProduct = {
+  productId: string;
+  price: number;
+  promoPrice: number;
+  quantity: number;
+}
+
+export const createOrder = async (slug: string, buyerName: string, buyerPhone: string, products: OrderProduct[]) => {
+  const { data } = await api.post(`/order/${slug}`, {
+    buyerName,
+    buyerPhone,
+    products
+  })
+
+  return data
+}
+
+export const getOrderById = async (orderId: string) => {
+  const { data } = await api.get<Catalog.Order>(`/order/${orderId}`)
+  return data
+}

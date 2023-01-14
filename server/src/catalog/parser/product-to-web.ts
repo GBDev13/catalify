@@ -1,6 +1,15 @@
-import { Category, File, Product } from '@prisma/client';
+import {
+  Category,
+  File,
+  Product,
+  ProductVariant,
+  ProductVariantOption,
+} from '@prisma/client';
 
-type ProductType = Product & { pictures: File[] };
+type ProductType = Product & {
+  pictures: File[];
+  variants: (ProductVariant & { options: ProductVariantOption[] })[];
+};
 
 type ProductDetailedType = ProductType & { category: Category };
 
@@ -26,6 +35,16 @@ export const productDetailedToWeb = (product: ProductDetailedType) => {
     promoPrice: product?.promoPrice,
     description: product?.description,
     pictures: product?.pictures?.map((x) => x.fileUrl),
+    variants: product?.variants
+      ? product.variants.map((variant) => ({
+          id: variant.id,
+          name: variant.name,
+          options: variant.options.map((option) => ({
+            id: option.id,
+            name: option.name,
+          })),
+        }))
+      : undefined,
     category: product?.category?.name
       ? {
           slug: product.category.slug,

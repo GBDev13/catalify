@@ -4,6 +4,11 @@ import { formatPrice } from "src/helpers/format-price"
 import { useCart } from "src/store/cart"
 import { RiCloseCircleFill } from 'react-icons/ri'
 import { motion, AnimatePresence } from "framer-motion"
+import { openWhatsAppMessage } from "src/helpers/open-whatsapp-message"
+import { checkoutCartToWhatsApp } from "src/helpers/checkout-cart-to-whatsapp"
+import { useState } from "react"
+import { CatalogDialog } from "../../catalog/catalog-dialog"
+import { CheckoutForm, CheckoutFormDialog } from "./checkout-form"
 
 export const CartSidebar = () => {
   const { cartItems, cartIsOpen, removeProductById, setCartIsOpen } = useCart()
@@ -17,6 +22,13 @@ export const CartSidebar = () => {
   const formattedTotal = formatPrice(total)
 
   const isDisabled = cartItems.length <= 0
+
+  const [showCheckoutForm, setShowCheckoutForm] = useState(false)
+
+  const handleCheckout = () => {
+    // const message = checkoutCartToWhatsApp()
+    // openWhatsAppMessage(message)
+  }
 
   return (
     <AnimatePresence>
@@ -62,19 +74,24 @@ export const CartSidebar = () => {
           )}
 
           <div className="p-4 flex-1 overflow-y-auto flex flex-col gap-3">
-            {cartItems.map(item => {
+            {cartItems.map((item, index) => {
               const formattedPrice = formatPrice(item?.promoPrice ?? item?.price);
 
               return (
-                <div key={item.id} className="flex gap-2">
+                <div key={`cart-item-${index}`} className="flex gap-2">
                   <img className="w-20 h-20 border border-gray-100 rounded-md" src={item?.picture ?? "/images/product-placeholder.svg"} />
       
                   <div className="flex flex-col">
                     <strong className="font-normal text-gray-500 truncate line-clamp-2">{`${item.quantity} x ${item.name}`}</strong>
+                    {item?.variants && (
+                      <span className="text-xs text-gray-400">
+                        {item.variants.map(variant => variant.option).join(' - ')}
+                      </span>
+                    )}
                     <span className="text-primary font-semibold">{formattedPrice}</span>
                   </div>
 
-                  <button onClick={() => removeProductById(item.id)} className="ml-auto text-gray-400 hover:text-primary transition-colors">
+                  <button onClick={() => removeProductById(item.cartId)} className="ml-auto text-gray-400 hover:text-primary transition-colors">
                     <FaTrash />
                   </button>
                 </div>
@@ -88,10 +105,14 @@ export const CartSidebar = () => {
               <strong className="text-primary font-semibold">{formattedTotal}</strong>
             </div>
             <div className="p-4">
+
+            <CheckoutFormDialog>
               <button disabled={isDisabled} className="bg-whatsapp disabled:opacity-50 disabled:brightness-90 disabled:cursor-not-allowed text-white justify-center flex items-center w-full gap-2 py-3 px-6 rounded-md hover:brightness-105 transition-all">
                 <FaWhatsapp size={20} />
                 Finalizar compra
               </button>
+            </CheckoutFormDialog>
+
             </div>
           </footer>
         </motion.aside>

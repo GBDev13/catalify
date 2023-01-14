@@ -152,6 +152,11 @@ export class CatalogService {
           },
         },
         category: true,
+        variants: {
+          include: {
+            options: true,
+          },
+        },
       },
     });
 

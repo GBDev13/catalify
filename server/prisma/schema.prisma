@@ -45,8 +45,45 @@ model Company {
 
   links   CompanyLinks[]
   banners CompanyBanners[]
+  order   Order[]
 
   @@map("companies")
+}
+
+model OrderProducts {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+
+  price      Float
+  promoPrice Float?
+  quantity   Int
+
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId String
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+
+  @@map("order_products")
+}
+
+model Order {
+  id         String @id
+  buyerName  String
+  buyerPhone String
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+
+  expiresAt DateTime
+
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId String
+
+  products OrderProducts[]
+
+  @@map("orders")
 }
 
 model Product {
@@ -69,7 +106,8 @@ model Product {
 
   variants ProductVariant[]
 
-  pictures File[]
+  pictures      File[]
+  orderProducts OrderProducts[]
 
   @@map("products")
 }

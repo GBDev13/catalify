@@ -17,4 +17,5 @@ export const catalogKeys = {
   companyBanners: (slug: string) => [slug, 'catalog-banners'],
   companyProduct: (productSlug: string) => [`product-${productSlug}`],
   companyFilteredProducts: (slug: string, page: number, categories: string[], order: string, search: string) => [`filtered-products-${slug}`, page, `categories-${categories.join(',')}`, order, search],
+  orderById: (orderId: string) => ['order', orderId],
 }

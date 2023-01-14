@@ -48,6 +48,7 @@ declare namespace Products {
   export type CatalogProductDetails = Omit<CatalogProduct, 'picture'> & {
     description: string
     pictures: string[]
+    variants: Products.Variant[]
     category?: {
       name: string;
       slug: string

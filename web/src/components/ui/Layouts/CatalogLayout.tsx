@@ -13,9 +13,10 @@ import { NextSeo } from 'next-seo';
 type CatalogLayoutProps = {
   children: ReactNode
   title: string
+  withoutLayout?: boolean
 }
 
-export const CatalogLayout = ({ title, children }: CatalogLayoutProps) => {
+export const CatalogLayout = ({ title, children, withoutLayout = false }: CatalogLayoutProps) => {
   const router = useRouter();
   const slug = String(router.query.companySlug ?? '');
 
@@ -27,6 +28,16 @@ export const CatalogLayout = ({ title, children }: CatalogLayoutProps) => {
       setCatalogColors(data.themeColor)
     }
   });
+
+  if(withoutLayout) return (
+    <>
+      <NextSeo
+        titleTemplate={`${info.name} - %s`}
+        title={title}
+      />
+      {children}
+    </>
+  )
 
   return (
     <>
