@@ -3,6 +3,8 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateOrderDto } from './dto/create-order-dto';
 import ShortUniqueId from 'short-unique-id';
 import { orderProductToWeb } from './parser/order-product-to-web';
+import { OrderStatus } from '@prisma/client';
+import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class OrderService {
@@ -85,5 +87,61 @@ export class OrderService {
       ...order,
       products: order.products.map((product) => orderProductToWeb(product)),
     };
+  }
+
+  async expireOrders() {
+    await this.prisma.order.updateMany({
+      where: {
+        status: OrderStatus.PENDING,
+        expiresAt: {
+          lte: new Date(),
+        },
+      },
+      data: {
+        status: OrderStatus.EXPIRED,
+      },
+    });
+  }
+
+  async completeOrder(orderId: string, user: User) {
+    const order = await this.prisma.order.findUnique({
+      where: {
+        id: orderId,
+      },
+      include: {
+        company: {
+          select: {
+            ownerId: true,
+          },
+        },
+      },
+    });
+
+    if (!order) {
+      throw new HttpException('Pedido não encontrado', HttpStatus.NOT_FOUND);
+    }
+
+    if (order.status !== OrderStatus.PENDING) {
+      throw new HttpException(
+        'Pedido já foi finalizado',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (order.company.ownerId !== user.id) {
+      throw new HttpException(
+        'Você não tem permissão para finalizar este pedido',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
+    await this.prisma.order.update({
+      where: {
+        id: orderId,
+      },
+      data: {
+        status: OrderStatus.FINISHED,
+      },
+    });
   }
 }

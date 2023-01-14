@@ -77,3 +77,8 @@ export const getOrderById = async (orderId: string) => {
   const { data } = await api.get<Catalog.Order>(`/order/${orderId}`)
   return data
 }
+
+export const completeOrder = async (orderId: string) => {
+  const { data } = await api.patch(`/order/${orderId}/complete`)
+  return data
+}

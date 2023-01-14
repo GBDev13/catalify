@@ -70,10 +70,18 @@ model OrderProducts {
   @@map("order_products")
 }
 
+enum OrderStatus {
+  PENDING
+  FINISHED
+  EXPIRED
+}
+
 model Order {
   id         String @id
   buyerName  String
   buyerPhone String
+
+  status OrderStatus @default(PENDING)
 
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt

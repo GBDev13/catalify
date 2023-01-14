@@ -1,5 +1,7 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { IsPublic } from 'src/auth/decorators/is-public.decorator';
+import { User } from 'src/user/entities/user.entity';
 import { CreateOrderDto } from './dto/create-order-dto';
 import { OrderService } from './order.service';
 
@@ -19,5 +21,13 @@ export class OrderController {
   @Get('/:orderId')
   async getOrder(@Param('orderId') orderId: string) {
     return this.orderService.getOrderById(orderId);
+  }
+
+  @Patch('/:orderId/complete')
+  async completeOrder(
+    @Param('orderId') orderId: string,
+    @CurrentUser() user: User,
+  ) {
+    return this.orderService.completeOrder(orderId, user);
   }
 }

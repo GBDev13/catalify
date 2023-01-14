@@ -1,22 +1,45 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/router"
-import { FaWhatsapp } from "react-icons/fa";
-import { FiCalendar, FiUser } from "react-icons/fi";
+import { toast } from "react-hot-toast";
+import { FaCheck, FaWhatsapp } from "react-icons/fa";
+import { FiCalendar, FiCheck, FiCheckCircle, FiUser } from "react-icons/fi";
 import { CatalogLayout } from "src/components/ui/Layouts/CatalogLayout";
 import { catalogKeys } from "src/constants/query-keys";
 import { formatPrice } from "src/helpers/format-price";
-import { getOrderById } from "src/services/catalog";
+import { orderStatusToText } from "src/helpers/order-status-to-text";
+import { completeOrder, getOrderById } from "src/services/catalog";
+import { useCatalog } from "src/store/catalog";
 
 export default function OrderDetails() {
   const router = useRouter();
   const orderId = router.query.id as string;
 
   const { status } = useSession()
-  const isAuthenticated = status === 'authenticated'
 
   const { data: order } = useQuery(catalogKeys.orderById(orderId), () => getOrderById(orderId), {
     enabled: !!orderId
+  })
+
+  const { name, logo, slug } = useCatalog(state => state.info)
+
+  const queryClient = useQueryClient();
+
+  const { mutate: handleCompleteOrder } = useMutation(() => toast.promise(completeOrder(order?.id!), {
+    loading: 'Concluindo pedido...',
+    success: 'Pedido concluído com sucesso!',
+    error: 'Ocorreu um erro ao concluir o pedido'
+  }), {
+    onSuccess: () => {
+      queryClient.setQueryData<Catalog.Order>(catalogKeys.orderById(orderId), (oldData) => {
+        if(!oldData) return undefined;
+        return {
+          ...oldData,
+          status: "FINISHED"
+        }
+      })
+    }
   })
 
   if(!order) return null;
@@ -38,9 +61,18 @@ export default function OrderDetails() {
 
   const formattedTotal = formatPrice(total)
 
+  const isAuthenticated = status === 'authenticated';
+
   return (
     <CatalogLayout title="Pedido" withoutLayout>
       <main className="w-full max-w-[800px] mx-auto px-4">
+        <Link className="mt-10 block" href={`/${slug}`}>
+          {logo ? <img src={logo} className="max-h-[100px] object-contain mx-auto" /> : (
+            <h1 className="text-primary text-4xl font-semibold text-center">
+              {name}
+            </h1>
+          )}
+        </Link>
         <header className="flex items-center justify-between flex-col gap-2 md:gap-0 md:flex-row my-8 md:my-10">
           <h1 className="text-xl text-gray-600">Pedido <span className="text-primary font-light">{order.id}</span></h1>
 
@@ -79,7 +111,7 @@ export default function OrderDetails() {
                     <img className="w-24 h-24 border border-gray-100 rounded-md" src={item?.picture ?? "/images/product-placeholder.svg"} />
         
                     <div className="flex flex-col">
-                      <strong className="font-normal text-gray-500 text-xl truncate line-clamp-2">{`${item.quantity} x ${item.name}`}</strong>
+                      <strong className="font-normal text-gray-500 text-xl line-clamp-2">{`${item.quantity} x ${item.name}`}</strong>
                       {item?.variants && (
                         <span className="text-sm text-gray-400">
                           {item.variants.join(' - ')}
@@ -91,6 +123,19 @@ export default function OrderDetails() {
                 )
               })}
           </div>
+
+          {isAuthenticated && (
+            <div className="flex items-center justify-between border-t border-t-gray-300 mt-10 pt-10">
+              <p className="text-lg text-gray-500 font-semibold">
+                {`Status do pedido: `}
+                <span className="text-primary">{orderStatusToText(order.status)}</span>
+              </p>
+              <button disabled={order.status !== 'PENDING'} onClick={() => handleCompleteOrder()} className="disabled:opacity-50 bg-primary text-white py-2 px-4 rounded-md flex items-center gap-2">
+                <FiCheckCircle size={20} />
+                Concluir pedido
+              </button>
+            </div>
+          )}
         </section>
       </main>
     </CatalogLayout>

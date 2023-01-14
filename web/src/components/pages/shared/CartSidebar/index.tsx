@@ -6,7 +6,7 @@ import { RiCloseCircleFill } from 'react-icons/ri'
 import { motion, AnimatePresence } from "framer-motion"
 import { CheckoutFormDialog } from "./checkout-form"
 
-export const CartSidebar = () => {
+const CartSidebar = () => {
   const { cartItems, cartIsOpen, removeProductById, setCartIsOpen } = useCart()
 
   const total = cartItems.reduce((acc, item) => {
@@ -70,7 +70,7 @@ export const CartSidebar = () => {
                   <img className="w-20 h-20 border border-gray-100 rounded-md" src={item?.picture ?? "/images/product-placeholder.svg"} />
       
                   <div className="flex flex-col">
-                    <strong className="font-normal text-gray-500 truncate line-clamp-2">{`${item.quantity} x ${item.name}`}</strong>
+                    <strong className="font-normal text-gray-500 line-clamp-2">{`${item.quantity} x ${item.name}`}</strong>
                     {item?.variants && (
                       <span className="text-xs text-gray-400">
                         {item.variants.map(variant => variant.option).join(' - ')}
@@ -108,3 +108,5 @@ export const CartSidebar = () => {
     </AnimatePresence>
   )
 }
+
+export default CartSidebar

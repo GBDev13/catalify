@@ -12,6 +12,8 @@ import { ProductVariantModule } from './product-variant/product-variant.module';
 import { FileModule } from './file/file.module';
 import { CatalogModule } from './catalog/catalog.module';
 import { OrderModule } from './order/order.module';
+import { TasksModule } from './tasks/tasks.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { OrderModule } from './order/order.module';
     FileModule,
     CatalogModule,
     OrderModule,
+    TasksModule,
+    ScheduleModule.forRoot(),
   ],
   providers: [
     AppService,

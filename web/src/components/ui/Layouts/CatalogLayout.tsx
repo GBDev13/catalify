@@ -6,9 +6,10 @@ import { useCatalog } from "src/store/catalog";
 import { getCompanyCatalog } from "src/services/catalog";
 import { useQuery } from "@tanstack/react-query";
 import { catalogKeys } from "src/constants/query-keys";
-import { CartSidebar } from "src/components/pages/shared/CartSidebar";
 import Head from "next/head";
 import { NextSeo } from 'next-seo';
+import dynamic from "next/dynamic";
+const CartSidebar = dynamic(() => import("src/components/pages/shared/CartSidebar"), { ssr: false });
 
 type CatalogLayoutProps = {
   children: ReactNode

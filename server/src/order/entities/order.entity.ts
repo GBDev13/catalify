@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { OrderStatus, Prisma } from '@prisma/client';
 
 export class Order implements Prisma.OrderUncheckedCreateInput {
   id: string;
@@ -6,4 +6,5 @@ export class Order implements Prisma.OrderUncheckedCreateInput {
   expiresAt: Date;
   buyerName: string;
   buyerPhone: string;
+  status: OrderStatus;
 }
