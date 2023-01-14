@@ -11,6 +11,7 @@ declare namespace Catalog {
       price: number;
       quantity: number;
       picture?: string
+      variants?: string[]
     }[]
   }
 }

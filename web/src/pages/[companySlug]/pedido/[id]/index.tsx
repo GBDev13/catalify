@@ -80,11 +80,11 @@ export default function OrderDetails() {
         
                     <div className="flex flex-col">
                       <strong className="font-normal text-gray-500 text-xl truncate line-clamp-2">{`${item.quantity} x ${item.name}`}</strong>
-                      {/* {item?.variants && (
-                        <span className="text-xs text-gray-400">
-                          {item.variants.map(variant => variant.option).join(' - ')}
+                      {item?.variants && (
+                        <span className="text-sm text-gray-400">
+                          {item.variants.join(' - ')}
                         </span>
-                      )} */}
+                      )}
                       <span className="text-primary font-semibold text-lg">{formattedPrice}</span>
                     </div>
                   </div>

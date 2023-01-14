@@ -1,9 +1,15 @@
-import { File, OrderProducts, Product } from '@prisma/client';
+import {
+  File,
+  OrderProducts,
+  Product,
+  ProductVariantOption,
+} from '@prisma/client';
 
 type OrderProductType = OrderProducts & {
   product: Product & {
     pictures: File[];
   };
+  selectedVariants: ProductVariantOption[];
 };
 
 export const orderProductToWeb = (orderProduct: OrderProductType) => {
@@ -15,6 +21,9 @@ export const orderProductToWeb = (orderProduct: OrderProductType) => {
     price: orderProd.price,
     promoPrice: orderProd?.promoPrice,
     quantity: orderProd.quantity,
+    variants: orderProd?.selectedVariants
+      ? orderProd.selectedVariants.map((variant) => variant.name)
+      : undefined,
     picture: product?.pictures?.length
       ? product.pictures[0]?.fileUrl
       : undefined,

@@ -77,7 +77,8 @@ export const CheckoutForm = ({ step, setStep }: CheckoutFormProps) => {
         price: cartItem.price,
         productId: cartItem.id,
         promoPrice: cartItem?.promoPrice,
-        quantity: cartItem.quantity
+        quantity: cartItem.quantity,
+        selectedVariants: cartItem?.variants?.map(variant => variant.optionId)
       }))
     })
   }

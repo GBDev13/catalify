@@ -36,7 +36,14 @@ export class OrderService {
             price: product.price,
             promoPrice: product.promoPrice,
             quantity: product.quantity,
-            productId: product.productId,
+            product: {
+              connect: {
+                id: product.productId,
+              },
+            },
+            selectedVariants: {
+              connect: product.selectedVariants.map((optId) => ({ id: optId })),
+            },
           })),
         },
         expiresAt,
@@ -54,6 +61,7 @@ export class OrderService {
       include: {
         products: {
           include: {
+            selectedVariants: true,
             product: {
               include: {
                 pictures: {

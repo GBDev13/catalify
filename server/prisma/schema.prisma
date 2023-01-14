@@ -65,6 +65,8 @@ model OrderProducts {
   product   Product @relation(fields: [productId], references: [id])
   productId String
 
+  selectedVariants ProductVariantOption[]
+
   @@map("order_products")
 }
 
@@ -153,6 +155,8 @@ model ProductVariantOption {
 
   company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
   companyId String
+
+  orderProducts OrderProducts[]
 
   @@map("product_variant_options")
 }

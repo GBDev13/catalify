@@ -26,6 +26,10 @@ class OrderProductDto {
   @IsInt()
   @IsPositive()
   quantity: number;
+
+  @IsString({ each: true })
+  @IsOptional()
+  selectedVariants: string[];
 }
 
 export class CreateOrderDto extends Order {

@@ -4,11 +4,7 @@ import { formatPrice } from "src/helpers/format-price"
 import { useCart } from "src/store/cart"
 import { RiCloseCircleFill } from 'react-icons/ri'
 import { motion, AnimatePresence } from "framer-motion"
-import { openWhatsAppMessage } from "src/helpers/open-whatsapp-message"
-import { checkoutCartToWhatsApp } from "src/helpers/checkout-cart-to-whatsapp"
-import { useState } from "react"
-import { CatalogDialog } from "../../catalog/catalog-dialog"
-import { CheckoutForm, CheckoutFormDialog } from "./checkout-form"
+import { CheckoutFormDialog } from "./checkout-form"
 
 export const CartSidebar = () => {
   const { cartItems, cartIsOpen, removeProductById, setCartIsOpen } = useCart()
@@ -18,17 +14,9 @@ export const CartSidebar = () => {
     return acc + (price * item.quantity)
   }, 0)
 
-
   const formattedTotal = formatPrice(total)
 
   const isDisabled = cartItems.length <= 0
-
-  const [showCheckoutForm, setShowCheckoutForm] = useState(false)
-
-  const handleCheckout = () => {
-    // const message = checkoutCartToWhatsApp()
-    // openWhatsAppMessage(message)
-  }
 
   return (
     <AnimatePresence>

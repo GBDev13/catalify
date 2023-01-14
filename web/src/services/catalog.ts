@@ -60,6 +60,7 @@ export type OrderProduct = {
   price: number;
   promoPrice: number;
   quantity: number;
+  selectedVariants?: string[]
 }
 
 export const createOrder = async (slug: string, buyerName: string, buyerPhone: string, products: OrderProduct[]) => {
