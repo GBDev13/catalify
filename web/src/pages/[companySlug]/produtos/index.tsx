@@ -62,11 +62,14 @@ export default function Produtos() {
 
   const pageCount = Math.ceil(total / limit);
 
+  const showingLeftCount = data?.offset || 1;
+  const showingRightCount = (page + 1) * limit;
+
   return (
     <CatalogLayout>
       <header className="flex items-center justify-between flex-col-reverse gap-2 sm:gap-0 sm:flex-row">
         <p className="text-sm text-gray-500">
-          <strong className="font-semibold text-gray-600">{`Mostrando ${data?.offset || 1} - ${(page + 1) * limit} `}</strong>
+          <strong className="font-semibold text-gray-600">{`Mostrando ${showingLeftCount} - ${showingRightCount >= total ? total : showingRightCount} `}</strong>
           de {total} {total === 1 ? 'produto' : 'produtos'}
         </p>
 

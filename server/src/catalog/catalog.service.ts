@@ -12,7 +12,7 @@ type CatalogProductFilters = {
   search?: string;
 };
 
-const PAGE_SIZE = 3;
+const PAGE_SIZE = 9;
 
 @Injectable()
 export class CatalogService {
@@ -76,9 +76,10 @@ export class CatalogService {
       throw new HttpException('Empresa não encontrada', HttpStatus.NOT_FOUND);
     }
 
-    const products = await this.prisma.product.findMany({
+    const highlightedProducts = await this.prisma.product.findMany({
       where: {
         companyId: company.id,
+        isHighlighted: true,
       },
       orderBy: {
         createdAt: 'desc',
@@ -93,9 +94,28 @@ export class CatalogService {
       },
     });
 
+    const products = await this.prisma.product.findMany({
+      where: {
+        companyId: company.id,
+        isHighlighted: false,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      include: {
+        pictures: {
+          orderBy: {
+            createdAt: 'desc',
+          },
+          take: 1,
+        },
+      },
+      take: 8,
+    });
+
     return {
-      products: products.filter((x) => !x?.isHighlighted).map(productToWeb),
-      highlights: products.filter((x) => x?.isHighlighted).map(productToWeb),
+      products: products.map(productToWeb),
+      highlights: highlightedProducts.map(productToWeb),
     };
   }
 
