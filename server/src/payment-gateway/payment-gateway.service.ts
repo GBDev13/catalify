@@ -22,6 +22,19 @@ export class PaymentGatewayService {
   }
 
   async createSubscriptionCheckout(customerEmail: string) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email: customerEmail,
+      },
+      include: {
+        subscription: true,
+      },
+    });
+
+    if (user.subscription.some((x) => x.status === 'ACTIVE')) {
+      throw new HttpException('Você já possui uma inscrição ativa', 400);
+    }
+
     const subscription = await this.getSubscriptionProduct();
 
     const successUrl = `${process.env.FRONT_END_URL}/company/success`;

@@ -51,7 +51,7 @@ export const Pricing = () => {
   const { mutate: handleCheckoutPremium, isLoading } = useMutation(() => toast.promise(createSubscriptionCheckout(session?.user?.email!), {
     loading: "Criando sessão de pagamento...",
     success: "Sessão criada com sucesso!",
-    error: "Erro ao criar sessão de pagamento"
+    error: (err) => err?.response?.data?.message || "Erro ao criar sessão de pagamento"
   }), {
     onSuccess: (checkoutUrl) => {
       window.location.href = checkoutUrl;
