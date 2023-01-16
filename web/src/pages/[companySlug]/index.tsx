@@ -56,6 +56,14 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   await queryClient.prefetchQuery(catalogKeys.companyCategories(slug), () => getCompanyCatalogCategories(slug))
   await queryClient.prefetchQuery(catalogKeys.companyProducts(slug), () => getCompanyCatalogProducts(slug))
 
+  const company = queryClient.getQueryData(catalogKeys.companyCatalog(slug))
+
+  if(!company) {
+    return {
+      notFound: true
+    }
+  }
+
   return {
     props: {
       dehydratedState: dehydrate(queryClient),
