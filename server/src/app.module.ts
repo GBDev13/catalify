@@ -14,6 +14,9 @@ import { CatalogModule } from './catalog/catalog.module';
 import { OrderModule } from './order/order.module';
 import { TasksModule } from './tasks/tasks.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { StripeModule } from './stripe/stripe.module';
+import { PaymentGatewayModule } from './payment-gateway/payment-gateway.module';
+import { SubscriptionModule } from './subscription/subscription.module';
 
 @Module({
   imports: [
@@ -29,6 +32,11 @@ import { ScheduleModule } from '@nestjs/schedule';
     OrderModule,
     TasksModule,
     ScheduleModule.forRoot(),
+    StripeModule.forRoot(process.env.STRIPE_KEY, {
+      apiVersion: '2022-11-15',
+    }),
+    PaymentGatewayModule,
+    SubscriptionModule,
   ],
   providers: [
     AppService,
