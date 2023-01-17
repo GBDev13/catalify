@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
 import { FormProvider, useFieldArray, useForm } from "react-hook-form"
 import { toast } from "react-hot-toast"
@@ -62,12 +62,16 @@ export const BannersForm = () => {
     name: 'banners'
   });
 
+  const queryClient = useQueryClient()
+
   const { mutateAsync: handleUpdateBanners } = useMutation((updateDto: UpdateBannerDto[]) => toast.promise(updateCompanyBanners(companyId!, updateDto), {
     loading: 'Salvando...',
     success: 'Banners salvos com sucesso!',
     error: (error) => error?.response?.data?.message ?? 'Erro ao salvar banners'
   }), {
-    onSuccess: () => {}
+    onSuccess: () => {
+      queryClient.invalidateQueries(companyKeys.companyBanners(companyId!))
+    }
   })
 
   const onSubmit = async (data: BannerFormData) => {

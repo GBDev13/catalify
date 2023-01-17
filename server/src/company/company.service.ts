@@ -5,24 +5,20 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { Company } from './entities/company.entity';
 import { v4 as uuid } from 'uuid';
-import { FileService } from 'src/file/file.service';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { UpdateCompanyLinksDto } from './dto/update-company-links-dto';
-import { CompanyLinks } from '@prisma/client';
 import { MAX_COMPANY_BANNERS, MAX_COMPANY_LINKS } from 'src/config/limits';
 import { UpdateCompanyBannerImagesDto } from './dto/update-company-banner-images-dto';
+import { StorageService } from 'src/storage/storage.service';
 
 @Injectable()
 export class CompanyService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly fileService: FileService,
+    private readonly storageService: StorageService,
   ) {}
 
-  async create(
-    createCompanyDto: CreateCompanyDto,
-    user: User,
-  ): Promise<Company> {
+  async create(createCompanyDto: CreateCompanyDto, user: User) {
     const userAlreadyHaveCompany = await this.prisma.company.findFirst({
       where: {
         ownerId: user.id,
@@ -68,10 +64,11 @@ export class CompanyService {
       const mimeType = getMimeType(logo);
 
       if (mimeType) {
-        const createdLogo = await this.fileService.uploadBase64File({
+        const createdLogo = await this.storageService.uploadBase64Image({
           base64: logo,
-          fileName: `company-logo-${uuid()}.${mimeType.split('/')[1]}`,
+          fileName: `${uuid()}.${mimeType.split('/')[1]}`,
           fileType: mimeType,
+          path: 'company-logos/',
         });
 
         await this.prisma.company.update({
@@ -128,7 +125,7 @@ export class CompanyService {
     let newLogoId: string | null = companyExists?.logoId ?? null;
 
     if ((logo || logo === null) && companyExists.logoId) {
-      await this.fileService.deleteFile(companyExists.logo.key);
+      await this.storageService.deleteFile(companyExists.logo.key);
       newLogoId = null;
     }
 
@@ -136,10 +133,11 @@ export class CompanyService {
       const mimeType = getMimeType(logo);
 
       if (mimeType) {
-        const createdLogo = await this.fileService.uploadBase64File({
-          base64: logo,
-          fileName: `company-logo-${uuid()}.${mimeType.split('/')[1]}`,
+        const createdLogo = await this.storageService.uploadBase64Image({
           fileType: mimeType,
+          base64: logo,
+          fileName: `${uuid()}.${mimeType.split('/')[1]}`,
+          path: 'company-logos/',
         });
 
         newLogoId = createdLogo.id;
@@ -289,7 +287,7 @@ export class CompanyService {
       throw new HttpException('Banner não encontrado', HttpStatus.NOT_FOUND);
     }
 
-    await this.fileService.deleteFile(bannerExists.picture.key);
+    await this.storageService.deleteFile(bannerExists.picture.key);
   }
 
   async updateBannerImages(
@@ -348,10 +346,11 @@ export class CompanyService {
           const mimeType = getMimeType(banner.image);
 
           if (mimeType) {
-            const createdBanner = await this.fileService.uploadBase64File({
+            const createdBanner = await this.storageService.uploadBase64Image({
               base64: banner.image,
-              fileName: `company-banner-${uuid()}.${mimeType.split('/')[1]}`,
+              fileName: `${uuid()}.${mimeType.split('/')[1]}`,
               fileType: mimeType,
+              path: 'company-banners/',
             });
 
             await this.prisma.companyBanners.create({

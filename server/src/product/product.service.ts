@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { FileService } from 'src/file/file.service';
 import { ProductVariantService } from 'src/product-variant/product-variant.service';
+import { StorageService } from 'src/storage/storage.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateProductDto, VariationDto } from './dto/create-product.dto';
 import {
@@ -8,12 +8,13 @@ import {
   UpdateProductVariations,
 } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
+import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class ProductService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly fileService: FileService,
+    private readonly storageService: StorageService,
     private readonly productVariantService: ProductVariantService,
   ) {}
 
@@ -72,11 +73,12 @@ export class ProductService {
       if (images) {
         await Promise.all(
           images.map(async (image) => {
-            return await this.fileService.uploadFile(
-              image.buffer,
-              image.originalname,
-              createdProduct.id,
-            );
+            return this.storageService.uploadFile({
+              dataBuffer: image.buffer,
+              fileName: `${uuid()}.${image.mimetype.split('/')[1]}`,
+              productId: createdProduct.id,
+              path: 'products/',
+            });
           }),
         );
       }
@@ -135,7 +137,7 @@ export class ProductService {
       updateProductDto;
 
     if (imagesToRemove) {
-      await this.fileService.deleteFilesByIds(
+      await this.storageService.deleteFilesByIds(
         typeof imagesToRemove === 'string' ? [imagesToRemove] : imagesToRemove,
       );
     }
@@ -143,11 +145,12 @@ export class ProductService {
     if (images) {
       await Promise.all(
         images.map(async (image) => {
-          return await this.fileService.uploadFile(
-            image.buffer,
-            image.originalname,
+          return await this.storageService.uploadFile({
+            dataBuffer: image.buffer,
+            fileName: `${uuid()}.${image.mimetype.split('/')[1]}`,
             productId,
-          );
+            path: 'products/',
+          });
         }),
       );
     }
@@ -206,7 +209,7 @@ export class ProductService {
     if (productExists.pictures.length > 0) {
       await Promise.all(
         productExists.pictures.map(async (picture) => {
-          return await this.fileService.deleteFile(picture.key);
+          return await this.storageService.deleteFile(picture.key);
         }),
       );
     }

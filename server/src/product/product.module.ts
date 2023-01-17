@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-import { FileModule } from 'src/file/file.module';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { ProductVariantModule } from 'src/product-variant/product-variant.module';
+import { StorageModule } from 'src/storage/storage.module';
 import { ProductController } from './product.controller';
 import { ProductService } from './product.service';
 
 @Module({
-  imports: [PrismaModule, FileModule, ProductVariantModule],
+  imports: [PrismaModule, ProductVariantModule, StorageModule],
   controllers: [ProductController],
   providers: [ProductService],
   exports: [ProductService],

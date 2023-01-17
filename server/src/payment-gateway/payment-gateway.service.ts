@@ -81,16 +81,19 @@ export class PaymentGatewayService {
         );
         break;
       case 'customer.subscription.deleted':
+        console.log('customer.subscription.deleted');
         const subscriptionData = event.data.object;
         await this.subscriptionService.cancelSubscription(
           String(subscriptionData.customer),
         );
         break;
       case 'customer.subscription.updated':
+        console.log('customer.subscription.updated');
         const updatedSubscription = event.data.object;
         const { status, customer } = updatedSubscription;
 
         if (status === 'canceled') {
+          console.log('cancelou');
           await this.subscriptionService.cancelSubscription(String(customer));
         } else if (status === 'active') {
           const isExpired =
@@ -98,8 +101,10 @@ export class PaymentGatewayService {
             new Date();
 
           if (isExpired) {
+            console.log('expirou');
             await this.subscriptionService.expireSubscription(String(customer));
           } else if (updatedSubscription.cancel_at_period_end) {
+            console.log('cancelou 2');
             await this.subscriptionService.cancelSubscription(
               String(customer),
               updatedSubscription.cancel_at,
