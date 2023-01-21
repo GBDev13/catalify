@@ -305,7 +305,15 @@ export class CompanyService {
     companyId: string,
     updateCompanyBannerImagesDto: UpdateCompanyBannerImagesDto,
     user: User,
+    hasSubscription: boolean,
   ) {
+    if (!hasSubscription) {
+      throw new HttpException(
+        'Você não possui uma assinatura premium para adicionar banners',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     const companyExists = await this.prisma.company.findUnique({
       where: {
         id: companyId,
@@ -336,12 +344,12 @@ export class CompanyService {
       (x) => !banners.find((y) => y?.id === x.id),
     );
 
-    if (
-      companyBanners.length - bannersToRemove.length + bannersToAdd.length >
-      MAX_COMPANY_BANNERS
-    ) {
+    const newBannersCount =
+      companyBanners.length - bannersToRemove.length + bannersToAdd.length;
+
+    if (newBannersCount > LIMITS.PREMIUM.MAX_BANNERS) {
       throw new HttpException(
-        `A empresa só pode ter até ${MAX_COMPANY_BANNERS} banners`,
+        `Você atingiu o limite de ${LIMITS.PREMIUM.MAX_BANNERS} banners de destaque.`,
         HttpStatus.BAD_REQUEST,
       );
     }

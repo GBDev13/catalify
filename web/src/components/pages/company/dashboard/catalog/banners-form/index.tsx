@@ -5,7 +5,7 @@ import { FormProvider, useFieldArray, useForm } from "react-hook-form"
 import { toast } from "react-hot-toast"
 import { Button } from "src/components/ui/Button"
 import { FileUpload } from "src/components/ui/FileUpload"
-import { IMAGE_MAX_SIZE, IMAGE_TYPES } from "src/constants/constants"
+import { IMAGE_MAX_SIZE, IMAGE_TYPES, LIMITS } from "src/constants/constants"
 import { companyKeys } from "src/constants/query-keys"
 import { urlToFile } from "src/helpers/url-to-file"
 import { getCompanyBanners, UpdateBannerDto, updateCompanyBanners } from "src/services/company"
@@ -20,7 +20,8 @@ const bannersFormSchema = z.object({
     link: z.string().url({
       message: 'Link deve ser uma URL válida'
     }).optional().or(z.literal(''))
-  })).max(3, {
+  }))
+  .max(LIMITS.PREMIUM.MAX_BANNERS, {
     message: 'É permitido no máximo 3 banners'
   })
 })
@@ -104,7 +105,7 @@ export const BannersForm = () => {
           <label className="flex gap-1.5 text-xs font-medium text-slate-500 mb-1">
             Clique ou arraste uma imagem para adicionar um novo banner
           </label>
-          <FileUpload maxFiles={3} acceptedTypes={IMAGE_TYPES} maxSize={IMAGE_MAX_SIZE} onDrop={onDropFile} />
+          <FileUpload maxFiles={LIMITS.PREMIUM.MAX_BANNERS} acceptedTypes={IMAGE_TYPES} maxSize={IMAGE_MAX_SIZE} onDrop={onDropFile} />
         </div>
 
         <div className="mt-4 flex flex-col gap-4">

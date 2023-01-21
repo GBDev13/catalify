@@ -54,8 +54,6 @@ export const LinksForm = () => {
     resolver: zodResolver(linksFormSchema)
   })
 
-  console.log(errors)
-
   const queryClient = useQueryClient();
 
   const { data: existentLinks } = useQuery(companyKeys.companyLinks(companyId!), () => getCompanyLinks(companyId!), {

@@ -7,7 +7,6 @@ import {
   Param,
   Post,
   Put,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import { CompanyService } from './company.service';
@@ -80,22 +79,25 @@ export class CompanyController {
   }
 
   @Put('/:companyId/banners')
+  @UseGuards(SubscriptionGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async updateCompanyBanners(
     @Param('companyId') companyId: string,
     @Body() updateCompanyBannersDto: UpdateCompanyBannerImagesDto,
     @CurrentUser() user: User,
+    @CurrentSubscriptionIsValid() validSubscription: boolean,
   ) {
     return this.companyService.updateBannerImages(
       companyId,
       updateCompanyBannersDto,
       user,
+      validSubscription,
     );
   }
 
   @Get('/:companySlug/subscription')
   async getSubscriptionByCompanySlug(
-    @Query('companySlug') companySlug: string,
+    @Param('companySlug') companySlug: string,
   ) {
     return this.subscriptionService.getSubscriptionByCompanySlug(companySlug);
   }

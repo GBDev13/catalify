@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { SubscriptionStatus } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { STRIPE_CLIENT } from 'src/stripe/constants';
@@ -108,6 +108,13 @@ export class SubscriptionService {
   }
 
   async getSubscriptionByCompanySlug(companySlug: string) {
+    if (!companySlug) {
+      throw new HttpException(
+        'Ocorreu um erro ao buscar seu plano atual',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     const company = await this.prisma.company.findFirst({
       where: {
         slug: companySlug,
@@ -116,7 +123,7 @@ export class SubscriptionService {
         subscription: true,
       },
     });
-
+    console.log(companySlug);
     return company?.subscription ?? [];
   }
 }

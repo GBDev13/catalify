@@ -6,12 +6,17 @@ import { LinksForm } from "src/components/pages/company/dashboard/catalog/links-
 import { PageTitle } from "src/components/pages/shared/PageTitle";
 import { Button } from "src/components/ui/Button";
 import { TipIcon } from "src/components/ui/TipIcon";
+import { isSubscriptionValid } from "src/helpers/isSubscriptionValid";
+import { useCompany } from "src/store/company";
 
 export default function CatalogCustomization() {
   const router = useRouter();
 
   const finalSlashIndex = router.asPath.lastIndexOf('/')
   const previousPath = router.asPath.slice(0, finalSlashIndex)
+
+  const { currentSubscription } = useCompany();
+  const subscriptionIsValid = isSubscriptionValid(currentSubscription!)
 
   return (
     <>
@@ -40,7 +45,16 @@ export default function CatalogCustomization() {
             <TipIcon size={20} tip="Esses banners serão usados na página principal do catálogo, eles são ótimos para divulgar promoções ou algo do tipo." />
           </h4>
 
-          <BannersForm />
+          {subscriptionIsValid ? (
+            <BannersForm />
+          ) : (
+            <div className="flex flex-col items-center gap-2 text-sm">
+              <p className="text-slate-500 text-center">Para acessar essa funcionalidade, é necessário ter uma <span className="text-indigo-500 font-semibold">assinatura premium.</span></p>
+              <Link passHref href="/company/dashboard/plans">
+                <Button size="SMALL" className="!px-10 !py-2.5 !min-h-0">Ver planos</Button>
+              </Link>
+            </div>
+          )}
         </div>
       </section>
     </>

@@ -25,5 +25,6 @@ export const LIMITS = {
   PREMIUM: {
     MAX_IMAGES_PER_PRODUCT: 5,
     MAX_CONTACT_LINKS: 10,
+    MAX_BANNERS: 3,
   },
 };
