@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { CompanyService } from './company.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
@@ -15,10 +16,14 @@ import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { UpdateCompanyLinksDto } from './dto/update-company-links-dto';
 import { UpdateCompanyBannerImagesDto } from './dto/update-company-banner-images-dto';
+import { SubscriptionService } from 'src/subscription/subscription.service';
 
 @Controller('/company')
 export class CompanyController {
-  constructor(private readonly companyService: CompanyService) {}
+  constructor(
+    private readonly companyService: CompanyService,
+    private readonly subscriptionService: SubscriptionService,
+  ) {}
 
   @Get()
   async getUserCompany(@CurrentUser() user: User) {
@@ -80,5 +85,12 @@ export class CompanyController {
       updateCompanyBannersDto,
       user,
     );
+  }
+
+  @Get('/:companySlug/subscription')
+  async getSubscriptionByCompanySlug(
+    @Query('companySlug') companySlug: string,
+  ) {
+    return this.subscriptionService.getSubscriptionByCompanySlug(companySlug);
   }
 }

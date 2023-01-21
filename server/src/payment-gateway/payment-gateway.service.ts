@@ -27,11 +27,15 @@ export class PaymentGatewayService {
         email: customerEmail,
       },
       include: {
-        subscription: true,
+        company: {
+          include: {
+            subscription: true,
+          },
+        },
       },
     });
 
-    if (user.subscription.some((x) => x.status === 'ACTIVE')) {
+    if (user?.company?.subscription.some((x) => x.status === 'ACTIVE')) {
       throw new HttpException('Você já possui uma inscrição ativa', 400);
     }
 
@@ -122,9 +126,12 @@ export class PaymentGatewayService {
       where: {
         email: userEmail,
       },
+      include: {
+        company: true,
+      },
     });
 
-    if (user?.customerId) return user.customerId;
+    if (user?.company?.customerId) return user.company.customerId;
 
     if (!user) {
       throw new HttpException('User not found', 404);
@@ -138,9 +145,9 @@ export class PaymentGatewayService {
       },
     });
 
-    await this.prisma.user.update({
+    await this.prisma.company.update({
       where: {
-        id: user.id,
+        id: user.company.id,
       },
       data: {
         customerId: customer.id,

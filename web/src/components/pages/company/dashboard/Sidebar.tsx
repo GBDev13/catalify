@@ -6,11 +6,15 @@ import { MouseEvent, useEffect, useState } from 'react'
 import { BiBookHeart } from 'react-icons/bi'
 import { FiSettings, FiHome, FiShoppingCart, FiLogOut, FiMenu, FiX } from 'react-icons/fi'
 import { CgWebsite } from 'react-icons/cg'
-import { HiOutlineChevronDown } from 'react-icons/hi'
+import { HiOutlineChevronDown, HiOutlineCurrencyDollar } from 'react-icons/hi'
 import { Divider } from 'src/components/ui/Divider'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useBreakpoint } from 'src/hooks/useBreakpoint'
 import { fadeAnim } from 'src/lib/animations'
+import { useCompany } from 'src/store/company'
+import { isSubscriptionValid } from 'src/helpers/isSubscriptionValid'
+import { Tooltip } from 'src/components/ui/Tooltip'
+import { AiOutlineDollar } from 'react-icons/ai'
 
 const sidebarItems = [
   {
@@ -47,7 +51,12 @@ const sidebarItems = [
         path: "/company/dashboard/catalog/customization"
       }
     ]
-  }
+  },
+  {
+    icon: <AiOutlineDollar size={20} />,
+    label: "Gerenciar Plano",
+    path: "/company/dashboard/plan"
+  },
 ]
 
 type SidebarItemProps = {
@@ -150,6 +159,10 @@ export const Sidebar = () => {
     }
   }, [isMobile, sideBarOpen])
 
+  const { currentSubscription } = useCompany()
+
+  const subscriptionIsValid = isSubscriptionValid(currentSubscription!)
+
   return (
     <>
       <AnimatePresence>
@@ -201,13 +214,16 @@ export const Sidebar = () => {
             <div className="p-4 bg-indigo-900 mt-auto flex items-center justify-between gap-4">
               <div className="flex flex-col gap-1">
                 <strong className="text-sm font-normal">{`${session?.user?.firstName} ${session?.user?.lastName ?? ''}`}</strong>
-                <button className="bg-green-400 text-slate-200 p-1 rounded text-xs">CONTA GRÁTIS</button>
+                <Tooltip content="Gerenciar Plano">
+                  {subscriptionIsValid ? (
+                    <Link className="text-slate-100 bg-indigo-500 hover:bg-indigo-400 transition-colors text-xs text-center py-0.5 px-1 rounded" href="/company/dashboard/plan">PLANO PREMIUM</Link>
+                  ) : (
+                    <Link className="text-slate-100 bg-blue-500 hover:bg-blue-400 transition-colors text-xs text-center py-0.5 px-1 rounded" href="/company/dashboard/plan">PLANO GRATIS</Link>
+                  )}
+                </Tooltip>
               </div>
     
               <div className="flex items-center gap-2">
-                <button>
-                  <FiSettings />
-                </button>
                 <button onClick={handleSignOut}>
                   <FiLogOut />
                 </button>

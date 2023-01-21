@@ -12,22 +12,22 @@ export class SubscriptionService {
   ) {}
 
   async createSubscription(customerId: string) {
-    const user = await this.prisma.user.findFirst({
+    const company = await this.prisma.company.findFirst({
       where: {
         customerId,
       },
     });
 
-    const userHasSubscription = await this.prisma.subscription.findFirst({
+    const companyHasSubscription = await this.prisma.subscription.findFirst({
       where: {
-        userId: user.id,
+        companyId: company.id,
       },
     });
 
-    if (userHasSubscription) {
+    if (companyHasSubscription) {
       await this.prisma.subscription.update({
         where: {
-          id: userHasSubscription.id,
+          id: companyHasSubscription.id,
         },
         data: {
           status: SubscriptionStatus.ACTIVE,
@@ -37,30 +37,30 @@ export class SubscriptionService {
 
     await this.prisma.subscription.create({
       data: {
-        userId: user.id,
+        companyId: company.id,
         status: SubscriptionStatus.ACTIVE,
       },
     });
   }
 
   async cancelSubscription(customerId: string, cancelAt?: number) {
-    const user = await this.prisma.user.findFirst({
+    const company = await this.prisma.company.findFirst({
       where: {
         customerId,
       },
     });
 
-    const userHasSubscription = await this.prisma.subscription.findFirst({
+    const companyHasSubscription = await this.prisma.subscription.findFirst({
       where: {
-        userId: user.id,
+        companyId: company.id,
       },
     });
 
-    if (userHasSubscription) {
+    if (companyHasSubscription) {
       if (cancelAt) {
         await this.prisma.subscription.update({
           where: {
-            id: userHasSubscription.id,
+            id: companyHasSubscription.id,
           },
           data: {
             status: SubscriptionStatus.CANCELING,
@@ -73,7 +73,7 @@ export class SubscriptionService {
 
       await this.prisma.subscription.update({
         where: {
-          id: userHasSubscription.id,
+          id: companyHasSubscription.id,
         },
         data: {
           status: SubscriptionStatus.CANCELED,
@@ -83,27 +83,40 @@ export class SubscriptionService {
   }
 
   async expireSubscription(customerId: string) {
-    const user = await this.prisma.user.findFirst({
+    const company = await this.prisma.company.findFirst({
       where: {
         customerId,
       },
     });
 
-    const userHasSubscription = await this.prisma.subscription.findFirst({
+    const companyHasSubscription = await this.prisma.subscription.findFirst({
       where: {
-        userId: user.id,
+        companyId: company.id,
       },
     });
 
-    if (userHasSubscription) {
+    if (companyHasSubscription) {
       await this.prisma.subscription.update({
         where: {
-          id: userHasSubscription.id,
+          id: companyHasSubscription.id,
         },
         data: {
           status: SubscriptionStatus.EXPIRED,
         },
       });
     }
+  }
+
+  async getSubscriptionByCompanySlug(companySlug: string) {
+    const company = await this.prisma.company.findFirst({
+      where: {
+        slug: companySlug,
+      },
+      include: {
+        subscription: true,
+      },
+    });
+
+    return company?.subscription ?? [];
   }
 }

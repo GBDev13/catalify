@@ -53,3 +53,8 @@ export const updateCompanyBanners = async (companyId: string, banners: UpdateBan
 
   return await api.put(`/company/${companyId}/banners`, { banners: bannersWithBase64 })
 }
+
+export const getCompanySubscriptionBySlug = async (slug: string) => {
+  const { data } = await api.get<Company.Subscription[]>(`/company/${slug}/subscription`)
+  return data
+}

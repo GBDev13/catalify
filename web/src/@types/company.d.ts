@@ -19,4 +19,14 @@ declare namespace Company {
     url?: string
     picture: string
   }
+
+  export type SubscriptionStatus =  "ACTIVE" | "CANCELED" | "CANCELING" | "EXPIRED"
+
+  export type Subscription = {
+    expiresAt: Date | null;
+    id: string;
+    status: SubscriptionStatus;
+    createdAt: string;
+    updatedAt: string;
+  }
 }

@@ -14,7 +14,7 @@ const similarFeatures = [
   'Importação de produtos via CSV',
 ]
 
-const plans = [
+export const PLANS = [
   {
     name: 'Plano gratuito',
     description: 'Continue gratuitamente com acesso a recursos limitados.',
@@ -71,7 +71,7 @@ export const Pricing = () => {
 
   return (
     <section className="w-full mt-16 gap-6 flex flex-col-reverse lg:grid lg:grid-cols-2">
-      {plans.map(plan => {
+      {PLANS.map(plan => {
         const formattedPrice = formatPrice(plan.price)
         const isPaid = plan.price > 0
 

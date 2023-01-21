@@ -20,9 +20,6 @@ model User {
   company   Company? @relation(fields: [companyId], references: [id])
   companyId String?
 
-  customerId   String?
-  subscription Subscription[]
-
   @@map("users")
 }
 
@@ -46,9 +43,12 @@ model Company {
   logo   File?   @relation(fields: [logoId], references: [id])
   logoId String?
 
-  links   CompanyLinks[]
-  banners CompanyBanners[]
-  order   Order[]
+  customerId String?
+
+  links        CompanyLinks[]
+  banners      CompanyBanners[]
+  order        Order[]
+  subscription Subscription[]
 
   @@map("companies")
 }
@@ -229,8 +229,8 @@ model Subscription {
 
   expiresAt DateTime?
 
-  user   User   @relation(fields: [userId], references: [id])
-  userId String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId String
 
   @@map("subscriptions")
 }

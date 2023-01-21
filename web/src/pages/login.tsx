@@ -58,10 +58,7 @@ export default function Login() {
           <Divider className="my-8" />
 
           <div className="flex items-center justify-between">
-            <Link href="/forgot-password" className="text-slate-400 text-sm hover:text-indigo-500 transition-colors">
-              Esqueceu a senha?
-            </Link>
-            <Link href="/onboarding" className="text-slate-400 text-sm hover:text-indigo-500 transition-colors">
+            <Link href="/onboarding" className="text-slate-400 text-sm hover:text-indigo-500 transition-colors ml-auto">
               Criar sua conta
             </Link>
           </div>

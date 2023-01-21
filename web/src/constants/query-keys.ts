@@ -8,6 +8,7 @@ export const companyKeys = {
   userCompanyInfo: (userId: string) => ['company', userId],
   companyLinks: (companyId: string) => [companyId, 'links'],
   companyBanners: (companyId: string) => [companyId, 'banners'],
+  companySubscription: (companyId: string) => [companyId, 'subscription'],
 }
 
 export const catalogKeys = {
