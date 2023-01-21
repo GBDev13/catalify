@@ -55,6 +55,21 @@ export class ProductService {
 
       const { images, variations, ...dto } = createProductDto;
 
+      if (
+        !hasSubscription &&
+        images.length > LIMITS.FREE.MAX_IMAGES_PER_PRODUCT
+      ) {
+        throw new HttpException(
+          `Você atingiu o limite de imagens por produto para sua conta gratuita. (${LIMITS.FREE.MAX_IMAGES_PER_PRODUCT} imagens por produto)`,
+          HttpStatus.BAD_REQUEST,
+        );
+      } else if (images.length > LIMITS.PREMIUM.MAX_IMAGES_PER_PRODUCT) {
+        throw new HttpException(
+          `Você atingiu o limite de imagens por produto. (${LIMITS.PREMIUM.MAX_IMAGES_PER_PRODUCT} imagens por produto)`,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
       const createdProduct = await this.prisma.product.create({
         data: {
           ...dto,
@@ -129,10 +144,14 @@ export class ProductService {
     updateProductDto: UpdateProductDto & { images: Express.Multer.File[] },
     companyId: string,
     productId: string,
+    hasSubscription: boolean,
   ) {
     const productExists = await this.prisma.product.findUnique({
       where: {
         id: productId,
+      },
+      include: {
+        pictures: true,
       },
     });
 
@@ -160,6 +179,31 @@ export class ProductService {
     }
 
     if (images) {
+      const removeCount = imagesToRemove
+        ? typeof imagesToRemove === 'string'
+          ? 1
+          : imagesToRemove.length
+        : 0;
+      const currentLength = productExists.pictures.length - removeCount;
+
+      if (
+        !hasSubscription &&
+        currentLength + images.length > LIMITS.FREE.MAX_IMAGES_PER_PRODUCT
+      ) {
+        throw new HttpException(
+          `Você atingiu o limite de imagens por produto para sua conta gratuita. (${LIMITS.FREE.MAX_IMAGES_PER_PRODUCT} imagens por produto)`,
+          HttpStatus.BAD_REQUEST,
+        );
+      } else if (
+        currentLength + images.length >
+        LIMITS.PREMIUM.MAX_IMAGES_PER_PRODUCT
+      ) {
+        throw new HttpException(
+          `Você atingiu o limite de imagens por produto. (${LIMITS.PREMIUM.MAX_IMAGES_PER_PRODUCT} imagens por produto)`,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
       await Promise.all(
         images.map(async (image) => {
           return await this.storageService.uploadFile({
@@ -270,7 +314,18 @@ export class ProductService {
     return product;
   }
 
-  async toggleHighlight(companyId: string, productId: string) {
+  async toggleHighlight(
+    companyId: string,
+    productId: string,
+    hasSubscription: boolean,
+  ) {
+    if (!hasSubscription) {
+      throw new HttpException(
+        'Você não possui uma assinatura premium para destacar produtos',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     const product = await this.prisma.product.findUnique({
       where: {
         id: productId,

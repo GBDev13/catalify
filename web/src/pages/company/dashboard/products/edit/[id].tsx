@@ -16,8 +16,9 @@ import { ControlledEditor } from "src/components/ui/Editor/controlled";
 import { ControlledFileUpload } from "src/components/ui/FileUpload/controlled";
 import { ControlledInput } from "src/components/ui/Input/controlled";
 import { ControlledSelect } from "src/components/ui/Select/controlled";
-import { IMAGE_MAX_SIZE, IMAGE_TYPES } from "src/constants/constants";
+import { IMAGE_MAX_SIZE, IMAGE_TYPES, LIMITS } from "src/constants/constants";
 import { productsKey } from "src/constants/query-keys";
+import { isSubscriptionValid } from "src/helpers/isSubscriptionValid";
 import { ActionType, ChangeType, onChangeExistentVariation, parseEditedVariations, SaveItem } from "src/helpers/on-change-existent-variations";
 import { urlToFile } from "src/helpers/url-to-file";
 import { useUnsavedChangesWarning } from "src/hooks/useUnsavedChangesWarning";
@@ -105,7 +106,8 @@ export type EditProductFormData = z.infer<typeof editProductFormSchema>
 
 export default function EditProduct() {
   const router = useRouter()
-  const { company } = useCompany()
+  const { company, currentSubscription } = useCompany()
+  const subscriptionIsValid = isSubscriptionValid(currentSubscription!)
   const companyId = company?.id
 
   const productId = String(router?.query?.id ?? '');
@@ -154,7 +156,7 @@ export default function EditProduct() {
   const { mutateAsync: handleEditProduct } = useMutation((data: EditProductDto) => toast.promise(editProduct(productId, companyId!, data), {
     loading: 'Editando produto...',
     success: 'Produto editado com sucesso!',
-    error: 'Erro ao editar produto',
+    error: (err) => err?.response?.data?.message ?? 'Erro ao editar produto. Tente novamente mais tarde.'
   }), {
     onSuccess: () => {
       reset()
@@ -168,27 +170,29 @@ export default function EditProduct() {
   const [removedImages, setRemovedImages] = useState<string[]>([])
 
   const onSubmit = async (data: EditProductFormData) => {
-    if (!isDirty) {
-      router.push('/company/dashboard/products')
-      return
-    }
-
-    const removedAllVariations = product?.variants?.length && !data.hasVariations;
-    await handleEditProduct({
-      ...data,
-      price: data.price / 100,
-      promoPrice: data?.promoPrice ? data.promoPrice / 100 : undefined,
-      variations: removedAllVariations ? {
-        added: [], edited: [], removed: product.variants.map(x => ({
-          id: x.id,
-          actionType: 'remove',
-          type: 'variation'
-        }))
-      } : parseEditedVariations(variationsChangesToSave, data.variations),
-      images: data?.images ? data.images.filter(image => !removedImages.includes(image.name) && !product?.pictures?.some(x => x.id === image.name)) : undefined,
-      imagesToRemove: removedImages,
-      categoryId: data?.category?.value ?? undefined
-    })
+    try {
+      if (!isDirty) {
+        router.push('/company/dashboard/products')
+        return
+      }
+  
+      const removedAllVariations = product?.variants?.length && !data.hasVariations;
+      await handleEditProduct({
+        ...data,
+        price: data.price / 100,
+        promoPrice: data?.promoPrice ? data.promoPrice / 100 : undefined,
+        variations: removedAllVariations ? {
+          added: [], edited: [], removed: product.variants.map(x => ({
+            id: x.id,
+            actionType: 'remove',
+            type: 'variation'
+          }))
+        } : parseEditedVariations(variationsChangesToSave, data.variations),
+        images: data?.images ? data.images.filter(image => !removedImages.includes(image.name) && !product?.pictures?.some(x => x.id === image.name)) : undefined,
+        imagesToRemove: removedImages,
+        categoryId: data?.category?.value ?? undefined
+      })
+    } catch {}
   }
 
   const { data: categories } = useQuery(productsKey.categories, () => getCategories(companyId!), {
@@ -231,6 +235,8 @@ export default function EditProduct() {
       setValue('promoPrice', 0)
     }
   }, [hasPromoPrice, setValue])
+
+  const maxImages = subscriptionIsValid ? LIMITS.PREMIUM.MAX_IMAGES_PER_PRODUCT : LIMITS.FREE.MAX_IMAGES_PER_PRODUCT;
 
   return (
     <>
@@ -277,7 +283,7 @@ export default function EditProduct() {
 
             <div className="flex flex-col gap-4">
               <h4 className="text-2xl font-semibold text-slate-500 border-b border-b-slate-300 pb-4 mb-6">Fotos do Produto</h4>
-              <ControlledFileUpload control={control} fieldName="images" onRemove={handleRemoveImage} withPreview isMultiple maxFiles={4} acceptedTypes={IMAGE_TYPES} maxSize={IMAGE_MAX_SIZE} />
+              <ControlledFileUpload control={control} fieldName="images" onRemove={handleRemoveImage} withPreview isMultiple maxFiles={maxImages} acceptedTypes={IMAGE_TYPES} maxSize={IMAGE_MAX_SIZE} />
 
               {hasVariations && <ProductVariations onChangeExistent={handleChangeExistentVariation} />}
             </div>

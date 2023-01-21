@@ -54,7 +54,7 @@ export class ProductController {
             throw new HttpException(
               {
                 status: HttpStatus.BAD_REQUEST,
-                error: 'Variations are not valid',
+                error: 'Variações inválidas',
               },
               HttpStatus.BAD_REQUEST,
             );
@@ -72,7 +72,7 @@ export class ProductController {
       throw new HttpException(
         {
           status: HttpStatus.BAD_REQUEST,
-          error: 'Product is not valid',
+          error: 'Produto inválido',
         },
         HttpStatus.BAD_REQUEST,
       );
@@ -81,17 +81,20 @@ export class ProductController {
 
   @Put('/:companyId/:productId')
   @UseInterceptors(FilesInterceptor('images'))
+  @UseGuards(SubscriptionGuard)
   @HttpCode(HttpStatus.OK)
   async update(
     @Body() updateProductDto: UpdateProductDto,
     @UploadedFiles() images: Express.Multer.File[],
     @Param('companyId') companyId: string,
     @Param('productId') productId: string,
+    @CurrentSubscriptionIsValid() validSubscription: boolean,
   ) {
     return this.productService.update(
       { ...updateProductDto, images },
       companyId,
       productId,
+      validSubscription,
     );
   }
 
@@ -164,11 +167,17 @@ export class ProductController {
   }
 
   @Patch('/:companyId/:productId/highlight')
+  @UseGuards(SubscriptionGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async toggleHighlight(
     @Param('companyId') companyId: string,
     @Param('productId') productId: string,
+    @CurrentSubscriptionIsValid() validSubscription: boolean,
   ) {
-    return this.productService.toggleHighlight(companyId, productId);
+    return this.productService.toggleHighlight(
+      companyId,
+      productId,
+      validSubscription,
+    );
   }
 }

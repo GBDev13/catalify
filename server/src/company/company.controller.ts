@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { CompanyService } from './company.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
@@ -17,6 +18,8 @@ import { UpdateCompanyDto } from './dto/update-company.dto';
 import { UpdateCompanyLinksDto } from './dto/update-company-links-dto';
 import { UpdateCompanyBannerImagesDto } from './dto/update-company-banner-images-dto';
 import { SubscriptionService } from 'src/subscription/subscription.service';
+import { SubscriptionGuard } from 'src/subscription/guards/subscription.guard';
+import { CurrentSubscriptionIsValid } from 'src/subscription/decorators/current-subscription.decorator';
 
 @Controller('/company')
 export class CompanyController {
@@ -55,16 +58,19 @@ export class CompanyController {
   }
 
   @Put('/:companyId/links')
+  @UseGuards(SubscriptionGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async updateCompanyLinks(
     @Param('companyId') companyId: string,
     @Body() updateCompanyLinksDto: UpdateCompanyLinksDto,
     @CurrentUser() user: User,
+    @CurrentSubscriptionIsValid() validSubscription: boolean,
   ) {
     return this.companyService.updateLinks(
       companyId,
       updateCompanyLinksDto,
       user,
+      validSubscription,
     );
   }
 

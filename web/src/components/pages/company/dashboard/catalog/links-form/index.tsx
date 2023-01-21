@@ -7,7 +7,9 @@ import { FiPlus, FiX } from "react-icons/fi"
 import { Button } from "src/components/ui/Button"
 import { Input } from "src/components/ui/Input"
 import { Tooltip } from "src/components/ui/Tooltip"
+import { LIMITS } from "src/constants/constants"
 import { companyKeys } from "src/constants/query-keys"
+import { isSubscriptionValid } from "src/helpers/isSubscriptionValid"
 import { getCompanyLinks, updateCompanyLinks } from "src/services/company"
 import { useCompany } from "src/store/company"
 import { z } from "zod"
@@ -19,19 +21,40 @@ const linksFormSchema = z.object({
     })
   }, {
     required_error: 'Insira um link'
-  })).max(8, {
-    message: 'Você pode adicionar até 8 links'
+  }))
+}).superRefine((data, ctx) => {
+  let repeatedIndex: number[] = []
+  const repeated = data.links.filter((x, i, a) => {
+    if(a.findIndex(y => y.value === x.value) !== i) {
+      repeatedIndex.push(i)
+      return true
+    }
+    return false
   })
+  if(repeated.length > 0) {
+    repeatedIndex.forEach(x => {
+      ctx.addIssue({
+        code: "custom",
+        message: "Link repetido",
+        path: [`links.${x}.value`]
+      })
+    })
+  }
 })
 
 type LinksFormData = z.infer<typeof linksFormSchema>
 
 export const LinksForm = () => {
   const companyId = useCompany(s => s.company?.id);
+  const currentSubscription = useCompany(s => s.currentSubscription);
 
-  const { control, handleSubmit, register, reset, formState: { errors, isDirty, isSubmitting } } = useForm<LinksFormData>({
+  const subscriptionIsValid = isSubscriptionValid(currentSubscription!)
+
+  const { control, handleSubmit, register, reset, setError, formState: { errors, isDirty, isSubmitting } } = useForm<LinksFormData>({
     resolver: zodResolver(linksFormSchema)
   })
+
+  console.log(errors)
 
   const queryClient = useQueryClient();
 
@@ -59,7 +82,16 @@ export const LinksForm = () => {
     }
   })
 
+  const linksLimit = subscriptionIsValid ? LIMITS.PREMIUM.MAX_CONTACT_LINKS : LIMITS.FREE.MAX_CONTACT_LINKS
+
   const onSubmit = async (data: LinksFormData) => {
+    if (data.links.length > linksLimit) {
+      setError('links', {
+        type: 'custom',
+        message: `Você atingiu o limite de links. Limite: ${linksLimit}`
+      })
+      return;
+    }
     try {
       await handleUpdateLinks(data.links.map(x => x.value))
     } catch {}

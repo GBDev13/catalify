@@ -22,6 +22,8 @@ export default function CompanyProducts() {
   const { company, currentSubscription } = useCompany()
   const companyId = company?.id
 
+  const subscriptionIsValid = isSubscriptionValid(currentSubscription!)
+
   const { data: products } = useQuery(productsKey.all, () => getProducts(companyId!), {
     enabled: !!companyId
   })
@@ -41,7 +43,7 @@ export default function CompanyProducts() {
   const { mutate: handleHighlightProduct } = useMutation((productId: string) => toast.promise(toggleHighlight(productId, companyId!), {
     loading: 'Alterando destaque...',
     success: 'Destaque alterado com sucesso!',
-    error: 'Erro ao alterar destaque'
+    error: (err) => err.response?.data?.message || 'Erro ao alterar destaque'
   }), {
     onSuccess(_, productId) {
       queryClient.setQueryData<Products.Product[]>(productsKey.all, (oldData) => {
@@ -105,13 +107,15 @@ export default function CompanyProducts() {
 
           return (
             <div className="flex items-center">
-              <Tooltip content={isHighlighted ? "Remover destaque" : "Destacar produto"}>
-                <button onClick={() => handleHighlightProduct(productId)} className={clsx("text-slate-500 p-2 hover:text-indigo-500", {
-                  "text-indigo-400": isHighlighted,
-                })}>
-                  {isHighlighted ? <AiFillStar size={25} /> : <AiOutlineStar size={25} />}
-                </button>
-              </Tooltip>
+              {subscriptionIsValid && (
+                <Tooltip content={isHighlighted ? "Remover destaque" : "Destacar produto"}>
+                  <button onClick={() => handleHighlightProduct(productId)} className={clsx("text-slate-500 p-2 hover:text-indigo-500", {
+                    "text-indigo-400": isHighlighted,
+                  })}>
+                    {isHighlighted ? <AiFillStar size={25} /> : <AiOutlineStar size={25} />}
+                  </button>
+                </Tooltip>
+              )}
               <Tooltip content="Editar produto">
                 <Link href={`./products/edit/${productId}`}>
                   <Button variant="TEXT">
@@ -135,10 +139,8 @@ export default function CompanyProducts() {
         }
       }
     ],
-    []
+    [handleDeleteProduct, handleHighlightProduct, subscriptionIsValid]
   );
-
-  const subscriptionIsValid = isSubscriptionValid(currentSubscription!)
 
    const checkCount = (e: MouseEvent) => {
     if(!subscriptionIsValid && products?.length >= LIMITS.FREE.MAX_PRODUCTS) {

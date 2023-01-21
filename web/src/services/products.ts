@@ -63,34 +63,30 @@ export type EditProductDto = Omit<Products.Product, 'category' | 'id' | 'variant
 }
 
 export const editProduct = async (productId: string, companyId: string, editProductDto: EditProductDto) => {
-  try {
-    const formData = new FormData()
+  const formData = new FormData()
 
-    formData.append('name', editProductDto.name)
-    formData.append('price', editProductDto.price.toString())
-    formData.append('description', editProductDto.description)
-    if (editProductDto?.promoPrice) formData.append('promoPrice', editProductDto.promoPrice.toString())
-    if (editProductDto?.categoryId) formData.append('categoryId', editProductDto.categoryId)
-    if(editProductDto?.variations) formData.append('variations', JSON.stringify(editProductDto.variations))
+  formData.append('name', editProductDto.name)
+  formData.append('price', editProductDto.price.toString())
+  formData.append('description', editProductDto.description)
+  if (editProductDto?.promoPrice) formData.append('promoPrice', editProductDto.promoPrice.toString())
+  if (editProductDto?.categoryId) formData.append('categoryId', editProductDto.categoryId)
+  if(editProductDto?.variations) formData.append('variations', JSON.stringify(editProductDto.variations))
 
-    if(editProductDto.imagesToRemove?.length > 0) {
-      editProductDto.imagesToRemove.forEach((image) => {
-        formData.append('imagesToRemove', image)
-      })
-    }
-
-    if(editProductDto?.images) {
-      editProductDto.images.forEach((image) => {
-        formData.append(`images`, image)
-      })
-    }
-
-    const response = await api.put(`/product/${companyId}/${productId}`, formData)
-
-    return response
-  } catch (err) {
-    return err
+  if(editProductDto.imagesToRemove?.length > 0) {
+    editProductDto.imagesToRemove.forEach((image) => {
+      formData.append('imagesToRemove', image)
+    })
   }
+
+  if(editProductDto?.images) {
+    editProductDto.images.forEach((image) => {
+      formData.append(`images`, image)
+    })
+  }
+
+  const response = await api.put(`/product/${companyId}/${productId}`, formData)
+
+  return response
 }
 
 export const deleteProduct = async (productId: string, companyId: string) => {

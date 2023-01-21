@@ -6,6 +6,11 @@ export const LIMITS = {
   FREE: {
     MAX_CATEGORIES: 5,
     MAX_PRODUCTS: 10,
+    MAX_IMAGES_PER_PRODUCT: 3,
+    MAX_CONTACT_LINKS: 2,
   },
-  PREMIUM: {},
+  PREMIUM: {
+    MAX_IMAGES_PER_PRODUCT: 5,
+    MAX_CONTACT_LINKS: 10,
+  },
 };

@@ -7,7 +7,11 @@ import { Company } from './entities/company.entity';
 import { v4 as uuid } from 'uuid';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { UpdateCompanyLinksDto } from './dto/update-company-links-dto';
-import { MAX_COMPANY_BANNERS, MAX_COMPANY_LINKS } from 'src/config/limits';
+import {
+  LIMITS,
+  MAX_COMPANY_BANNERS,
+  MAX_COMPANY_LINKS,
+} from 'src/config/limits';
 import { UpdateCompanyBannerImagesDto } from './dto/update-company-banner-images-dto';
 import { StorageService } from 'src/storage/storage.service';
 
@@ -190,10 +194,14 @@ export class CompanyService {
     companyId: string,
     updateCompanyLinksDto: UpdateCompanyLinksDto,
     user: User,
+    hasSubscription: boolean,
   ) {
     const companyExists = await this.prisma.company.findUnique({
       where: {
         id: companyId,
+      },
+      include: {
+        links: true,
       },
     });
 
@@ -210,9 +218,7 @@ export class CompanyService {
 
     const { links: urls } = updateCompanyLinksDto;
 
-    const existingLinks = await this.prisma.companyLinks.findMany({
-      where: { companyId },
-    });
+    const existingLinks = companyExists.links;
 
     const existingUrls = new Set(existingLinks.map((link) => link.url));
     const newUrls = urls.filter((url) => !existingUrls.has(url));
@@ -224,13 +230,18 @@ export class CompanyService {
       return matchingLink && matchingLink.url !== url;
     });
 
-    if (
-      existingLinks.length - deletedUrls.length + newUrls.length >
-      MAX_COMPANY_LINKS
-    ) {
+    const newLinksCount =
+      existingLinks.length - deletedUrls.length + newUrls.length;
+
+    if (!hasSubscription && newLinksCount > LIMITS.FREE.MAX_CONTACT_LINKS) {
       throw new HttpException(
-        `A empresa só pode ter até ${MAX_COMPANY_LINKS} links`,
-        HttpStatus.BAD_REQUEST,
+        `Você atingiu o limite de ${LIMITS.FREE.MAX_CONTACT_LINKS} links de contato para sua conta gratuita.`,
+        HttpStatus.FORBIDDEN,
+      );
+    } else if (newLinksCount > LIMITS.PREMIUM.MAX_CONTACT_LINKS) {
+      throw new HttpException(
+        `Você atingiu o limite de ${LIMITS.PREMIUM.MAX_CONTACT_LINKS} links de contato.`,
+        HttpStatus.FORBIDDEN,
       );
     }
 
