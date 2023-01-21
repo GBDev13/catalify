@@ -49,7 +49,7 @@ const CreateCategoryForm = ({ onSuccess, initialData }: CreateCategoryFormProps)
   const { mutateAsync: handleCreateCategory } = useMutation((category: string) => toast.promise(createCategory(category, companyId!), {
     loading: 'Criando categoria...',
     success: 'Categoria criada com sucesso!',
-    error: 'Erro ao criar categoria'
+    error: (err) => err?.response?.data?.message ?? 'Erro ao criar categoria'
   }), {
     onSuccess: () => {
       queryClient.invalidateQueries(productsKey.categories)
@@ -60,7 +60,7 @@ const CreateCategoryForm = ({ onSuccess, initialData }: CreateCategoryFormProps)
   const { mutateAsync: handleUpdateCategory } = useMutation((category: string) => toast.promise(updateCategory({ id: initialData?.id!, name: category }, companyId!), {
     loading: 'Atualizando categoria...',
     success: 'Categoria atualizada com sucesso!',
-    error: 'Erro ao atualizar categoria'
+    error: (err) => err?.response?.data?.message ?? 'Erro ao atualizar categoria'
   }), {
     onSuccess: () => {
       queryClient.invalidateQueries(productsKey.categories)
@@ -69,11 +69,13 @@ const CreateCategoryForm = ({ onSuccess, initialData }: CreateCategoryFormProps)
   })
 
   const onSubmit = async (data: CreateCategoryFormData) => {
-    if(initialData) {
-      await handleUpdateCategory(data.name)
-    } else {
-      await handleCreateCategory(data.name)
-    }
+    try {
+      if(initialData) {
+        await handleUpdateCategory(data.name)
+      } else {
+        await handleCreateCategory(data.name)
+      }
+    } catch {}
   }
 
   return (

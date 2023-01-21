@@ -118,7 +118,7 @@ export default function NewProduct() {
   const { mutateAsync: handleCreateProduct } = useMutation((data: CreateProductDto) => toast.promise(createProduct(data, companyId!), {
     loading: 'Criando produto...',
     success: 'Produto criado com sucesso!',
-    error: 'Erro ao criar produto',
+    error: (err) => err.response?.data?.message || 'Erro ao criar produto'
   }), {
     onSuccess: () => {
       reset()
@@ -128,18 +128,20 @@ export default function NewProduct() {
   })
 
   const onSubmit = async (data: NewProductFormData) => {
-    await handleCreateProduct({
-      categoryId: data.category?.value,
-      description: data.description,
-      images: data.images,
-      name: data.name,
-      price: data.price / 100,
-      promoPrice: data?.promoPrice ? data.promoPrice / 100 : undefined,
-      variations: data.variations?.length > 0 ? data.variations?.map(variation => ({
-        name: variation.name,
-        options: variation.options.map(option => option.value),
-      })) : undefined
-    })
+    try {
+      await handleCreateProduct({
+        categoryId: data.category?.value,
+        description: data.description,
+        images: data.images,
+        name: data.name,
+        price: data.price / 100,
+        promoPrice: data?.promoPrice ? data.promoPrice / 100 : undefined,
+        variations: data.variations?.length > 0 ? data.variations?.map(variation => ({
+          name: variation.name,
+          options: variation.options.map(option => option.value),
+        })) : undefined
+      })
+    } catch {}
   }
 
   const { data: categories } = useQuery(productsKey.categories, () => getCategories(companyId!), {

@@ -1,6 +1,6 @@
 import { Table } from "src/components/ui/Table"
 import { ColumnDef } from '@tanstack/react-table';
-import { useMemo } from "react";
+import { MouseEvent, useMemo } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { productsKey } from "src/constants/query-keys";
 import { deleteProduct, getProducts, toggleHighlight } from "src/services/products";
@@ -15,9 +15,11 @@ import { ConfirmationPopover } from "src/components/pages/shared/ConfirmationPop
 import toast from "react-hot-toast";
 import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
 import clsx from "clsx";
+import { isSubscriptionValid } from "src/helpers/isSubscriptionValid";
+import { LIMITS } from "src/constants/constants";
 
 export default function CompanyProducts() {
-  const { company } = useCompany()
+  const { company, currentSubscription } = useCompany()
   const companyId = company?.id
 
   const { data: products } = useQuery(productsKey.all, () => getProducts(companyId!), {
@@ -134,7 +136,16 @@ export default function CompanyProducts() {
       }
     ],
     []
-   );
+  );
+
+  const subscriptionIsValid = isSubscriptionValid(currentSubscription!)
+
+   const checkCount = (e: MouseEvent) => {
+    if(!subscriptionIsValid && products?.length >= LIMITS.FREE.MAX_PRODUCTS) {
+      toast.error("Você atingiu o limite de produtos para sua conta gratuita")
+      e.preventDefault()
+    }
+   }
 
   return (
     <>
@@ -144,7 +155,7 @@ export default function CompanyProducts() {
             <FiDownload size={20} />
             Importar Produtos
           </Button>
-          <Link passHref href="./products/new">
+          <Link passHref href="./products/new" onClick={checkCount}>
             <Button>
               <FiPlusCircle size={20} />
               Adicionar Produto

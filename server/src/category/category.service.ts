@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { LIMITS } from 'src/config/limits';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { Category } from './entities/category.entity';
@@ -10,6 +11,7 @@ export class CategoryService {
   async create(
     createCategoryDto: CreateCategoryDto,
     companyId: string,
+    hasSubscription: boolean,
   ): Promise<Category> {
     const companyExists = await this.prisma.company.findUnique({
       where: {
@@ -22,6 +24,20 @@ export class CategoryService {
         'Esta empresa não existe',
         HttpStatus.BAD_REQUEST,
       );
+    }
+
+    if (!hasSubscription) {
+      const categoriesCount = await this.prisma.category.count({
+        where: {
+          companyId,
+        },
+      });
+      if (categoriesCount >= LIMITS.FREE.MAX_CATEGORIES) {
+        throw new HttpException(
+          'Você atingiu o limite de categorias para sua conta gratuita',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
     }
 
     const createdCategory = await this.prisma.category.create({

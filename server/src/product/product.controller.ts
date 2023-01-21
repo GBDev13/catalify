@@ -11,10 +11,13 @@ import {
   Post,
   Put,
   UploadedFiles,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { Validator } from 'class-validator';
+import { CurrentSubscriptionIsValid } from 'src/subscription/decorators/current-subscription.decorator';
+import { SubscriptionGuard } from 'src/subscription/guards/subscription.guard';
 import { CreateProductDto, VariationDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductService } from './product.service';
@@ -25,11 +28,13 @@ export class ProductController {
 
   @Post('/:companyId')
   @UseInterceptors(FilesInterceptor('images'))
+  @UseGuards(SubscriptionGuard)
   @HttpCode(HttpStatus.CREATED)
   async create(
     @Body() createProductDto: CreateProductDto,
     @UploadedFiles() images: Express.Multer.File[],
     @Param('companyId') companyId: string,
+    @CurrentSubscriptionIsValid() validSubscription: boolean,
   ) {
     try {
       if (createProductDto?.variations) {
@@ -60,6 +65,7 @@ export class ProductController {
       return this.productService.create(
         { ...createProductDto, images },
         companyId,
+        validSubscription,
       );
     } catch (error) {
       console.log('error during product creation (CONTROLLER)', error);

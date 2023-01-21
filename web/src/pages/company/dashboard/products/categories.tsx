@@ -9,12 +9,14 @@ import { PageTitle } from "src/components/pages/shared/PageTitle";
 import { Button } from "src/components/ui/Button";
 import { Table } from "src/components/ui/Table";
 import { Tooltip } from "src/components/ui/Tooltip";
+import { LIMITS } from "src/constants/constants";
 import { productsKey } from "src/constants/query-keys";
+import { isSubscriptionValid } from "src/helpers/isSubscriptionValid";
 import { deleteCategory, getCategories } from "src/services/products";
 import { useCompany } from "src/store/company";
 
 export default function CompanyProductsCategories() {
-  const { company } = useCompany()
+  const { company, currentSubscription } = useCompany()
   const companyId = company?.id
 
   const { data: categories } = useQuery(productsKey.categories, () => getCategories(companyId!), {
@@ -70,13 +72,22 @@ export default function CompanyProductsCategories() {
       }
     ],
     []
-   );
+  );
+
+  const subscriptionIsValid = isSubscriptionValid(currentSubscription!)
+
+   const checkCount = (e: any) => {
+    if(!subscriptionIsValid && categories!?.length >= LIMITS.FREE.MAX_CATEGORIES) {
+      toast.error("Você atingiu o limite de categorias para sua conta gratuita")
+      e.preventDefault()
+    }
+   }
 
   return (
     <>
       <PageTitle title="Categorias">
         <CreateCategoryModal>
-          <Button>
+          <Button onClick={checkCount}>
             <FiPlusCircle size={20} />
             Adicionar Categoria
           </Button>

@@ -14,3 +14,11 @@ export const IMAGE_TYPES = {
 }
 
 export const IMAGE_MAX_SIZE = 5 * 1024 * 1024 // 5MB
+
+export const LIMITS = {
+  FREE: {
+    MAX_CATEGORIES: 5,
+    MAX_PRODUCTS: 10,
+  },
+  PREMIUM: {},
+};

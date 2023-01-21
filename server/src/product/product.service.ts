@@ -9,6 +9,7 @@ import {
 } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
 import { v4 as uuid } from 'uuid';
+import { LIMITS } from 'src/config/limits';
 
 @Injectable()
 export class ProductService {
@@ -21,6 +22,7 @@ export class ProductService {
   async create(
     createProductDto: CreateProductDto & { images: Express.Multer.File[] },
     companyId: string,
+    hasSubscription: boolean,
   ): Promise<Product> {
     try {
       const companyExists = await this.prisma.company.findUnique({
@@ -34,6 +36,21 @@ export class ProductService {
           'Esta empresa não existe',
           HttpStatus.BAD_REQUEST,
         );
+      }
+
+      if (!hasSubscription) {
+        const productsCount = await this.prisma.product.count({
+          where: {
+            companyId,
+          },
+        });
+
+        if (productsCount >= LIMITS.FREE.MAX_PRODUCTS) {
+          throw new HttpException(
+            'Você atingiu o limite de produtos para sua conta gratuita',
+            HttpStatus.BAD_REQUEST,
+          );
+        }
       }
 
       const { images, variations, ...dto } = createProductDto;

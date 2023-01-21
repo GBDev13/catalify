@@ -8,7 +8,10 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
+import { CurrentSubscriptionIsValid } from 'src/subscription/decorators/current-subscription.decorator';
+import { SubscriptionGuard } from 'src/subscription/guards/subscription.guard';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category-dto';
@@ -18,12 +21,18 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Post('/:companyId')
+  @UseGuards(SubscriptionGuard)
   @HttpCode(HttpStatus.CREATED)
-  async register(
+  async create(
     @Body() createCategoryDto: CreateCategoryDto,
     @Param('companyId') companyId: string,
+    @CurrentSubscriptionIsValid() validSubscription: boolean,
   ) {
-    return this.categoryService.create(createCategoryDto, companyId);
+    return this.categoryService.create(
+      createCategoryDto,
+      companyId,
+      validSubscription,
+    );
   }
 
   @Put('/:companyId')
