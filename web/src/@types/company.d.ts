@@ -43,4 +43,10 @@ declare namespace Company {
     logoMode: 'rounded' | 'free'
     logo?: string;
   }
+
+  export type LinksPageLink = {
+    id: string;
+    title: string;
+    url: string
+  }
 }

@@ -1,14 +1,13 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { SubscriptionStatus } from '@prisma/client';
+import { LinksPageService } from 'src/links-page/links-page.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { STRIPE_CLIENT } from 'src/stripe/constants';
-import Stripe from 'stripe';
 
 @Injectable()
 export class SubscriptionService {
   constructor(
-    @Inject(STRIPE_CLIENT) private stripe: Stripe,
     private readonly prisma: PrismaService,
+    private readonly linksPageService: LinksPageService,
   ) {}
 
   async createSubscription(customerId: string) {
@@ -25,7 +24,7 @@ export class SubscriptionService {
     });
 
     if (companyHasSubscription) {
-      await this.prisma.subscription.update({
+      return await this.prisma.subscription.update({
         where: {
           id: companyHasSubscription.id,
         },
@@ -40,6 +39,18 @@ export class SubscriptionService {
         companyId: company.id,
         status: SubscriptionStatus.ACTIVE,
       },
+    });
+
+    await this.linksPageService.create(company.id, {
+      bgColor: company.themeColor,
+      bgColor2: company.themeColor,
+      textColor: '#000',
+      textColor2: '#000',
+      title: company.name,
+      bgMode: 'solid',
+      boxColor: '#fff',
+      boxMode: 'solid',
+      logoMode: 'free',
     });
   }
 

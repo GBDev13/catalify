@@ -84,18 +84,6 @@ export class CompanyService {
       }
     }
 
-    await this.linksPageService.create(createdCompany.id, {
-      bgColor: createCompanyDto.themeColor,
-      bgColor2: createCompanyDto.themeColor,
-      textColor: '#000',
-      textColor2: '#000',
-      title: createCompanyDto.name,
-      bgMode: 'solid',
-      boxColor: '#fff',
-      boxMode: 'solid',
-      logoMode: 'free',
-    });
-
     return createdCompany;
   }
 

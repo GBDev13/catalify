@@ -80,3 +80,30 @@ export const updateCompanyLinksPageCustomization = async (companyId: string, dto
     logo: linksPageLogo ?? dto?.logo,
   })
 }
+
+export const getCompanyLinksPageLinks = async (companyId: string) => {
+  const { data } = await api.get<Company.LinksPageLink[]>(`/links-page/${companyId}/links`)
+  return data
+}
+
+export type UpdateLinksDto = {
+  originalId?: string
+  title: string
+  url: string
+}
+
+export const updateCompanyLinksPageLinks = async (companyId: string, links: UpdateLinksDto[]) => {
+  const { data } = await api.put<Company.LinksPageLink[]>(`/links-page/${companyId}/links`, {
+    links
+  })
+  return data
+}
+
+type PublicCompanyLinks = Company.LinksPageCustomization & {
+  links: Company.LinksPageLink[]
+}
+
+export const getPublicCompanyLinks = async (companySlug: string) => {
+  const { data } = await api.get<PublicCompanyLinks>(`/links-page/${companySlug}/page-data`)
+  return data
+}

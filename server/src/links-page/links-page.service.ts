@@ -5,6 +5,8 @@ import { getMimeType } from 'src/utils/getMimeType';
 import { CreateLinksPageDto } from './dto/create-links-page.dto';
 import { UpdateLinksPageDto } from './dto/update-links-page.dto';
 import { v4 as uuid } from 'uuid';
+import { UpdateLinksDto } from './dto/update-links.dto';
+import { LIMITS } from 'src/config/limits';
 @Injectable()
 export class LinksPageService {
   constructor(
@@ -17,6 +19,9 @@ export class LinksPageService {
       where: {
         id: companyId,
       },
+      include: {
+        linksPage: true,
+      },
     });
 
     if (!company) {
@@ -25,6 +30,8 @@ export class LinksPageService {
         HttpStatus.BAD_REQUEST,
       );
     }
+
+    if (company?.linksPage) return company.linksPage;
 
     const createdLinksPage = await this.prismaService.companyLinksPage.create({
       data: {
@@ -131,5 +138,159 @@ export class LinksPageService {
     });
 
     return updatedLinksPage;
+  }
+
+  async getLinksByCompanyId(companyId: string) {
+    const linksPage = await this.prismaService.companyLinksPage.findFirst({
+      where: {
+        companyId,
+      },
+      include: {
+        links: true,
+      },
+    });
+
+    if (!linksPage) {
+      throw new HttpException(
+        'Esta empresa não possui uma página de links',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return linksPage.links.map((link) => ({
+      id: link.id,
+      title: link.title,
+      url: link.url,
+    }));
+  }
+
+  async updateLinks(
+    companyId: string,
+    updateLinksDto: UpdateLinksDto,
+    hasSubscription: boolean,
+  ) {
+    if (!hasSubscription) {
+      throw new HttpException(
+        'Você não possui uma assinatura premium para gerenciar links',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const linksPage = await this.prismaService.companyLinksPage.findFirst({
+      where: {
+        companyId,
+      },
+      include: {
+        links: true,
+      },
+    });
+
+    if (!linksPage) {
+      throw new HttpException(
+        'Esta empresa não possui uma página de links',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const newLinks = updateLinksDto.links.filter((x) => !x.originalId);
+    const updateLinks = updateLinksDto.links.filter((x) => {
+      const hasId = x.originalId;
+
+      if (hasId) {
+        const link = linksPage.links.find((link) => link.id === x.originalId);
+
+        if (link.title !== x.title || link.url !== x.url) {
+          return true;
+        }
+      }
+
+      return false;
+    });
+    const removedLinks = linksPage.links.filter(
+      (x) => !updateLinksDto.links.find((link) => link.originalId === x.id),
+    );
+
+    const newLinksCount =
+      linksPage.links.length - removedLinks.length + newLinks.length;
+
+    if (newLinksCount > LIMITS.PREMIUM.MAX_LINKS_PAGE_LINKS) {
+      throw new HttpException(
+        `Você atingiu o limite de ${LIMITS.PREMIUM.MAX_LINKS_PAGE_LINKS} links.`,
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    if (removedLinks.length) {
+      await Promise.all(
+        removedLinks.map((link) =>
+          this.prismaService.companyLinksPageLink.delete({
+            where: {
+              id: link.id,
+            },
+          }),
+        ),
+      );
+    }
+
+    if (updateLinks.length) {
+      await Promise.all(
+        updateLinks.map((link) =>
+          this.prismaService.companyLinksPageLink.update({
+            where: {
+              id: link.originalId,
+            },
+            data: {
+              title: link.title,
+              url: link.url,
+            },
+          }),
+        ),
+      );
+    }
+
+    if (newLinks.length) {
+      await Promise.all(
+        newLinks.map((link) =>
+          this.prismaService.companyLinksPageLink.create({
+            data: {
+              title: link.title,
+              url: link.url,
+              companyLinksPageId: linksPage.id,
+            },
+          }),
+        ),
+      );
+    }
+  }
+
+  async getPageDataByCompanySlug(companySlug: string) {
+    const linksPage = await this.prismaService.companyLinksPage.findFirst({
+      where: {
+        company: {
+          slug: companySlug,
+        },
+      },
+      include: {
+        logo: true,
+        links: true,
+      },
+    });
+
+    if (!linksPage) {
+      throw new HttpException(
+        'Esta empresa não possui uma página de links',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return {
+      ...linksPage,
+      logo: linksPage?.logo ? linksPage.logo.fileUrl : undefined,
+      links: linksPage.links.map((link) => ({
+        id: link.id,
+        title: link.title,
+        url: link.url,
+      })),
+    };
   }
 }

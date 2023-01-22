@@ -1,38 +1,47 @@
 import { dehydrate, QueryClient, useQuery } from "@tanstack/react-query"
 import { GetStaticPaths, GetStaticProps } from "next"
+import { NextSeo } from "next-seo"
+import Head from "next/head"
 import { useRouter } from "next/router"
-import { catalogKeys } from "src/constants/query-keys"
-import { getCompanyCatalog } from "src/services/catalog"
-import { useCatalog } from "src/store/catalog"
+import { LinksPage } from "src/components/pages/shared/LinksPage"
+import { companyKeys } from "src/constants/query-keys"
+import { getPublicCompanyLinks } from "src/services/company"
 
 export default function CompanyLinks() {
   const router = useRouter()
   const slug = router.query.companySlug as string
 
-  const { setCatalogInfo, setCatalogColors, info } = useCatalog()
+  const { data: pageData } = useQuery(companyKeys.companyPublicLinksPage(slug), () => getPublicCompanyLinks(slug));
 
-  useQuery(catalogKeys.companyCatalog(slug), () => getCompanyCatalog(slug), {
-    onSuccess: (data) => {
-      setCatalogInfo(data)
-      setCatalogColors(data.themeColor)
-    }
-  });
+  if(!pageData) return null
 
   return (
-    <main className="w-screen min-h-screen h-screen bg-primary overflow-y-auto flex flex-col items-center justify-center p-4">
-      {info?.logo ? (
-        <img className="max-h-[150px] object-contain" src={info.logo} />
-      ) : (
-        <h1 className="text-readable font-semibold text-5xl">{info?.name}</h1>
+    <main className="w-screen min-h-screen overflow-y-auto flex flex-col">
+      <NextSeo
+        title={`${pageData.title} - Links`}
+        description={pageData?.headLine}
+      />
+
+      {pageData?.logo && (
+        <Head>
+          <link rel="icon" href={pageData.logo} />
+        </Head>
       )}
 
-      <div className="flex flex-col gap-4 w-full max-w-[400px] mt-10">
-        {info.links?.map((link, index) => (
-          <a key={index} href={link} className="w-full p-2 rounded-full bg-readable text-primary text-xl text-center">
-            {link}
-          </a>
-        ))}
-      </div>
+      <LinksPage
+        background={pageData.bgColor}
+        background2={pageData.bgColor2}
+        backgroundMode={pageData.bgMode}
+        title={pageData.title}
+        headline={pageData?.headLine}
+        logo={pageData?.logo}
+        logoMode={pageData.logoMode}
+        textColor={pageData.textColor}
+        textColor2={pageData.textColor2}
+        boxColor={pageData.boxColor}
+        boxMode={pageData.boxMode}
+        links={pageData?.links ?? []}
+      />
     </main>
   )
 }
@@ -49,10 +58,10 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
   const slug = params?.companySlug as string
 
-  await queryClient.prefetchQuery(catalogKeys.companyCatalog(slug), () => getCompanyCatalog(slug))
-  const company = queryClient.getQueryData(catalogKeys.companyCatalog(slug))
+  await queryClient.prefetchQuery(companyKeys.companyPublicLinksPage(slug), () => getPublicCompanyLinks(slug))
+  const data = queryClient.getQueryData(companyKeys.companyPublicLinksPage(slug))
 
-  if(!company) {
+  if(!data) {
     return {
       notFound: true
     }
@@ -62,6 +71,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     props: {
       dehydratedState: dehydrate(queryClient),
     },
-    revalidate: 60 * 60 * 10, // 10 hours
+    revalidate: 60 * 60 * 24, // 24 hours
   }
 }

@@ -259,5 +259,22 @@ model CompanyLinksPage {
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
 
+  links CompanyLinksPageLink[]
+
   @@map("company_links_pages")
+}
+
+model CompanyLinksPageLink {
+  id String @id @default(uuid())
+
+  title String
+  url   String
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+
+  companyLinksPage   CompanyLinksPage @relation(fields: [companyLinksPageId], references: [id])
+  companyLinksPageId String
+
+  @@map("company_links_pages_links")
 }

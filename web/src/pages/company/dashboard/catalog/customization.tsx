@@ -32,7 +32,7 @@ export default function CatalogCustomization() {
       <section className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-10">
         <div>
           <h4 className="text-2xl font-semibold text-slate-500 border-b border-b-slate-300 pb-4 mb-6 flex items-center gap-2">
-            Links
+            Links de Contato
             <TipIcon size={20} tip="Os links irão ficar no rodapé de todas as páginas do catálogo, recomendamos adicionar todas as redes sociais da empresa!" />
           </h4>
 

@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
@@ -12,10 +13,11 @@ import { ControlledFileUpload } from "src/components/ui/FileUpload/controlled";
 import { ControlledInput } from "src/components/ui/Input/controlled";
 import { ControlledToggleGroup } from "src/components/ui/ToggleGroup/controlled";
 import { IMAGE_MAX_SIZE, IMAGE_TYPES } from "src/constants/constants";
-import { catalogKeys, companyKeys } from "src/constants/query-keys";
+import { companyKeys } from "src/constants/query-keys";
+import { isSubscriptionValid } from "src/helpers/isSubscriptionValid";
 import { urlToFile } from "src/helpers/url-to-file";
-import { getCompanyCatalog } from "src/services/catalog";
-import { getCompanyLinksPageCustomization, updateCompanyLinksPageCustomization, UpdateLinksPageCustomizationDto } from "src/services/company";
+import { getCompanyLinksPageCustomization, getCompanyLinksPageLinks, updateCompanyLinksPageCustomization, UpdateLinksPageCustomizationDto } from "src/services/company";
+import { revalidatePath } from "src/services/revalidate";
 import { useCompany } from "src/store/company";
 import { z } from "zod";
 
@@ -51,8 +53,10 @@ const logoModeOptions = [
 ]
 
 export default function ManageLinksPage() {
-  const { company } = useCompany()
+  const { company, currentSubscription } = useCompany()
   const companyId = company?.id!;
+
+  const hasSubscription = isSubscriptionValid(currentSubscription!);
 
   const { control, watch, reset, handleSubmit, formState: { isDirty, dirtyFields, isSubmitting } } = useForm<LinksFormType>({
     mode: 'onChange',
@@ -62,9 +66,13 @@ export default function ManageLinksPage() {
   const formData = watch()
 
   const [initialData, setInitialData] = useState<LinksFormType | null>(null)
+
+  const { data: existentLinks } = useQuery(companyKeys.companyLinksPageLinks(companyId!), () => getCompanyLinksPageLinks(companyId!), {
+    enabled: !!companyId && hasSubscription
+  })
   
   useQuery(companyKeys.companyLinksPageCustomization(companyId), () => getCompanyLinksPageCustomization(companyId), {
-    enabled: !!companyId,
+    enabled: !!companyId && hasSubscription,
     onSuccess: async (data) => {
       const logo = data?.logo ? [await urlToFile(data.logo, `logo-${data.title}`)] : [];
       const newData = {
@@ -91,6 +99,7 @@ export default function ManageLinksPage() {
   }), {
     onSuccess: async () => {
       await queryClient.invalidateQueries(companyKeys.companyLinksPageCustomization(companyId))
+      await revalidatePath(`/links/${company?.slug}`)
     }
   })
 
@@ -118,9 +127,28 @@ export default function ManageLinksPage() {
 
   const logo = formData?.logo?.[0] ? URL.createObjectURL(formData.logo[0]) : undefined;
 
+  if(!hasSubscription) return (
+    <>
+      <PageTitle title="Gerenciar Página de Links" />
+
+      <h1 className="text-indigo-500 font-semibold text-2xl text-center">
+        Desculpe, essa funcionalidade é exclusiva para o plano premium.
+      </h1>
+      <p className="mt-2 text-center text-slate-500 mx-auto w-full max-w-[1000px]">
+      Atualize para o nosso <span className="text-indigo-500">plano premium</span> para ter acesso a essa e muitas outras funcionalidades incríveis. Se você ainda não é um usuário premium, <Link href="/" className="text-indigo-500 font-semibold">clique aqui</Link> para saber mais sobre nossos planos e como atualizar.
+      </p>
+    </>
+  )
+
   return (
     <div className="w-full lg:h-full flex flex-col">
-      <PageTitle title="Gerenciar Página de Links" />
+      <PageTitle title="Gerenciar Página de Links">
+        <Link href={`/links/${company?.slug}`} target="_blank">
+          <Button variant="OUTLINE">
+            Acessar Página de Links
+          </Button>
+        </Link>
+      </PageTitle>
 
       <section className="w-full grid gap-4 grid-cols-1 lg:grid-cols-[1fr,400px] flex-1">
         <form className="w-full grid grid-cols-1 md:grid-cols-2 gap-4 lg:h-max" onSubmit={handleSubmit(onSubmit)}>
@@ -171,16 +199,8 @@ export default function ManageLinksPage() {
             textColor2={formData?.textColor2}
             boxColor={formData.boxColor}
             boxMode={formData.boxMode}
-            links={[
-              {
-                title: 'Facebook',
-                url: 'https://facebook.com',
-              },
-              {
-                title: 'Instagram',
-                url: 'https://instagram.com',
-              }
-            ]}
+            links={existentLinks ?? []}
+            previewMode
           />}
         </div>
       </section>      

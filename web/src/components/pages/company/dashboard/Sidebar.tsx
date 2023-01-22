@@ -15,6 +15,7 @@ import { useCompany } from 'src/store/company'
 import { isSubscriptionValid } from 'src/helpers/isSubscriptionValid'
 import { Tooltip } from 'src/components/ui/Tooltip'
 import { AiOutlineDollar } from 'react-icons/ai'
+import { FeatureExplanation, SubscriptionRequiredDialog } from '../../shared/SubscriptionRequiredDialog'
 
 const sidebarItems = [
   {
@@ -56,6 +57,12 @@ const sidebarItems = [
     icon: <FiLink size={20} />,
     label: "Página de Links",
     path: "/company/dashboard/links",
+    needsSubscription: true,
+    subscriptionExplanation: {
+      title: "Página de Links",
+      description: "A página de links é uma página que você pode compartilhar com seus clientes para que eles acessem links customizados de forma simples. Você pode customizar a página de links com o seu logo e cores.",
+      videoUrl: "https://youtu.be/xMh7BfqYTDc"
+    }
   },
   {
     icon: <AiOutlineDollar size={20} />,
@@ -66,10 +73,14 @@ const sidebarItems = [
 
 type SidebarItemProps = {
   item: typeof sidebarItems[number]
+  onOpenSubscriptionRequired: (explanation: FeatureExplanation) => void
 }
 
-const SidebarItem = ({ item }: SidebarItemProps) => {
+const SidebarItem = ({ item, onOpenSubscriptionRequired }: SidebarItemProps) => {
   const router = useRouter()
+
+  const { currentSubscription } = useCompany()
+  const hasSubscription = isSubscriptionValid(currentSubscription!)
 
   const hasSubItems = item.subItems?.length
   const isActive = hasSubItems ? router.pathname.startsWith(item.path) : router.pathname === item.path
@@ -77,6 +88,11 @@ const SidebarItem = ({ item }: SidebarItemProps) => {
   const [submenuOpen, setSubmenuOpen] = useState(false)
   
   const handleOnClick = (e: MouseEvent) => {
+    if(item?.needsSubscription && !hasSubscription) {
+      e.preventDefault()
+      onOpenSubscriptionRequired(item?.subscriptionExplanation!)
+    }
+
     if(hasSubItems) {
       e.preventDefault()
       setSubmenuOpen(state => !state)
@@ -168,8 +184,12 @@ export const Sidebar = () => {
 
   const subscriptionIsValid = isSubscriptionValid(currentSubscription!)
 
+  const [subscriptionRequiredDialogOpen, setSubscriptionRequiredDialogOpen] = useState<FeatureExplanation | null>(null)
+
   return (
     <>
+      <SubscriptionRequiredDialog open={subscriptionRequiredDialogOpen} setOpen={setSubscriptionRequiredDialogOpen} />
+
       <AnimatePresence>
         {sideBarOpen && (
           <motion.aside className={
@@ -211,7 +231,7 @@ export const Sidebar = () => {
     
             <div className="fle flex-col gap-2 px-4">
               {sidebarItems.map((item) => (
-                <SidebarItem item={item} key={item.label} />
+                <SidebarItem item={item} key={item.label} onOpenSubscriptionRequired={setSubscriptionRequiredDialogOpen} />
               ))}
             </div>
     
