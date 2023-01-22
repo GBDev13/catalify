@@ -22,7 +22,7 @@ export const Footer = () => {
         </div>
 
       </div>
-      <p className="w-full text-center border-t border-readable py-4 px-2">Desenvolvido por <Link className="font-bold" href="/">Cataloguei</Link></p>
+      <p className="w-full text-center border-t border-readable py-4 px-2">Desenvolvido por <Link className="font-bold" href="/">Catalify</Link></p>
     </section>
    </footer> 
   )

@@ -71,9 +71,7 @@ export class StorageService {
   async deleteFile(fileKey: string) {
     const file = this.storage.bucket(StorageConfig.mediaBucket).file(fileKey);
 
-    const deleteResult = await file.delete();
-
-    console.log('deleteResult', deleteResult);
+    await file.delete();
 
     const fileToDelete = await this.prisma.file.findFirst({
       where: {

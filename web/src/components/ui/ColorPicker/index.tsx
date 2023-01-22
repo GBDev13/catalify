@@ -60,7 +60,7 @@ export const ColorPicker = forwardRef<HTMLInputElement, InputProps>(({ disabled,
         ref={ref}
       >
         <div className="flex items-center gap-1">
-          <div className="w-4 h-4 rounded" style={{ background: selectedColor }} />
+          <div className="w-4 h-4 rounded border border-slate-50" style={{ background: selectedColor }} />
           <span>{selectedColor}</span>
         </div>
 

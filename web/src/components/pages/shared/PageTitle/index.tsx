@@ -2,7 +2,7 @@ import { ReactNode } from "react"
 
 type PageTitleProps = {
   title: string
-  children: ReactNode
+  children?: ReactNode
 }
 
 export const PageTitle = ({ title, children }: PageTitleProps) => {
@@ -13,7 +13,7 @@ export const PageTitle = ({ title, children }: PageTitleProps) => {
         <h1 className="font-semibold text-2xl md:text-4xl">{title}</h1>
       </div>
 
-      {children}
+      {children && children}
     </header>
   )
 }

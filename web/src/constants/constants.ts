@@ -7,10 +7,7 @@ export const VARIANT_MODELS = [
 ]
 
 export const IMAGE_TYPES = {
-  'image/jpeg': ['image/jpeg'],
-  'image/jpg': ['image/jpg'],
-  'image/png': ['image/png'],
-  'image/webp': ['image/webp'],
+  'image/*': ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
 }
 
 export const IMAGE_MAX_SIZE = 5 * 1024 * 1024 // 5MB

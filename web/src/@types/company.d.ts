@@ -29,4 +29,18 @@ declare namespace Company {
     createdAt: string;
     updatedAt: string;
   }
+
+  export type LinksPageCustomization = {
+    title: string;
+    headLine?: string;
+    textColor: string;
+    textColor2: string;
+    boxColor: string;
+    boxMode: 'solid' | 'outline';
+    bgColor: string;
+    bgColor2: string;
+    bgMode: 'solid' | 'gradient';
+    logoMode: 'rounded' | 'free'
+    logo?: string;
+  }
 }

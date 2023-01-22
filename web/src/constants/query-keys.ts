@@ -9,6 +9,7 @@ export const companyKeys = {
   companyLinks: (companyId: string) => [companyId, 'links'],
   companyBanners: (companyId: string) => [companyId, 'banners'],
   companySubscription: (companyId: string) => [companyId, 'subscription'],
+  companyLinksPageCustomization: (companyId: string) => [companyId, 'links-page-customization'],
 }
 
 export const catalogKeys = {

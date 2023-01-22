@@ -17,6 +17,7 @@ import { StripeModule } from './stripe/stripe.module';
 import { PaymentGatewayModule } from './payment-gateway/payment-gateway.module';
 import { SubscriptionModule } from './subscription/subscription.module';
 import { StorageModule } from './storage/storage.module';
+import { LinksPageModule } from './links-page/links-page.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { StorageModule } from './storage/storage.module';
     PaymentGatewayModule,
     SubscriptionModule,
     StorageModule,
+    LinksPageModule,
   ],
   providers: [
     AppService,

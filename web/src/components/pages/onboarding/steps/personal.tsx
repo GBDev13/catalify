@@ -69,7 +69,7 @@ export const PersonalStep = ({ onNextStep }: PersonalStepProps) => {
   return (
     <>
       <div className="self-start">
-        <h2 className="font-semibold text-2xl">Obrigado por escolher a <span className="text-indigo-500">Cataloguei</span>!</h2>
+        <h2 className="font-semibold text-2xl">Obrigado por escolher a <span className="text-indigo-500">Catalify</span>!</h2>
         <p className="text-slate-500">Para começar, precisamos que você nos forneça alguns dados sobre a sua conta.</p>
       </div>
       <form className="w-full grid grid-cols-2 gap-4 mt-10" onSubmit={handleSubmit(onSubmit)}>

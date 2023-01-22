@@ -49,6 +49,7 @@ model Company {
   banners      CompanyBanners[]
   order        Order[]
   subscription Subscription[]
+  linksPage    CompanyLinksPage[]
 
   @@map("companies")
 }
@@ -183,8 +184,9 @@ model File {
   product   Product? @relation(fields: [productId], references: [id])
   productId String?
 
-  company        Company[]
-  companyBanners CompanyBanners[]
+  company          Company[]
+  companyBanners   CompanyBanners[]
+  companyLinksPage CompanyLinksPage[]
 }
 
 model CompanyLinks {
@@ -233,4 +235,29 @@ model Subscription {
   companyId String
 
   @@map("subscriptions")
+}
+
+model CompanyLinksPage {
+  id         String  @id @default(uuid())
+  title      String
+  headLine   String?
+  textColor  String  @db.VarChar(7)
+  textColor2 String  @db.VarChar(7)
+  boxColor   String  @db.VarChar(7)
+  boxMode    String
+  bgColor    String  @db.VarChar(7)
+  bgColor2   String  @db.VarChar(7)
+  bgMode     String
+  logoMode   String
+
+  logo   File?   @relation(fields: [logoId], references: [id], onDelete: SetNull)
+  logoId String?
+
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId String
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+
+  @@map("company_links_pages")
 }

@@ -32,7 +32,7 @@ export const FileUpload = ({ disabled, acceptedTypes, maxSize, maxFiles = 1, onD
   });
 
   const supportedTypesText = useMemo(() => {
-    return Object.keys(acceptedTypes).map((format) => format.split("/")[1].toUpperCase()).join(', ');
+    return Object.values(acceptedTypes).flatMap((format) => format.map(x => x.split("/")[1].toUpperCase())).join(', ');
   }, [acceptedTypes])
 
   const previewArray = useMemo(() => {

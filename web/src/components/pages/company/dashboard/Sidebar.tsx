@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { MouseEvent, useEffect, useState } from 'react'
 import { BiBookHeart } from 'react-icons/bi'
-import { FiSettings, FiHome, FiShoppingCart, FiLogOut, FiMenu, FiX } from 'react-icons/fi'
+import { FiSettings, FiHome, FiShoppingCart, FiLogOut, FiMenu, FiX, FiLink } from 'react-icons/fi'
 import { CgWebsite } from 'react-icons/cg'
 import { HiOutlineChevronDown, HiOutlineCurrencyDollar } from 'react-icons/hi'
 import { Divider } from 'src/components/ui/Divider'
@@ -51,6 +51,11 @@ const sidebarItems = [
         path: "/company/dashboard/catalog/customization"
       }
     ]
+  },
+  {
+    icon: <FiLink size={20} />,
+    label: "Página de Links",
+    path: "/company/dashboard/links",
   },
   {
     icon: <AiOutlineDollar size={20} />,
@@ -194,8 +199,7 @@ export const Sidebar = () => {
               })
             }>
               <div className="flex items-center gap-2">
-                <BiBookHeart />
-                <h2>Cataloguei</h2>
+                <h2>Catalify</h2>
               </div>
               {isMobile && (
                 <button onClick={closeSidebar} className="bg-white w-8 h-8 rounded-full shadow-sm flex items-center justify-center text-indigo-500">

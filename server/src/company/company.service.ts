@@ -7,19 +7,17 @@ import { Company } from './entities/company.entity';
 import { v4 as uuid } from 'uuid';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { UpdateCompanyLinksDto } from './dto/update-company-links-dto';
-import {
-  LIMITS,
-  MAX_COMPANY_BANNERS,
-  MAX_COMPANY_LINKS,
-} from 'src/config/limits';
+import { LIMITS } from 'src/config/limits';
 import { UpdateCompanyBannerImagesDto } from './dto/update-company-banner-images-dto';
 import { StorageService } from 'src/storage/storage.service';
+import { LinksPageService } from 'src/links-page/links-page.service';
 
 @Injectable()
 export class CompanyService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly storageService: StorageService,
+    private readonly linksPageService: LinksPageService,
   ) {}
 
   async create(createCompanyDto: CreateCompanyDto, user: User) {
@@ -85,6 +83,18 @@ export class CompanyService {
         });
       }
     }
+
+    await this.linksPageService.create(createdCompany.id, {
+      bgColor: createCompanyDto.themeColor,
+      bgColor2: createCompanyDto.themeColor,
+      textColor: '#000',
+      textColor2: '#000',
+      title: createCompanyDto.name,
+      bgMode: 'solid',
+      boxColor: '#fff',
+      boxMode: 'solid',
+      logoMode: 'free',
+    });
 
     return createdCompany;
   }

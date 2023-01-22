@@ -71,7 +71,7 @@ export const useCart = create<CartStore>()(
           })
         }
       }), {
-        name: 'cataloguei:cart',
+        name: 'catalify:cart',
         partialize: (state) => ({ cartItems: state.cartItems }),
       })
     ),

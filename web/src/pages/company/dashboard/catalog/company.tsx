@@ -125,7 +125,7 @@ export default function CatalogCompany() {
             <ControlledPhoneInput disabled={!isEditing} label="Whatsapp que irá receber os pedidos" fieldName="phone" control={control} />
           </div>
 
-          <ControlledInput disabled={!isEditing} tip="Texto que será usado para acessar sua loja através do link do navegador (ex: cataloguei.com/sualoja)" className="col-span-full" label="Slug da loja" placeholder="sualoja" fieldName="slug" control={control} />
+          <ControlledInput disabled={!isEditing} tip="Texto que será usado para acessar sua loja através do link do navegador (ex: catalify.com.br/sualoja)" className="col-span-full" label="Slug da loja" placeholder="sualoja" fieldName="slug" control={control} />
 
           <div className="col-span-full">
           <label htmlFor="logo" className="block text-xs font-medium text-slate-500 mb-1">Logo da Empresa (opcional)</label>

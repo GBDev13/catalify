@@ -44,7 +44,7 @@ export const CheckoutForm = ({ step, setStep }: CheckoutFormProps) => {
 
   useEffect(() => {
     if (step === 1) {
-      const userInfo = localStorage.getItem('cataloguei:userInfo')
+      const userInfo = localStorage.getItem('catalify:userInfo')
       if (userInfo) {
         const { name, phone } = JSON.parse(userInfo)
         reset({ name, phone })
@@ -61,7 +61,7 @@ export const CheckoutForm = ({ step, setStep }: CheckoutFormProps) => {
     error: 'Erro ao criar pedido'
   }), {
     onSuccess: (orderId, variables) => {
-      localStorage.setItem('cataloguei:userInfo', JSON.stringify({ name, phone }))
+      localStorage.setItem('catalify:userInfo', JSON.stringify({ name, phone }))
       const message = checkoutCartToWhatsApp(slug, orderId, variables.buyerName)
       openWhatsAppMessage(message)
       setStep(2)

@@ -58,3 +58,25 @@ export const getCompanySubscriptionBySlug = async (slug: string) => {
   const { data } = await api.get<Company.Subscription[]>(`/company/${slug}/subscription`)
   return data
 }
+
+export const getCompanyLinksPageCustomization = async (companyId: string) => {
+  const { data } = await api.get<Company.LinksPageCustomization>(`/links-page/${companyId}`)
+  return data
+}
+
+export type UpdateLinksPageCustomizationDto = Omit<Company.LinksPageCustomization, 'logo'> & {
+  logo?: File | null
+}
+
+export const updateCompanyLinksPageCustomization = async (companyId: string, dto: UpdateLinksPageCustomizationDto) => {
+  let linksPageLogo: string | undefined = undefined
+
+  if (dto?.logo) {
+    linksPageLogo = await getBase64(dto.logo)
+  }
+
+  return await api.put(`/links-page/${companyId}`, {
+    ...dto,
+    logo: linksPageLogo ?? dto?.logo,
+  })
+}

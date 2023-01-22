@@ -11,6 +11,7 @@ import { createSubscriptionCheckout } from "src/services/payment"
 const similarFeatures = [
   'Catalogo digital',
   'Customização de cores e logo',
+  'Página de links de contato',
   'Importação de produtos via CSV',
 ]
 
@@ -92,7 +93,7 @@ export const Pricing = () => {
 
             <div className="mt-4 sm:mt-10">
               <h4>Funcionalidades:</h4>
-              <ul className="flex flex-col gap-1.5 mt-2 min-h-[280px]">
+              <ul className="flex flex-col gap-1.5 mt-2 min-h-[310px]">
                 {plan.features.map((feature, index) => (
                   <li key={feature} className="text-slate-400 text-sm font-light flex items-center gap-1">
                     {isPaid ? index > similarFeatures.length - 1 ? (
