@@ -16,9 +16,10 @@ type SubscriptionRequiredDialogProps = {
 
 type FeatureExplanationProps = {
   explanation: FeatureExplanation | null
+  onClose: () => void
 }
 
-const FeatureExplanation = ({ explanation }: FeatureExplanationProps) => {
+const FeatureExplanation = ({ explanation, onClose }: FeatureExplanationProps) => {
   return (
     <div>
       <h2 className="font-semibold text-indigo-500 text-xl mb-2">{explanation?.title}</h2>
@@ -36,7 +37,7 @@ const FeatureExplanation = ({ explanation }: FeatureExplanationProps) => {
             <Button variant="OUTLINE" size="WIDE">Vídeo demonstrativo</Button>
           </a>
         )}
-        <Link href="/">
+        <Link href="./dashboard/plans" onClick={onClose}>
           <Button size="WIDE">
             Assinar Premium
           </Button>
@@ -48,7 +49,7 @@ const FeatureExplanation = ({ explanation }: FeatureExplanationProps) => {
 
 export const SubscriptionRequiredDialog = ({ open, setOpen }: SubscriptionRequiredDialogProps) => {
   return (
-    <Dialog title="Funcionalidade Premium" content={<FeatureExplanation explanation={open} />} open={!!open} maxWidth="700px" onOpenChange={(value) => {
+    <Dialog title="Funcionalidade Premium" content={<FeatureExplanation onClose={() => setOpen(null)} explanation={open} />} open={!!open} maxWidth="700px" onOpenChange={(value) => {
       if (!value) setOpen(null)
     }} />
   )

@@ -1,0 +1,35 @@
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+import { Pricing } from "src/components/pages/onboarding/pricing";
+import { PageTitle } from "src/components/pages/shared/PageTitle";
+import { isSubscriptionValid } from "src/helpers/isSubscriptionValid";
+import { useCompany } from "src/store/company";
+
+export default function PlansPage() {
+  const { currentSubscription } = useCompany()
+  const hasSubscription = isSubscriptionValid(currentSubscription!);
+
+  const router = useRouter()
+
+  useEffect(() => {
+    if (hasSubscription) {
+      router.replace('/company/dashboard/plan')
+    }
+  }, [hasSubscription, router])
+
+  if(hasSubscription) return null;
+
+  return (
+    <div>
+      <PageTitle title="Planos" />
+
+      <h2 className="text-center text-slate-600 text-xl sm:text-2xl">
+        Escolha o plano que mais se encaixa com a sua empresa
+      </h2>
+
+      <div className="-mt-10">
+        <Pricing hideFree />
+      </div>
+    </div>
+  )
+}

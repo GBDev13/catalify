@@ -11,7 +11,6 @@ import { createSubscriptionCheckout } from "src/services/payment"
 const similarFeatures = [
   'Catalogo digital',
   'Customização de cores e logo',
-  'Página de links de contato',
   'Importação de produtos via CSV',
 ]
 
@@ -33,7 +32,7 @@ export const PLANS = [
   {
     name: 'Plano Premium',
     description: 'Com o plano premium, você tem acesso ilimitado a todos os recursos e suporte prioritário.',
-    price: 39.90,
+    price: 24.90,
     features: [
       ...similarFeatures,
       'Produtos ilimitados',
@@ -42,13 +41,18 @@ export const PLANS = [
       'Até 5 variações por produto',
       'Até 10 links de contato',
       'Destaque de produtos',
+      'Página de links customizável',
       '3 Imagens de destaque no catálogo',
       'Suporte prioritário'
     ]
   }
 ]
 
-export const Pricing = () => {
+type PricingProps = {
+  hideFree?: boolean
+}
+
+export const Pricing = ({ hideFree }: PricingProps) => {
   const { data: session } = useSession()
 
   const { mutate: handleCheckoutPremium, isLoading } = useMutation(() => toast.promise(createSubscriptionCheckout(session?.user?.email!), {
@@ -78,6 +82,8 @@ export const Pricing = () => {
         const formattedPrice = formatPrice(plan.price)
         const isPaid = plan.price > 0
 
+        const showButton = hideFree ? isPaid : true
+
         return (
           <div key={plan.name} className="bg-white px-6 py-10 rounded-lg shadow-sm flex flex-col w-full">
             <div className="min-h-[150px]">
@@ -93,7 +99,7 @@ export const Pricing = () => {
 
             <div className="mt-4 sm:mt-10">
               <h4>Funcionalidades:</h4>
-              <ul className="flex flex-col gap-1.5 mt-2 min-h-[310px]">
+              <ul className="flex flex-col gap-1.5 mt-2 min-h-[315px]">
                 {plan.features.map((feature, index) => (
                   <li key={feature} className="text-slate-400 text-sm font-light flex items-center gap-1">
                     {isPaid ? index > similarFeatures.length - 1 ? (
@@ -108,9 +114,11 @@ export const Pricing = () => {
                 ))}
               </ul>
 
-              <Button onClick={() => onCheckout(isPaid)} isLoading={isLoading} variant={isPaid ? "PRIMARY" : "OUTLINE"} size="WIDE" className="mt-6">
-                {isPaid ? 'Assinar agora' : 'Continuar'}
-              </Button>
+              {showButton && (
+                <Button onClick={() => onCheckout(isPaid)} isLoading={isLoading} variant={isPaid ? "PRIMARY" : "OUTLINE"} size="WIDE" className="mt-6">
+                  {isPaid ? 'Assinar agora' : 'Continuar'}
+                </Button>
+              )}
             </div>
           </div>
         )

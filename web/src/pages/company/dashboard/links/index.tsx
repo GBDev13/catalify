@@ -135,7 +135,7 @@ export default function ManageLinksPage() {
         Desculpe, essa funcionalidade é exclusiva para o plano premium.
       </h1>
       <p className="mt-2 text-center text-slate-500 mx-auto w-full max-w-[1000px]">
-      Atualize para o nosso <span className="text-indigo-500">plano premium</span> para ter acesso a essa e muitas outras funcionalidades incríveis. Se você ainda não é um usuário premium, <Link href="/" className="text-indigo-500 font-semibold">clique aqui</Link> para saber mais sobre nossos planos e como atualizar.
+      Atualize para o nosso <span className="text-indigo-500">plano premium</span> para ter acesso a essa e muitas outras funcionalidades incríveis. Se você ainda não é um usuário premium, <Link href="./plans" className="text-indigo-500 font-semibold">clique aqui</Link> para saber mais sobre nossos planos e como atualizar.
       </p>
     </>
   )
