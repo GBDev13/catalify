@@ -44,12 +44,11 @@ export const variationsSchema = z.array(z.object({
     }).max(50, {
       message: "O nome da variação deve ter no máximo 50 caracteres",
     }),
-  })).max(10, {
+  }))
+  .max(LIMITS.FREE.MAX_OPTIONS_PER_VARIATION, {
     message: "A variação pode ter no máximo 10 opções",
   }),
-})).max(5, {
-  message: "O produto pode ter no máximo 5 variações",
-})
+}))
 
 const editProductFormSchema = z.object({
   name: z.string({

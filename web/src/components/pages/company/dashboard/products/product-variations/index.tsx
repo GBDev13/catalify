@@ -85,6 +85,7 @@ export default function ProductVariations({ onChangeExistent }: ProductVariation
             </div>
           );
         })}
+        {errors?.variations?.message && <p className="text-red-500 text-sm mt-2">{errors?.variations?.message}</p>}
       </section>
     </>
   );

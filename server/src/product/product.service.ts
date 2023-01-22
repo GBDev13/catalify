@@ -70,6 +70,48 @@ export class ProductService {
         );
       }
 
+      if (variations) {
+        const typedVariations = JSON.parse(
+          variations,
+        ) as unknown as VariationDto[];
+
+        if (
+          !hasSubscription &&
+          typedVariations.length > LIMITS.FREE.MAX_VARIATIONS_PER_PRODUCT
+        ) {
+          throw new HttpException(
+            `Você atingiu o limite de variações por produto para sua conta gratuita. (${LIMITS.FREE.MAX_VARIATIONS_PER_PRODUCT} variações por produto)`,
+            HttpStatus.BAD_REQUEST,
+          );
+        } else if (
+          typedVariations.length > LIMITS.PREMIUM.MAX_VARIATIONS_PER_PRODUCT
+        ) {
+          throw new HttpException(
+            `Você atingiu o limite de variações por produto. (${LIMITS.PREMIUM.MAX_VARIATIONS_PER_PRODUCT} variações por produto)`,
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+
+        typedVariations.forEach((variation) => {
+          if (
+            !hasSubscription &&
+            variation.options.length > LIMITS.FREE.MAX_OPTIONS_PER_VARIATION
+          ) {
+            throw new HttpException(
+              `Você atingiu o limite de opções por variação para sua conta gratuita. (${LIMITS.FREE.MAX_OPTIONS_PER_VARIATION} opções por variação)`,
+              HttpStatus.BAD_REQUEST,
+            );
+          } else if (
+            variation.options.length > LIMITS.PREMIUM.MAX_OPTIONS_PER_VARIATION
+          ) {
+            throw new HttpException(
+              `Você atingiu o limite de opções por variação. (${LIMITS.PREMIUM.MAX_OPTIONS_PER_VARIATION} opções por variação)`,
+              HttpStatus.BAD_REQUEST,
+            );
+          }
+        });
+      }
+
       const createdProduct = await this.prisma.product.create({
         data: {
           ...dto,
@@ -152,6 +194,7 @@ export class ProductService {
       },
       include: {
         pictures: true,
+        variants: true,
       },
     });
 
@@ -220,10 +263,55 @@ export class ProductService {
       const parsedVariations = JSON.parse(
         variations,
       ) as unknown as UpdateProductVariations;
+
+      const newVariationsCount =
+        productExists.variants.length +
+        parsedVariations.added.length -
+        parsedVariations.removed.length;
+
+      if (
+        !hasSubscription &&
+        newVariationsCount > LIMITS.FREE.MAX_VARIATIONS_PER_PRODUCT
+      ) {
+        throw new HttpException(
+          `Você atingiu o limite de variações por produto para sua conta gratuita. (${LIMITS.FREE.MAX_VARIATIONS_PER_PRODUCT} variações por produto)`,
+          HttpStatus.BAD_REQUEST,
+        );
+      } else if (
+        newVariationsCount > LIMITS.PREMIUM.MAX_VARIATIONS_PER_PRODUCT
+      ) {
+        throw new HttpException(
+          `Você atingiu o limite de variações por produto. (${LIMITS.PREMIUM.MAX_VARIATIONS_PER_PRODUCT} variações por produto)`,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      parsedVariations.added.forEach((variation) => {
+        if (variation.type === 'variation') {
+          if (
+            !hasSubscription &&
+            variation.options.length > LIMITS.FREE.MAX_OPTIONS_PER_VARIATION
+          ) {
+            throw new HttpException(
+              `Você atingiu o limite de opções por variação para sua conta gratuita. (${LIMITS.FREE.MAX_OPTIONS_PER_VARIATION} opções por variação)`,
+              HttpStatus.BAD_REQUEST,
+            );
+          } else if (
+            variation.options.length > LIMITS.PREMIUM.MAX_OPTIONS_PER_VARIATION
+          ) {
+            throw new HttpException(
+              `Você atingiu o limite de opções por variação. (${LIMITS.PREMIUM.MAX_OPTIONS_PER_VARIATION} opções por variação)`,
+              HttpStatus.BAD_REQUEST,
+            );
+          }
+        }
+      });
+
       await this.productVariantService.addVariations(
         parsedVariations,
         companyId,
         productId,
+        hasSubscription,
       );
       await this.productVariantService.updateVariations(parsedVariations);
       await this.productVariantService.deleteVariations(parsedVariations);

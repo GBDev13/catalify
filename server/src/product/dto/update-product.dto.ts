@@ -60,6 +60,7 @@ export type UpdateProductVariations = {
     id: string;
     type: ChangeType;
     actionType: ActionType;
+    variationId?: string;
   }[];
   added: {
     type: ChangeType;

@@ -10,6 +10,7 @@ export type SaveItem = {
   id: string,
   type: ChangeType,
   actionType: ActionType,
+  parentId?: string
 }
 
 type OnChangeExistentVariationProps = {
@@ -44,7 +45,9 @@ export const onChangeExistentVariation = ({ type, fieldId, actionType, saveFunct
       }
     }
 
-    return [...prevState, { actionType, id: fieldId, type }]
+    const parentId = type === 'option' ? allVariations.find(variation => variation.options.some(x => x.id === fieldId))?.id : undefined;
+
+    return [...prevState, { actionType, id: fieldId, type, parentId }]
   })
 }
 
@@ -73,7 +76,10 @@ export const parseEditedVariations = (editedVariations: SaveItem[], allVariation
       newValue: item.type === 'variation' ? found?.name : found?.value
     }
   });
-  const removed = editedVariations.filter((item) => item.actionType === 'remove');
+  const removed = editedVariations.filter((item) => item.actionType === 'remove')?.map(({ parentId, ...item }) => ({
+    ...item,
+    variationId: parentId
+  }));
 
   const addedOptions = allVariations.filter(item => item.options.some(x => !x.originalId)).filter(x => x.originalId).map(item => {
     const options = item.options.filter(x => !x.originalId)

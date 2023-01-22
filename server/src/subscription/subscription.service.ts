@@ -123,7 +123,6 @@ export class SubscriptionService {
         subscription: true,
       },
     });
-    console.log(companySlug);
     return company?.subscription ?? [];
   }
 }

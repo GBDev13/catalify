@@ -70,12 +70,10 @@ const newProductFormSchema = z.object({
       }).max(50, {
         message: "O nome da variação deve ter no máximo 50 caracteres",
       }),
-    })).max(10, {
+    })).max(LIMITS.FREE.MAX_OPTIONS_PER_VARIATION, {
       message: "A variação pode ter no máximo 10 opções",
     }),
-  })).max(5, {
-    message: "O produto pode ter no máximo 5 variações",
-  })
+  }))
 }).superRefine(({ price, promoPrice, hasPromoPrice }, ctx) => {
   if (!hasPromoPrice) return
 
@@ -114,7 +112,7 @@ export default function NewProduct() {
     }
   })
 
-  const { control, handleSubmit, reset, setValue, formState: { isSubmitting, isDirty }} = methods
+  const { control, handleSubmit, reset, setValue, setError, formState: { isSubmitting, isDirty }} = methods
 
   const queryClient = useQueryClient()
 
@@ -132,6 +130,18 @@ export default function NewProduct() {
 
   const onSubmit = async (data: NewProductFormData) => {
     try {
+      if(!subscriptionIsValid && data.variations.length > LIMITS.FREE.MAX_VARIATIONS_PER_PRODUCT) {
+        setError('variations', {
+          message: `Você atingiu o limite de ${LIMITS.FREE.MAX_VARIATIONS_PER_PRODUCT} variação por produto no plano gratuito.`
+        })
+        return
+      } else if (data.variations.length > LIMITS.PREMIUM.MAX_VARIATIONS_PER_PRODUCT) {
+        setError('variations', {
+          message: `Você atingiu o limite de ${LIMITS.PREMIUM.MAX_VARIATIONS_PER_PRODUCT} variações por produto.`
+        })
+        return
+      }
+
       await handleCreateProduct({
         categoryId: data.category?.value,
         description: data.description,

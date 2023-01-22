@@ -24,6 +24,7 @@ export const PLANS = [
       'Até 10 produtos',
       'Até 5 categorias',
       'Até 3 imagens por produto',
+      'Até 1 variação por produto',
       'Até 2 links de contato',
       'Suporte básico'
     ]
@@ -37,6 +38,7 @@ export const PLANS = [
       'Produtos ilimitados',
       'Categorias ilimitadas',
       'Até 5 imagens por produto',
+      'Até 5 variações por produto',
       'Até 10 links de contato',
       'Destaque de produtos',
       '3 Imagens de destaque no catálogo',
@@ -90,7 +92,7 @@ export const Pricing = () => {
 
             <div className="mt-4 sm:mt-10">
               <h4>Funcionalidades:</h4>
-              <ul className="flex flex-col gap-1.5 mt-2 min-h-[255px]">
+              <ul className="flex flex-col gap-1.5 mt-2 min-h-[280px]">
                 {plan.features.map((feature, index) => (
                   <li key={feature} className="text-slate-400 text-sm font-light flex items-center gap-1">
                     {isPaid ? index > similarFeatures.length - 1 ? (

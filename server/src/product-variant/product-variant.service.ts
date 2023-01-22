@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { LIMITS } from 'src/config/limits';
 import { UpdateProductVariations } from 'src/product/dto/update-product.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateProductVariantDto } from './dto/create-product-variant.dto';
@@ -44,39 +45,76 @@ export class ProductVariantService {
     parsedVariations: UpdateProductVariations,
     companyId: string,
     productId: string,
+    hasSubscription: boolean,
   ) {
+    const variationsIdCountChecked = [];
+
     for (const added of parsedVariations.added || []) {
-      try {
-        if (added.type === 'variation') {
-          await this.prisma.productVariant.create({
-            data: {
-              name: added.name,
-              companyId,
-              productId,
-              options: {
-                createMany: {
-                  data: added.options.map((option) => ({
-                    name: option,
-                    companyId,
-                  })),
-                },
+      const variationIsChecked = variationsIdCountChecked.includes(
+        added.variationId,
+      );
+
+      if (!variationIsChecked) {
+        const count = await this.prisma.productVariantOption.count({
+          where: {
+            productVariantId: added.variationId,
+          },
+        });
+
+        const newOptionsCount = parsedVariations.added.filter(
+          (x) => x.type === 'option' && x.variationId === added.variationId,
+        ).length;
+        const removedOptionsCount = parsedVariations.removed.filter(
+          (x) =>
+            x.type === 'option' &&
+            x.actionType === 'remove' &&
+            x.variationId === added.variationId,
+        ).length;
+
+        const newCount = count - removedOptionsCount + newOptionsCount;
+
+        if (
+          !hasSubscription &&
+          newCount > LIMITS.FREE.MAX_OPTIONS_PER_VARIATION
+        ) {
+          throw new HttpException(
+            `Você atingiu o limite de ${LIMITS.FREE.MAX_OPTIONS_PER_VARIATION} opções por variação para sua conta gratuita.`,
+            HttpStatus.BAD_REQUEST,
+          );
+        } else if (newCount > LIMITS.PREMIUM.MAX_OPTIONS_PER_VARIATION) {
+          throw new HttpException(
+            `Você atingiu o limite de ${LIMITS.PREMIUM.MAX_OPTIONS_PER_VARIATION} opções por variação para sua conta.`,
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+
+        variationsIdCountChecked.push(added.variationId);
+      }
+
+      if (added.type === 'variation') {
+        await this.prisma.productVariant.create({
+          data: {
+            name: added.name,
+            companyId,
+            productId,
+            options: {
+              createMany: {
+                data: added.options.map((option) => ({
+                  name: option,
+                  companyId,
+                })),
               },
             },
-          });
-        } else if (added.type === 'option') {
-          await this.prisma.productVariantOption.create({
-            data: {
-              name: added.value,
-              companyId,
-              productVariantId: added.variationId,
-            },
-          });
-        }
-      } catch (error) {
-        throw new HttpException(
-          'Erro ao adicionar novas variações',
-          HttpStatus.BAD_REQUEST,
-        );
+          },
+        });
+      } else if (added.type === 'option') {
+        await this.prisma.productVariantOption.create({
+          data: {
+            name: added.value,
+            companyId,
+            productVariantId: added.variationId,
+          },
+        });
       }
     }
   }
