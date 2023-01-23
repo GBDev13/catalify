@@ -8,6 +8,10 @@
   }
 }
 
+#body {
+  pointer-events: auto !important;
+}
+
 /* React Select */
 
 .react-select__control {

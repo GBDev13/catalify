@@ -123,6 +123,8 @@ model Product {
   pictures      File[]
   orderProducts OrderProducts[]
 
+  stock Stock[]
+
   @@map("products")
 }
 
@@ -169,6 +171,7 @@ model ProductVariantOption {
   companyId String
 
   orderProducts OrderProducts[]
+  stock         Stock[]
 
   @@map("product_variant_options")
 }
@@ -277,4 +280,20 @@ model CompanyLinksPageLink {
   companyLinksPageId String
 
   @@map("company_links_pages_links")
+}
+
+model Stock {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+
+  productVariantOption   ProductVariantOption @relation(fields: [productVariantOptionId], references: [id])
+  productVariantOptionId String
+
+  quantity Int
+
+  @@map("stocks")
 }

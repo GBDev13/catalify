@@ -23,3 +23,12 @@ export const catalogKeys = {
   companyFilteredProducts: (slug: string, page: number, categories: string[], order: string, search: string) => [`filtered-products-${slug}`, page, `categories-${categories.join(',')}`, order, search],
   orderById: (orderId: string) => ['order', orderId],
 }
+
+export const ordersKeys = {
+  companyOrders: (companyId: string) => [companyId, 'orders'],
+  orderById: (orderId: string) => ['order', orderId],
+}
+
+export const stockKeys = {
+  stockOptions: (companyId: string) => [companyId, 'stock-options'],
+}

@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { MouseEvent, useEffect, useState } from 'react'
 import { BiBookHeart } from 'react-icons/bi'
-import { FiSettings, FiHome, FiShoppingCart, FiLogOut, FiMenu, FiX, FiLink } from 'react-icons/fi'
+import { FiSettings, FiHome, FiShoppingCart, FiLogOut, FiMenu, FiX, FiLink, FiArchive } from 'react-icons/fi'
 import { CgWebsite } from 'react-icons/cg'
 import { HiOutlineChevronDown, HiOutlineCurrencyDollar } from 'react-icons/hi'
 import { Divider } from 'src/components/ui/Divider'
@@ -37,6 +37,22 @@ const sidebarItems = [
         path: "/company/dashboard/products/categories"
       }
     ]
+  },
+  {
+    icon: <FiArchive size={20} />,
+    label: "Pedidos",
+    path: "/company/dashboard/orders",
+    subItems: [
+      {
+        label: "Todos",
+        path: "/company/dashboard/orders"
+      }
+    ]
+  },
+  {
+    icon: <FiArchive size={20} />,
+    label: "Estoque",
+    path: "/company/dashboard/stock",
   },
   {
     icon: <CgWebsite size={20} />,

@@ -18,6 +18,7 @@ import { PaymentGatewayModule } from './payment-gateway/payment-gateway.module';
 import { SubscriptionModule } from './subscription/subscription.module';
 import { StorageModule } from './storage/storage.module';
 import { LinksPageModule } from './links-page/links-page.module';
+import { StockModule } from './stock/stock.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { LinksPageModule } from './links-page/links-page.module';
     SubscriptionModule,
     StorageModule,
     LinksPageModule,
+    StockModule,
   ],
   providers: [
     AppService,

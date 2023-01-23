@@ -144,4 +144,28 @@ export class OrderService {
       },
     });
   }
+
+  async getAllOrders(companyId: string) {
+    const orders = await this.prisma.order.findMany({
+      where: {
+        companyId,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      include: {
+        products: {
+          select: {
+            price: true,
+            promoPrice: true,
+            quantity: true,
+          },
+        },
+      },
+    });
+
+    return orders.map((order) => ({
+      ...order,
+    }));
+  }
 }

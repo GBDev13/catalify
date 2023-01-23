@@ -30,4 +30,9 @@ export class OrderController {
   ) {
     return this.orderService.completeOrder(orderId, user);
   }
+
+  @Get('/:companyId/all')
+  async getAllOrders(@Param('companyId') companyId: string) {
+    return this.orderService.getAllOrders(companyId);
+  }
 }
