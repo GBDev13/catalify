@@ -50,6 +50,7 @@ model Company {
   order        Order[]
   subscription Subscription[]
   linksPage    CompanyLinksPage[]
+  stock        Stock[]
 
   @@map("companies")
 }
@@ -287,13 +288,16 @@ model Stock {
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
 
-  product   Product @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId String
 
-  productVariantOption   ProductVariantOption @relation(fields: [productVariantOptionId], references: [id])
-  productVariantOptionId String
+  productVariantOption   ProductVariantOption? @relation(fields: [productVariantOptionId], references: [id], onDelete: Cascade)
+  productVariantOptionId String?
 
   quantity Int
+
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId String
 
   @@map("stocks")
 }

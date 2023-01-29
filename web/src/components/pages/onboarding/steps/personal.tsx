@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import z from 'zod'
 import { Button } from "../../../ui/Button";
 import { OnboardingFormData } from "../form";
+import { Logo } from "src/assets/Logo";
 
 export const personalStepFormSchema = z.object({
   firstName: z.string({
@@ -69,7 +70,7 @@ export const PersonalStep = ({ onNextStep }: PersonalStepProps) => {
   return (
     <>
       <div className="self-start">
-        <h2 className="font-semibold text-2xl">Obrigado por escolher a <span className="text-indigo-500">Catalify</span>!</h2>
+        <h2 className="flex items-center gap-2 font-semibold text-2xl">Obrigado por escolher a <Logo className="!text-indigo-500" /></h2>
         <p className="text-slate-500">Para começar, precisamos que você nos forneça alguns dados sobre a sua conta.</p>
       </div>
       <form className="w-full grid grid-cols-2 gap-4 mt-10" onSubmit={handleSubmit(onSubmit)}>

@@ -12,6 +12,7 @@ export const companyKeys = {
   companyLinksPageCustomization: (companyId: string) => [companyId, 'links-page-customization'],
   companyLinksPageLinks: (companyId: string) => [companyId, 'links-page-links'],
   companyPublicLinksPage: (companySlug: string) => [companySlug, 'public-links-page'],
+  companyStock: (companyId: string) => [companyId, 'stock'],
 }
 
 export const catalogKeys = {
@@ -31,4 +32,5 @@ export const ordersKeys = {
 
 export const stockKeys = {
   stockOptions: (companyId: string) => [companyId, 'stock-options'],
+  productStock: (companyId: string, productId: string) => [companyId, 'product-stock', productId],
 }

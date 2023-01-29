@@ -3,10 +3,9 @@ import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { MouseEvent, useEffect, useState } from 'react'
-import { BiBookHeart } from 'react-icons/bi'
-import { FiSettings, FiHome, FiShoppingCart, FiLogOut, FiMenu, FiX, FiLink, FiArchive } from 'react-icons/fi'
+import { FiHome, FiShoppingCart, FiLogOut, FiMenu, FiX, FiLink, FiArchive } from 'react-icons/fi'
 import { CgWebsite } from 'react-icons/cg'
-import { HiOutlineChevronDown, HiOutlineCurrencyDollar } from 'react-icons/hi'
+import { HiOutlineChevronDown } from 'react-icons/hi'
 import { Divider } from 'src/components/ui/Divider'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useBreakpoint } from 'src/hooks/useBreakpoint'
@@ -16,6 +15,8 @@ import { isSubscriptionValid } from 'src/helpers/isSubscriptionValid'
 import { Tooltip } from 'src/components/ui/Tooltip'
 import { AiOutlineDollar } from 'react-icons/ai'
 import { FeatureExplanation, SubscriptionRequiredDialog } from '../../shared/SubscriptionRequiredDialog'
+import { Logo } from 'src/assets/Logo'
+import { TfiReceipt } from 'react-icons/tfi'
 
 const sidebarItems = [
   {
@@ -39,7 +40,7 @@ const sidebarItems = [
     ]
   },
   {
-    icon: <FiArchive size={20} />,
+    icon: <TfiReceipt size={20} />,
     label: "Pedidos",
     path: "/company/dashboard/orders",
     subItems: [
@@ -234,9 +235,9 @@ export const Sidebar = () => {
                 "justify-between px-6": isMobile,
               })
             }>
-              <div className="flex items-center gap-2">
-                <h2>Catalify</h2>
-              </div>
+              <Link href="/company/dashboard" className="flex items-center gap-2">
+                <Logo />
+              </Link>
               {isMobile && (
                 <button onClick={closeSidebar} className="bg-white w-8 h-8 rounded-full shadow-sm flex items-center justify-center text-indigo-500">
                   <FiX size={25} />

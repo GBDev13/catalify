@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Logo } from 'src/assets/Logo'
 import { getSocialIconByUrl } from 'src/helpers/get-social-icon-by-url'
 import { useCatalog } from 'src/store/catalog'
 
@@ -22,7 +23,9 @@ export const Footer = () => {
         </div>
 
       </div>
-      <p className="w-full text-center border-t border-readable py-4 px-2">Desenvolvido por <Link className="font-bold" href="/">Catalify</Link></p>
+      <p className="w-full flex items-center justify-center gap-2 text-center border-t border-readable py-4 px-2">Desenvolvido por <Link className="font-bold" href="/">
+        <Logo className="text-readable w-[80px]" />
+      </Link></p>
     </section>
    </footer> 
   )

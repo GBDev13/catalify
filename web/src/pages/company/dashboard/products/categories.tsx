@@ -44,7 +44,7 @@ export default function CompanyProductsCategories() {
         footer: 'Nome'
       },
       {
-        header: () => <span className="block text-right">Ações</span>,
+        header: () => <span className="block w-full text-right">Ações</span>,
         accessorKey: 'id',
         cell: (row) => (
           <div className="flex items-center justify-end">

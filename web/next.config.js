@@ -2,8 +2,15 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['res.cloudinary.com', 'img.freepik.com', 's3-alpha-sig.figma.com', 'digital-catalog-images.s3.sa-east-1.amazonaws.com']
-  }
+    domains: ['storage.googleapis.com']
+  },
+  webpack: (config, options) => {
+    config.module.rules.push({
+      test: /\.svg$/,
+      use: ['@svgr/webpack'],
+    });
+    return config;
+  },
 }
 
 module.exports = nextConfig
