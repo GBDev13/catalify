@@ -12,6 +12,7 @@ import { PageTitle } from "src/components/pages/shared/PageTitle";
 import { Button } from "src/components/ui/Button";
 import { ControlledCheckbox } from "src/components/ui/Checkbox/controlled";
 import { ControlledCurrencyInput } from "src/components/ui/CurrencyInput/controlled";
+import { ConfirmationDialog } from "src/components/ui/Dialog/confirmation";
 import { ControlledEditor } from "src/components/ui/Editor/controlled";
 import { ControlledFileUpload } from "src/components/ui/FileUpload/controlled";
 import { ControlledInput } from "src/components/ui/Input/controlled";
@@ -19,7 +20,7 @@ import { ControlledSelect } from "src/components/ui/Select/controlled";
 import { IMAGE_MAX_SIZE, IMAGE_TYPES, LIMITS } from "src/constants/constants";
 import { productsKey } from "src/constants/query-keys";
 import { isSubscriptionValid } from "src/helpers/isSubscriptionValid";
-import { ActionType, ChangeType, onChangeExistentVariation, parseEditedVariations, SaveItem } from "src/helpers/on-change-existent-variations";
+import { ActionType, ChangeType, onChangeExistentVariation, ParseEditedResponse, parseEditedVariations, SaveItem } from "src/helpers/on-change-existent-variations";
 import { urlToFile } from "src/helpers/url-to-file";
 import { useUnsavedChangesWarning } from "src/hooks/useUnsavedChangesWarning";
 import { editProduct, EditProductDto, getCategories, getProductById } from "src/services/products";
@@ -152,15 +153,25 @@ export default function EditProduct() {
 
   const queryClient = useQueryClient()
 
+  const [showEditStockModal, setShowEditStockModal] = useState(false)
+
   const { mutateAsync: handleEditProduct } = useMutation((data: EditProductDto) => toast.promise(editProduct(productId, companyId!, data), {
     loading: 'Editando produto...',
     success: 'Produto editado com sucesso!',
     error: (err) => err?.response?.data?.message ?? 'Erro ao editar produto. Tente novamente mais tarde.'
   }), {
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
+      
+      const variationsIsEmpty = Object.keys(variables?.variations ?? {}).map(key => (variables?.variations ?? {})[key as keyof ParseEditedResponse]).every(value => !value?.length)
+
       reset()
       queryClient.invalidateQueries(productsKey.all)
       queryClient.invalidateQueries(productsKey.single(productId))
+
+      if(!variationsIsEmpty) {
+        setShowEditStockModal(true)
+        return
+      }
       router.push('/company/dashboard/products')
     }
   })
@@ -247,6 +258,14 @@ export default function EditProduct() {
           </Button>
         </Link>
       </PageTitle>
+
+      <ConfirmationDialog
+        show={showEditStockModal}
+        title="Deseja editar o estoque?"
+        description="Você alterou as variações do produto, deseja alterar também a quantidade do estoque?"
+        onConfirm={() => router.push(`/company/dashboard/stock?productId=${productId}`)}
+        onCancel={() => router.push("/company/dashboard/products")}
+      />
 
       {isLoadingProduct ? <p>carregando</p> : (
         <FormProvider {...methods}>

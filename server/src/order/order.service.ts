@@ -109,6 +109,11 @@ export class OrderService {
         id: orderId,
       },
       include: {
+        products: {
+          include: {
+            selectedVariants: true,
+          },
+        },
         company: {
           select: {
             ownerId: true,
@@ -134,15 +139,48 @@ export class OrderService {
         HttpStatus.UNAUTHORIZED,
       );
     }
+    order.products.forEach(async (product) => {
+      product.selectedVariants.forEach(async (option) => {
+        const optionStock = await this.prisma.stock.findFirst({
+          where: {
+            productVariantOptionId: option.id,
+            productId: product.productId,
+          },
+        });
 
-    await this.prisma.order.update({
-      where: {
-        id: orderId,
-      },
-      data: {
-        status: OrderStatus.FINISHED,
-      },
+        await this.prisma.stock.update({
+          where: {
+            id: optionStock.id,
+          },
+          data: {
+            quantity: optionStock.quantity - product.quantity,
+          },
+        });
+      });
+      // const productStock = await this.prisma.stock.findFirst({
+      //   where: {
+      //     productId: product.productId,
+      //   },
+      // });
+
+      // await this.prisma.stock.update({
+      //   where: {
+      //     id: productStock.id,
+      //   },
+      //   data: {
+      //     quantity: productStock.quantity - product.quantity,
+      //   },
+      // });
     });
+
+    // await this.prisma.order.update({
+    //   where: {
+    //     id: orderId,
+    //   },
+    //   data: {
+    //     status: OrderStatus.FINISHED,
+    //   },
+    // });
   }
 
   async getAllOrders(companyId: string) {

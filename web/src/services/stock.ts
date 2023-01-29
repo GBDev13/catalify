@@ -13,7 +13,8 @@ export const getStockOptions = async (companyId: string) => {
 export type StockDto = {
   stockQuantity: {
     quantity: number;
-    stockOptionId?: string;
+    stockOptionId1?: string;
+    stockOptionId2?: string;
   }[]
 }
 

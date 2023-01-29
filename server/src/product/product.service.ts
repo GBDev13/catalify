@@ -266,8 +266,8 @@ export class ProductService {
 
       const newVariationsCount =
         productExists.variants.length +
-        parsedVariations.added.length -
-        parsedVariations.removed.length;
+        parsedVariations.added.filter((x) => x.type === 'variation').length -
+        parsedVariations.removed.filter((x) => x.type === 'variation').length;
 
       if (
         !hasSubscription &&
@@ -307,14 +307,33 @@ export class ProductService {
         }
       });
 
+      const hasStock = await this.prisma.stock.findMany({
+        where: {
+          productId,
+        },
+        include: {
+          productVariantOption: {
+            include: {
+              productVariant: true,
+            },
+          },
+          productVariantOption2: {
+            include: {
+              productVariant: true,
+            },
+          },
+        },
+      });
+
+      await this.productVariantService.updateVariations(parsedVariations);
+      await this.productVariantService.deleteVariations(parsedVariations);
       await this.productVariantService.addVariations(
         parsedVariations,
         companyId,
         productId,
         hasSubscription,
+        hasStock,
       );
-      await this.productVariantService.updateVariations(parsedVariations);
-      await this.productVariantService.deleteVariations(parsedVariations);
     }
 
     const updatedProduct = await this.prisma.product.update({

@@ -38,7 +38,7 @@ export const PLANS = [
       'Produtos ilimitados',
       'Categorias ilimitadas',
       'Até 5 imagens por produto',
-      'Até 5 variações por produto',
+      'Até 2 variações por produto',
       'Até 10 links de contato',
       'Destaque de produtos',
       'Página de links customizável',

@@ -105,7 +105,7 @@ export class StockService {
     }
 
     const hasVariants = createProductStockDto.stockQuantity.every(
-      (x) => !!x?.stockOptionId,
+      (x) => !!x?.stockOptionId1,
     );
 
     if (hasVariants) {
@@ -115,7 +115,8 @@ export class StockService {
             productId,
             companyId,
             quantity: stockQuantity.quantity,
-            productVariantOptionId: stockQuantity.stockOptionId,
+            productVariantOptionId: stockQuantity.stockOptionId1,
+            productVariantOptionId2: stockQuantity.stockOptionId2,
           };
         }),
       });
@@ -171,6 +172,11 @@ export class StockService {
       },
       include: {
         productVariantOption: {
+          include: {
+            productVariant: true,
+          },
+        },
+        productVariantOption2: {
           include: {
             productVariant: true,
           },

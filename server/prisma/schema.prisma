@@ -172,7 +172,8 @@ model ProductVariantOption {
   companyId String
 
   orderProducts OrderProducts[]
-  stock         Stock[]
+  stock1        Stock[]         @relation("productVariantOption1")
+  stock2        Stock[]         @relation("productVariantOption2")
 
   @@map("product_variant_options")
 }
@@ -291,8 +292,11 @@ model Stock {
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId String
 
-  productVariantOption   ProductVariantOption? @relation(fields: [productVariantOptionId], references: [id], onDelete: Cascade)
+  productVariantOption   ProductVariantOption? @relation("productVariantOption1", fields: [productVariantOptionId], references: [id])
   productVariantOptionId String?
+
+  productVariantOption2   ProductVariantOption? @relation("productVariantOption2", fields: [productVariantOptionId2], references: [id])
+  productVariantOptionId2 String?
 
   quantity Int
 

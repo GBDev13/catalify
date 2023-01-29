@@ -13,6 +13,7 @@ import { useCart } from "src/store/cart"
 import { toast } from "react-hot-toast"
 import { useCatalog } from "src/store/catalog"
 import { useState } from "react"
+import clsx from "clsx"
 
 export default function Produto() {
   const { query } = useRouter();
@@ -88,8 +89,10 @@ export default function Produto() {
 
           {productData?.variants && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-5">
-              {productData?.variants.map(variant => (
-                <div className="flex flex-col" key={variant.id}>
+              {productData?.variants.map((variant, index) => (
+                <div className={clsx("flex flex-col", {
+                  "col-span-full": productData?.variants?.length % 2 !== 0 && index === productData?.variants?.length - 1
+                })} key={variant.id}>
                   <label htmlFor={variant.id} className="text-gray-400 text-sm mb-1">{variant.name}</label>
                   <select
                     id={variant.id}

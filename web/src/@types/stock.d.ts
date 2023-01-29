@@ -21,18 +21,23 @@ declare namespace Stock {
     hasVariants: boolean;
   }
 
+  type StockVariantOption = {
+    createdAt: string;
+    name: string;
+    productVariant: {
+      name: string;
+      id: string;
+    }
+  };
+
   export type StockDetailedItem = {
     id: string;
     productId: string;
     productVariantOptionId?: string;
-    productVariantOption?: {
-      createdAt: string;
-      name: string;
-      productVariant: {
-        name: string;
-        id: string;
-      }
-    };
+    productVariantOption?: StockVariantOption;
+    productVariantOptionId2?: string;
+    productVariantOption2?: StockVariantOption;
     quantity: number;
+    createdAt: string;
   }
 }

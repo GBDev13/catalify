@@ -22,15 +22,16 @@ const addStockFormSchema = z.object({
   }),
   stockQuantity: z.array(z.object({
     optionName: z.string(),
-    stockVariantId: z.string().optional(),
-    stockOptionId: z.string().optional(),
+    stockVariantId1: z.string().optional(),
+    stockVariantId2: z.string().optional(),
+    stockOptionId1: z.string().optional(),
+    stockOptionId2: z.string().optional(),
     productStockId: z.string().optional(),
     quantity: z.number({
       invalid_type_error: "Quantidade inválida",
-    }).positive({
-      message: "Quantidade deve ser maior que 0"
+    }).min(0, {
+      message: "Quantidade inválida"
     }),
-    label: z.string().optional()
   }))
 })
 
@@ -78,17 +79,34 @@ const AddStockForm = ({ selectedProductId, onSuccess }: AddStockFormProps) => {
 
     setValue('stockQuantity', [])
     if(selectedProduct?.variants?.length) {
-      selectedProduct?.variants?.forEach((item) => {
-        item?.options?.forEach((option, index) => {
-          append({
-            stockVariantId: item.id,
-            optionName: option.name,
-            stockOptionId: option.id,
-            quantity: 0,
-            label: index === 0 ? item.name : undefined
+      const variantOne = selectedProduct?.variants[0]
+      const variantTwo = selectedProduct?.variants?.[1]
+
+      if(variantTwo) {
+        variantOne?.options?.forEach((optionOne) => {
+          variantTwo?.options?.forEach((optionTwo) => {
+            append({
+              stockVariantId1: variantOne.id,
+              stockVariantId2: variantTwo.id,
+              stockOptionId1: optionOne.id,
+              stockOptionId2: optionTwo.id,
+              quantity: 0,
+              optionName: `${optionOne.name} - ${optionTwo.name}`
+            })
           })
         })
+        return
+      }
+
+      variantOne?.options?.forEach((optionOne) => {
+        append({
+          stockVariantId1: variantOne.id,
+          stockOptionId1: optionOne.id,
+          quantity: 0,
+          optionName: optionOne.name
+        })
       })
+      
     } else {
       append({
         optionName: 'Quantidade de estoque',
@@ -127,7 +145,7 @@ const AddStockForm = ({ selectedProductId, onSuccess }: AddStockFormProps) => {
     onSuccess: (data) => {
       setValue('stockQuantity', [])
 
-      const hasVariants = data.every(x => !!x.productVariantOptionId);
+      const hasVariants = !data.every(x => (!x.productVariantOptionId && !x.productVariantOptionId2));
       if(!hasVariants) {
         reset({
           product: {
@@ -144,40 +162,30 @@ const AddStockForm = ({ selectedProductId, onSuccess }: AddStockFormProps) => {
         return
       }
 
-      const groupedData = data.reduce((acc, item) => {
-        const variantName = item.productVariantOption?.productVariant?.name!;
-        if(!acc[variantName]) {
-          acc[variantName] = []
-        }
+      const sortedData = data.sort((a, b) => {
+        const aDate = new Date(a.productVariantOption?.createdAt!)
+        const bDate = new Date(b.productVariantOption?.createdAt!)
 
-        acc[variantName].push(item)
-        return acc
-      }, {} as Record<string, Stock.StockDetailedItem[]>)
-      
+        return aDate.getTime() - bDate.getTime()
+      })
+
       reset({
         product: {
           label: "",
           value: selectedProductId
         },
-        stockQuantity: Object.values(groupedData).flatMap((group) => {
-          return group
-          .sort((a, b) => {
-            return new Date(a.productVariantOption?.createdAt!).getTime() - new Date(b.productVariantOption?.createdAt!).getTime()
-          })
-          .flatMap((x, index) => ({
-            optionName: x?.productVariantOption?.name,
-            productStockId: x.id,
-            quantity: x.quantity,
-            label: index === 0 ? x?.productVariantOption?.productVariant?.name : undefined
-          }))
-        })
+        stockQuantity: sortedData.map((x, index) => ({
+          optionName: [x.productVariantOption?.name, x?.productVariantOption2?.name].filter(Boolean).join(' - '),
+          productStockId: x.id,
+          quantity: x.quantity,
+        }))
       })
     }
   })
 
   const submitIsDisabled = isEditing ? isSubmitting : isSubmitting || !selectedProduct
 
-  const selectedProductHasVariants = isEditing ? productStock?.every(x => !!x.productVariantOptionId) : selectedProduct?.variants && selectedProduct?.variants?.length > 0;
+  const selectedProductHasVariants = isEditing ? !productStock?.every(x => !!x.productVariantOptionId && !x.productVariantOptionId2) : selectedProduct?.variants && selectedProduct?.variants?.length > 0;
 
   const onSubmit = useCallback(async (data: AddStockFormType) => {
     if(!isEditing && !selectedProduct) return
@@ -215,7 +223,8 @@ const AddStockForm = ({ selectedProductId, onSuccess }: AddStockFormProps) => {
         await handleCreateStock({
           stockQuantity: data.stockQuantity.map(x => ({
             quantity: x.quantity,
-            stockOptionId: x.stockOptionId,
+            stockOptionId1: x.stockOptionId1,
+            stockOptionId2: x.stockOptionId2,
           }))
         })
         return
@@ -245,7 +254,7 @@ const AddStockForm = ({ selectedProductId, onSuccess }: AddStockFormProps) => {
         />
       )}
 
-      <section className={clsx("grid grid-cols-2 gap-2 my-4", {
+      <section className={clsx("grid grid-cols-3 gap-2 my-4", {
         "mt-0": isEditing
       })}>
         {selectedProductHasVariants && <h3 className="text-sm text-slate-600 col-span-full mb-4">Selecione a quantidade de estoque para cada variação</h3>}
@@ -253,12 +262,8 @@ const AddStockForm = ({ selectedProductId, onSuccess }: AddStockFormProps) => {
         {fields.map((item, index) => {
           return (
             <>
-              {!!item?.label && (
-                <h4 className="col-span-full text-slate-500 text-sm">
-                  {item.label}</h4>
-              )}
-              <div key={item.id} className={clsx({
-                "col-span-2": !selectedProductHasVariants
+              <div key={item.optionName} className={clsx({
+                "col-span-full": !selectedProductHasVariants
               })}>
                 <Input
                   label={item.optionName}
@@ -289,7 +294,7 @@ export const ManageStockDialog = ({ selectedProductId, children }: ManageStockDi
   const [open, setOpen] = useState(false)
 
   return (
-    <Dialog open={open} onOpenChange={setOpen} title={!!selectedProductId ? "Editar estoque" : "Adicionar estoque"} maxWidth="600px" content={<AddStockForm selectedProductId={selectedProductId} onSuccess={() => setOpen(false)} />}>
+    <Dialog open={open} onOpenChange={setOpen} title={!!selectedProductId ? "Editar estoque" : "Adicionar estoque"} maxWidth="750px" content={<AddStockForm selectedProductId={selectedProductId} onSuccess={() => setOpen(false)} />}>
       {children}
     </Dialog>
   )

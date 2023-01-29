@@ -15,7 +15,11 @@ export class StockQuantityItemDto {
 
   @IsString()
   @IsOptional()
-  stockOptionId?: string;
+  stockOptionId1?: string;
+
+  @IsString()
+  @IsOptional()
+  stockOptionId2?: string;
 }
 
 export class CreateProductStockDto {

@@ -85,7 +85,7 @@ export default function CompanyStock() {
     ],
     [handleDeleteStock]
   );
-
+    // todo - open dialog when has id in url
   return (
     <>
       <PageTitle title="Estoque">
