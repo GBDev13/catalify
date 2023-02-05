@@ -49,25 +49,27 @@ export default function CompanyDashboard() {
       <section className="w-full mt-8 flex flex-col gap-4 bg-slate-100 px-2 md:px-3 py-4 rounded-md shadow-sm">
         <h3 className="text-2xl font-semibold">Pedidos da Semana</h3>
         {graphData.length > 0 && (
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart
-              width={500}
-              height={400}
-              data={graphData}
-              margin={{
-                top: 10,
-                right: 30,
-                left: 0,
-                bottom: 0,
-              }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="day" fontSize="12px" />
-              <YAxis fontSize="12px" allowDecimals={false} />
-              <Tooltip wrapperStyle={{ outline: 'none' }} content={<CustomTooltip />} />
-              <Area type="monotone" dataKey="orders" fillOpacity={0.8} stroke="#818cf8" fill="#6366f1" />
-            </AreaChart>
-          </ResponsiveContainer>
+          <div className="h-[400px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart
+                width={500}
+                height={400}
+                data={graphData}
+                margin={{
+                  top: 10,
+                  right: 30,
+                  left: 0,
+                  bottom: 0,
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="day" fontSize="12px" />
+                <YAxis fontSize="12px" allowDecimals={false} />
+                <Tooltip wrapperStyle={{ outline: 'none' }} content={<CustomTooltip />} />
+                <Area type="monotone" dataKey="orders" fillOpacity={0.8} stroke="#818cf8" fill="#6366f1" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
         )}
 
       </section>
