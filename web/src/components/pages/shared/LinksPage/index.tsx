@@ -65,7 +65,7 @@ export const LinksPage = ({
       {logo && (
         <img className={clsx("object-contain", {
           'w-[100px] h-[100px] rounded-full': logoMode === 'rounded',
-          'max-h-[100px]': logoMode === 'free',
+          'max-h-[100px] max-w-[200px] sm:max-w-[380px]': logoMode === 'free',
         })} src={logo} />
       )}
       <h1

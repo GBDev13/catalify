@@ -56,6 +56,7 @@ export const getCompanyCatalogFilteredProducts = async (slug: string, page: numb
 }
 
 export type OrderProduct = {
+  name: string;
   productId: string;
   price: number;
   promoPrice: number;

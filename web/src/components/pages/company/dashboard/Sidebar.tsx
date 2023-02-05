@@ -52,6 +52,12 @@ const sidebarItems = [
   },
   {
     icon: <FiArchive size={20} />,
+    needsSubscription: true,
+    subscriptionExplanation: {
+      title: "Controle de Estoque",
+      description: "O controle de estoque é uma ferramenta que permite que você gerencie o estoque de seus produtos. Você pode gerenciar estoque de produtos com ou sem variações.",
+      videoUrl: "https://youtu.be/xMh7BfqYTDc"
+    },
     label: "Estoque",
     path: "/company/dashboard/stock",
   },

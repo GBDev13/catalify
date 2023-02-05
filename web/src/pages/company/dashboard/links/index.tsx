@@ -80,7 +80,7 @@ export default function ManageLinksPage() {
         background: data.bgColor,
         background2: data.bgColor2,
         backgroundMode: data.bgMode,
-        headline: data.headLine,
+        headline: data.headLine ?? "",
         logo
       };
       reset(newData)

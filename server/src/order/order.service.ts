@@ -35,6 +35,7 @@ export class OrderService {
         companyId: company.id,
         products: {
           create: createOrderDto.products.map((product) => ({
+            name: product.name,
             price: product.price,
             promoPrice: product.promoPrice,
             quantity: product.quantity,
@@ -140,47 +141,62 @@ export class OrderService {
       );
     }
     order.products.forEach(async (product) => {
-      product.selectedVariants.forEach(async (option) => {
-        const optionStock = await this.prisma.stock.findFirst({
+      if (product.selectedVariants.length > 0) {
+        const ids = product.selectedVariants.map((x) => x.id);
+
+        const stock = await this.prisma.stock.findFirst({
           where: {
-            productVariantOptionId: option.id,
+            productId: product.productId,
+            OR: [
+              {
+                productVariantOptionId: ids?.[0] ?? null,
+                productVariantOptionId2: ids?.[1] ?? null,
+              },
+              {
+                productVariantOptionId2: ids?.[0] ?? null,
+                productVariantOptionId: ids?.[1] ?? null,
+              },
+            ],
+          },
+        });
+
+        if (stock) {
+          await this.prisma.stock.update({
+            where: {
+              id: stock.id,
+            },
+            data: {
+              quantity: stock.quantity - product.quantity,
+            },
+          });
+        }
+      }
+
+      if (product.selectedVariants.length <= 0) {
+        const productStock = await this.prisma.stock.findFirst({
+          where: {
             productId: product.productId,
           },
         });
-
         await this.prisma.stock.update({
           where: {
-            id: optionStock.id,
+            id: productStock.id,
           },
           data: {
-            quantity: optionStock.quantity - product.quantity,
+            quantity: productStock.quantity - product.quantity,
           },
         });
-      });
-      // const productStock = await this.prisma.stock.findFirst({
-      //   where: {
-      //     productId: product.productId,
-      //   },
-      // });
-
-      // await this.prisma.stock.update({
-      //   where: {
-      //     id: productStock.id,
-      //   },
-      //   data: {
-      //     quantity: productStock.quantity - product.quantity,
-      //   },
-      // });
+      }
     });
 
-    // await this.prisma.order.update({
-    //   where: {
-    //     id: orderId,
-    //   },
-    //   data: {
-    //     status: OrderStatus.FINISHED,
-    //   },
-    // });
+    await this.prisma.order.update({
+      where: {
+        id: orderId,
+      },
+      data: {
+        status: OrderStatus.FINISHED,
+      },
+    });
   }
 
   async getAllOrders(companyId: string) {

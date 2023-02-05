@@ -15,9 +15,11 @@ type OrderProductType = OrderProducts & {
 export const orderProductToWeb = (orderProduct: OrderProductType) => {
   const { product, ...orderProd } = orderProduct;
 
+  const storedProduct = (product ?? orderProd) as any;
+
   return {
-    id: product.id,
-    name: product.name,
+    id: storedProduct.id,
+    name: storedProduct.name,
     price: orderProd.price,
     promoPrice: orderProd?.promoPrice,
     quantity: orderProd.quantity,
@@ -25,7 +27,7 @@ export const orderProductToWeb = (orderProduct: OrderProductType) => {
       ? orderProd.selectedVariants.map((variant) => variant.name)
       : undefined,
     picture: product?.pictures?.length
-      ? product.pictures[0]?.fileUrl
+      ? storedProduct.pictures[0]?.fileUrl
       : undefined,
   };
 };

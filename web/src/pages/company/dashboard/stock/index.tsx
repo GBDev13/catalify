@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
-import { useMemo } from "react";
+import { useRouter } from "next/router";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
 import { FiEdit, FiTrash } from "react-icons/fi";
 import { ManageStockDialog } from "src/components/pages/company/dashboard/stock/manage-stock-dialog";
@@ -85,11 +86,29 @@ export default function CompanyStock() {
     ],
     [handleDeleteStock]
   );
-    // todo - open dialog when has id in url
+
+  const router = useRouter()
+  const productStockId = router.query.productId as string
+
+  const [manageIsOpen, setManageIsOpen] = useState(false)
+
+  useEffect(() => {
+    if (productStockId) {
+      setManageIsOpen(true)
+    }
+  }, [productStockId, router])
+
+  const handleOpenChange = (isOpen: boolean) => {
+    if(productStockId) {
+      router.replace('/company/dashboard/stock', undefined, { shallow: true })
+    }
+    setManageIsOpen(isOpen)
+  }
+
   return (
     <>
       <PageTitle title="Estoque">
-        <ManageStockDialog>
+        <ManageStockDialog open={manageIsOpen} selectedProductId={productStockId} onOpenChange={handleOpenChange}>
           <Button>
             Adicionar estoque
           </Button>

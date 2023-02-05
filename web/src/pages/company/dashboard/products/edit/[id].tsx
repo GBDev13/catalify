@@ -168,7 +168,7 @@ export default function EditProduct() {
       queryClient.invalidateQueries(productsKey.all)
       queryClient.invalidateQueries(productsKey.single(productId))
 
-      if(!variationsIsEmpty) {
+      if(!variationsIsEmpty && subscriptionIsValid) {
         setShowEditStockModal(true)
         return
       }

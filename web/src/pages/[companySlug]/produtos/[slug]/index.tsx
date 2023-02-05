@@ -28,7 +28,7 @@ export default function Produto() {
 
   const { formattedPrice, formattedPromoPrice, promoPercentage } = getFormattedPrices(productData?.price!, productData?.promoPrice)
 
-  const { addProductToCart } = useCart();
+  const { addProductToCart, setCartIsOpen } = useCart();
 
   const pictures = productData?.pictures?.length ? productData.pictures : ['/images/product-placeholder.svg']
 
@@ -44,10 +44,6 @@ export default function Produto() {
   }
 
   const buyDisabled = Object.keys(selectedVariations).length !== productData?.variants?.length;
-
-  const handleBuy = () => {
-    console.log('buy')
-  }
 
   const handleAddToCart = () => {
     const variants = Object.entries(selectedVariations).map(([variantId, optionId]) => {
@@ -72,6 +68,7 @@ export default function Produto() {
       picture: productData?.pictures ? productData?.pictures[0] : undefined,
       variants
     })
+    setCartIsOpen(true);
   }
 
   return (

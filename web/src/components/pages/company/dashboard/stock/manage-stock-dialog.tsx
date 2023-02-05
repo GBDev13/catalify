@@ -43,7 +43,7 @@ type AddStockFormProps = {
 }
 
 const AddStockForm = ({ selectedProductId, onSuccess }: AddStockFormProps) => {
-  const isEditing = !!selectedProductId;
+  const [isEditing, setIsEditing] = useState(!!selectedProductId)
 
   const { company } = useCompany()
   const companyId = company?.id!;
@@ -140,10 +140,15 @@ const AddStockForm = ({ selectedProductId, onSuccess }: AddStockFormProps) => {
     }
   })
 
-  const { data: productStock } = useQuery(stockKeys.productStock(companyId, selectedProductId!), () => getProductStock(companyId, selectedProductId!), {
+  const { data: productStock, isFetched } = useQuery(stockKeys.productStock(companyId, selectedProductId!), () => getProductStock(companyId, selectedProductId!), {
     enabled: !!selectedProductId && !!companyId,
     onSuccess: (data) => {
       setValue('stockQuantity', [])
+
+      if(!data.length) {
+        setIsEditing(false)
+        return
+      }
 
       const hasVariants = !data.every(x => (!x.productVariantOptionId && !x.productVariantOptionId2));
       if(!hasVariants) {
@@ -180,8 +185,23 @@ const AddStockForm = ({ selectedProductId, onSuccess }: AddStockFormProps) => {
           quantity: x.quantity,
         }))
       })
+    },
+    onError: () => {
+      setIsEditing(false)
     }
   })
+
+  useEffect(() => {
+    if(!isEditing && !!selectedProductId && isFetched) {
+      const product = stockOptions?.find(x => x.id === selectedProductId)
+      reset({
+        product: {
+          label: product?.name ?? "",
+          value: selectedProductId
+        }
+      })
+    }
+  }, [isEditing, isFetched, reset, selectedProductId, stockOptions])
 
   const submitIsDisabled = isEditing ? isSubmitting : isSubmitting || !selectedProduct
 
@@ -261,21 +281,19 @@ const AddStockForm = ({ selectedProductId, onSuccess }: AddStockFormProps) => {
 
         {fields.map((item, index) => {
           return (
-            <>
-              <div key={item.optionName} className={clsx({
-                "col-span-full": !selectedProductHasVariants
-              })}>
-                <Input
-                  label={item.optionName}
-                  {...register(`stockQuantity.${index}.quantity` as const, {
-                    valueAsNumber: true
-                  })}
-                  className="w-full"
-                  defaultValue={item.quantity}
-                  error={errors.stockQuantity?.[index]?.quantity}
-                />
-              </div>
-            </>
+            <div key={item.optionName} className={clsx({
+              "col-span-full": !selectedProductHasVariants
+            })}>
+              <Input
+                label={item.optionName}
+                {...register(`stockQuantity.${index}.quantity` as const, {
+                  valueAsNumber: true
+                })}
+                className="w-full"
+                defaultValue={item.quantity}
+                error={errors.stockQuantity?.[index]?.quantity}
+              />
+            </div>
           );
         })}
       </section>
@@ -288,10 +306,15 @@ const AddStockForm = ({ selectedProductId, onSuccess }: AddStockFormProps) => {
 type ManageStockDialogProps = {
   children: ReactNode
   selectedProductId?: string
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }
 
-export const ManageStockDialog = ({ selectedProductId, children }: ManageStockDialogProps) => {
-  const [open, setOpen] = useState(false)
+export const ManageStockDialog = ({ open: initialOpen, onOpenChange, selectedProductId, children }: ManageStockDialogProps) => {
+  const [modalOpen, setModalOpen] = useState(false)
+
+  const open = initialOpen !== undefined ? initialOpen : modalOpen
+  const setOpen = onOpenChange !== undefined ? onOpenChange : setModalOpen
 
   return (
     <Dialog open={open} onOpenChange={setOpen} title={!!selectedProductId ? "Editar estoque" : "Adicionar estoque"} maxWidth="750px" content={<AddStockForm selectedProductId={selectedProductId} onSuccess={() => setOpen(false)} />}>

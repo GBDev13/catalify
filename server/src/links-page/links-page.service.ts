@@ -31,7 +31,7 @@ export class LinksPageService {
       );
     }
 
-    if (company?.linksPage) return company.linksPage;
+    if (company.linksPage.length > 0) return company.linksPage;
 
     const createdLinksPage = await this.prismaService.companyLinksPage.create({
       data: {

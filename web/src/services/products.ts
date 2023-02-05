@@ -50,9 +50,9 @@ export const createProduct = async (createProductDto: CreateProductDto, companyI
     })
   }
 
-  const response = await api.post(`/product/${companyId}`, formData)
+  const { data } = await api.post<Products.Product>(`/product/${companyId}`, formData)
 
-  return response
+  return data
 }
 
 export type EditProductDto = Omit<Products.Product, 'category' | 'id' | 'variants' | 'pictures'> & {

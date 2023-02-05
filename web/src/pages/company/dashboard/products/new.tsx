@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { FiArrowLeft } from "react-icons/fi";
@@ -12,6 +12,7 @@ import { PageTitle } from "src/components/pages/shared/PageTitle";
 import { Button } from "src/components/ui/Button";
 import { ControlledCheckbox } from "src/components/ui/Checkbox/controlled";
 import { ControlledCurrencyInput } from "src/components/ui/CurrencyInput/controlled";
+import { ConfirmationDialog } from "src/components/ui/Dialog/confirmation";
 import { ControlledEditor } from "src/components/ui/Editor/controlled";
 import { ControlledFileUpload } from "src/components/ui/FileUpload/controlled";
 import { ControlledInput } from "src/components/ui/Input/controlled";
@@ -116,15 +117,21 @@ export default function NewProduct() {
 
   const queryClient = useQueryClient()
 
+  const [productId, setProductId] = useState("");
+  const [showCreateStockModal, setShowCreateStockModal] = useState(false)
+
   const { mutateAsync: handleCreateProduct } = useMutation((data: CreateProductDto) => toast.promise(createProduct(data, companyId!), {
     loading: 'Criando produto...',
     success: 'Produto criado com sucesso!',
     error: (err) => err.response?.data?.message || 'Erro ao criar produto'
   }), {
-    onSuccess: () => {
+    onSuccess: (createdProduct) => {
       reset()
       queryClient.invalidateQueries(productsKey.all)
-      router.push('/company/dashboard/products')
+      if(subscriptionIsValid) {
+        setShowCreateStockModal(true)
+      }
+      setProductId(createdProduct.id)
     }
   })
 
@@ -202,6 +209,14 @@ export default function NewProduct() {
           </Button>
         </Link>
       </PageTitle>
+
+      <ConfirmationDialog
+        show={showCreateStockModal}
+        title="Deseja controlar o estoque?"
+        description="Você poderá adicionar o controle de estoque para este produto mais tarde, caso deseje."
+        onConfirm={() => router.push(`/company/dashboard/stock?productId=${productId}`)}
+        onCancel={() => router.push("/company/dashboard/products")}
+      />
 
       <FormProvider {...methods}>
         <form className="grid bg-slate-100 rounded grid-cols-1 gap-6 p-4 lg:gap-16 lg:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>

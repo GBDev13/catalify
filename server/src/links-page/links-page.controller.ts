@@ -1,14 +1,6 @@
 import { LinksPageService } from './links-page.service';
 import { CreateLinksPageDto } from './dto/create-links-page.dto';
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Post,
-  Put,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, Put, UseGuards } from '@nestjs/common';
 import { UpdateLinksPageDto } from './dto/update-links-page.dto';
 import { UpdateLinksDto } from './dto/update-links.dto';
 import { SubscriptionGuard } from 'src/subscription/guards/subscription.guard';
@@ -18,14 +10,6 @@ import { IsPublic } from 'src/auth/decorators/is-public.decorator';
 @Controller('links-page')
 export class LinksPageController {
   constructor(private readonly linksPageService: LinksPageService) {}
-
-  @Post('/:companyId')
-  create(
-    @Body() createLinksPageDto: CreateLinksPageDto,
-    @Param('companyId') companyId: string,
-  ) {
-    return this.linksPageService.create(companyId, createLinksPageDto);
-  }
 
   @Get('/:companyId')
   getByCompanyId(@Param('companyId') companyId: string) {

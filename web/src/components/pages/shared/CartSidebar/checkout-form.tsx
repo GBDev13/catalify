@@ -74,6 +74,7 @@ export const CheckoutForm = ({ step, setStep }: CheckoutFormProps) => {
       buyerName: data.name,
       buyerPhone: data.phone,
       products: cartItems.map(cartItem => ({
+        name: cartItem.name,
         price: cartItem.price,
         productId: cartItem.id,
         promoPrice: cartItem?.promoPrice,

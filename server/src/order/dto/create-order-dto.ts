@@ -12,6 +12,9 @@ import { Order } from '../entities/order.entity';
 
 class OrderProductDto {
   @IsString()
+  name: string;
+
+  @IsString()
   productId: string;
 
   @IsNumber()
