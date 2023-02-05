@@ -21,7 +21,7 @@ import { TfiReceipt } from 'react-icons/tfi'
 const sidebarItems = [
   {
     icon: <FiHome size={20} />,
-    label: "Dashboard",
+    label: "Resumo",
     path: "/company/dashboard"
   },
   {
@@ -216,7 +216,7 @@ export const Sidebar = () => {
       <AnimatePresence>
         {sideBarOpen && (
           <motion.aside className={
-            clsx("h-screen bg-indigo-800 text-indigo-100 flex flex-col min-w-[250px] z-10", {
+            clsx("h-screen bg-indigo-800 text-indigo-100 flex flex-col min-w-[300px] z-10", {
               "fixed left-0 min-w-0 w-full max-w-[350px]": isMobile,
             })
           }
@@ -242,7 +242,7 @@ export const Sidebar = () => {
               })
             }>
               <Link href="/company/dashboard" className="flex items-center gap-2">
-                <Logo />
+                <Logo className="w-[130px]" />
               </Link>
               {isMobile && (
                 <button onClick={closeSidebar} className="bg-white w-8 h-8 rounded-full shadow-sm flex items-center justify-center text-indigo-500">

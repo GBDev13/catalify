@@ -13,6 +13,7 @@ export const companyKeys = {
   companyLinksPageLinks: (companyId: string) => [companyId, 'links-page-links'],
   companyPublicLinksPage: (companySlug: string) => [companySlug, 'public-links-page'],
   companyStock: (companyId: string) => [companyId, 'stock'],
+  companyOverview: (companyId: string) => [companyId, 'overview'],
 }
 
 export const catalogKeys = {

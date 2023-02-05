@@ -405,4 +405,81 @@ export class CompanyService {
       );
     }
   }
+
+  async getCompanyOverview(companyId: string) {
+    const productCount = await this.prisma.product.count({
+      where: {
+        companyId,
+      },
+    });
+
+    const categoryCount = await this.prisma.category.count({
+      where: {
+        companyId,
+      },
+    });
+
+    const monthOrdersCount = await this.prisma.order.count({
+      where: {
+        companyId,
+        createdAt: {
+          gte: new Date(new Date().setMonth(new Date().getMonth() - 1)),
+        },
+      },
+    });
+
+    const weekOrders = await this.prisma.order.findMany({
+      where: {
+        companyId,
+        createdAt: {
+          gte: new Date(new Date().setDate(new Date().getDate() - 7)),
+        },
+      },
+    });
+
+    const weekOrdersGroupedByDay = weekOrders.reduce(
+      (acc, order) => {
+        const day = new Date(order.createdAt).getDay();
+        if (acc[day]) {
+          acc[day] += 1;
+        } else {
+          acc[day] = 1;
+        }
+        return acc;
+      },
+      {
+        0: 0,
+        1: 0,
+        2: 0,
+        3: 0,
+        4: 0,
+        5: 0,
+        6: 0,
+      },
+    );
+
+    const DAYS_OF_WEEK = [
+      'Domingo',
+      'Segunda',
+      'Terça',
+      'Quarta',
+      'Quinta',
+      'Sexta',
+      'Sábado',
+    ];
+
+    const parsedWeekOrdersGroupedByDay = Object.entries(
+      weekOrdersGroupedByDay,
+    ).map(([key, value]) => ({
+      day: DAYS_OF_WEEK[parseInt(key, 10)],
+      orders: value,
+    }));
+
+    return {
+      products: productCount,
+      categories: categoryCount,
+      monthOrders: monthOrdersCount,
+      weekOrders: parsedWeekOrdersGroupedByDay,
+    };
+  }
 }

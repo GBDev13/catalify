@@ -101,4 +101,9 @@ export class CompanyController {
   ) {
     return this.subscriptionService.getSubscriptionByCompanySlug(companySlug);
   }
+
+  @Get('/:companyId/overview')
+  async getCompanyOverview(@Param('companyId') companyId: string) {
+    return this.companyService.getCompanyOverview(companyId);
+  }
 }

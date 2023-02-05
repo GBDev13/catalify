@@ -49,4 +49,14 @@ declare namespace Company {
     title: string;
     url: string
   }
+
+  export type CompanyOverview = {
+    categories: number;
+    products: number;
+    monthOrders: number;
+    weekOrders: {
+      day: string;
+      orders: number;
+    }[]
+  }
 }

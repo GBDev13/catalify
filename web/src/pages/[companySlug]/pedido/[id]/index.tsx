@@ -67,7 +67,7 @@ export default function OrderDetails() {
     <CatalogLayout title="Pedido" withoutLayout>
       <main className="w-full max-w-[800px] mx-auto px-4">
         <Link className="mt-10 block" href={`/${slug}`}>
-          {logo ? <img src={logo} className="max-h-[100px] object-contain mx-auto" /> : (
+          {logo ? <img src={logo} className="max-h-[100px] max-w-[300px] object-contain mx-auto" /> : (
             <h1 className="text-primary text-4xl font-semibold text-center">
               {name}
             </h1>

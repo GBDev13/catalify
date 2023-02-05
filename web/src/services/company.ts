@@ -107,3 +107,8 @@ export const getPublicCompanyLinks = async (companySlug: string) => {
   const { data } = await api.get<PublicCompanyLinks>(`/links-page/${companySlug}/page-data`)
   return data
 }
+
+export const getCompanyOverview = async (companyId: string) => {
+  const { data } = await api.get<Company.CompanyOverview>(`/company/${companyId}/overview`)
+  return data
+}

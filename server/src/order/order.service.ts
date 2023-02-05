@@ -31,7 +31,7 @@ export class OrderService {
           },
         });
 
-        if (productStock.quantity < product.quantity) {
+        if (productStock && productStock.quantity < product.quantity) {
           stockError.push(product.productId);
         }
       } else {
