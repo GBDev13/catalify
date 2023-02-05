@@ -23,7 +23,7 @@ export const deleteCategory = async (categoryId: string, companyId: string) => {
   return api.delete(`/category/${companyId}/${categoryId}`)
 }
 
-export type CreateProductDto = Omit<Products.Product, 'category' | 'id' | 'variants' | 'pictures'> & {
+export type CreateProductDto = Omit<Products.Product, 'category' | 'id' | 'variants' | 'pictures' | 'isVisible'> & {
   images?: File[]
   categoryId?: string
   variations?: Products.Variation[]
@@ -55,7 +55,7 @@ export const createProduct = async (createProductDto: CreateProductDto, companyI
   return data
 }
 
-export type EditProductDto = Omit<Products.Product, 'category' | 'id' | 'variants' | 'pictures'> & {
+export type EditProductDto = Omit<Products.Product, 'category' | 'id' | 'variants' | 'pictures' | 'isVisible'> & {
   variations?: ParseEditedResponse
   categoryId?: string
   images?: File[]
@@ -101,4 +101,8 @@ export const getProductById = async (productId: string) => {
 
 export const toggleHighlight = async (productId: string, companyId: string) => {
   return api.patch(`/product/${companyId}/${productId}/highlight`)
+}
+
+export const toggleVisibility = async (productId: string, companyId: string) => {
+  return api.patch(`/product/${companyId}/${productId}/visible`)
 }

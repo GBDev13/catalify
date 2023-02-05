@@ -2,7 +2,7 @@ import create from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
 
-type CartItem = Products.CatalogProduct & {
+type CartItem = Omit<Products.CatalogProduct, 'hasStock'> & {
   quantity: number
   cartId: string
   variants?: {

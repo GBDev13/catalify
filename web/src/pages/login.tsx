@@ -4,6 +4,7 @@ import { getSession, signIn } from "next-auth/react"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { useForm } from "react-hook-form"
+import { DashboardSEO } from "src/components/pages/shared/DashboardSEO"
 import { Button } from "src/components/ui/Button"
 import { Divider } from "src/components/ui/Divider"
 import { ControlledInput } from "src/components/ui/Input/controlled"
@@ -46,6 +47,8 @@ export default function Login() {
 
   return (
     <main className="w-screen h-screen grid grid-cols-1 grid-rows-[1.5fr,1fr] md:grid-rows-1 md:grid-cols-2">
+      <DashboardSEO title="Entrar" />
+
       <section className="p-8 flex flex-col items-center">
         <div className="w-full max-w-[600px] mt-10 md:mt-20">
           <h1 className="text-4xl font-semibold">Entrar</h1>

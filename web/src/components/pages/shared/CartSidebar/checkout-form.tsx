@@ -32,9 +32,10 @@ type CheckoutFormData = z.infer<typeof checkoutFormSchema>
 type CheckoutFormProps = {
   step: number
   setStep: (step: number) => void
+  setOpen: (open: boolean) => void
 }
 
-export const CheckoutForm = ({ step, setStep }: CheckoutFormProps) => {
+export const CheckoutForm = ({ step, setStep, setOpen }: CheckoutFormProps) => {
   const { slug } = useCatalog(state => state.info)
   const { cartItems, resetCart } = useCart()
 
@@ -58,7 +59,16 @@ export const CheckoutForm = ({ step, setStep }: CheckoutFormProps) => {
   const { mutateAsync: handleCheckout, data: orderId } = useMutation(({ buyerName, buyerPhone, products }: { buyerName: string; buyerPhone: string; products: OrderProduct[] }) => toast.promise(createOrder(slug, buyerName, buyerPhone, products), {
     loading: 'Criando pedido...',
     success: 'Pedido Criando com sucesso!',
-    error: 'Erro ao criar pedido'
+    error: (err) => {
+      const error = err as any
+      const invalidQuantity = error.response?.data?.invalidQuantity ?? []
+      setOpen(false)
+      if(invalidQuantity.length > 0) {
+        const productsOutOfStock = cartItems.filter(cartItem => error.response.data.invalidQuantity.includes(cartItem.id))
+        return `Alguns produtos não estão mais disponíveis no estoque, verifique os produtos: ${productsOutOfStock.map(product => product.name).join(', ')}`;
+      }
+      return 'Erro ao criar pedido'
+    }
   }), {
     onSuccess: (orderId, variables) => {
       localStorage.setItem('catalify:userInfo', JSON.stringify({ name, phone }))
@@ -66,22 +76,24 @@ export const CheckoutForm = ({ step, setStep }: CheckoutFormProps) => {
       openWhatsAppMessage(message)
       setStep(2)
       resetCart()
-    }
+    },
   })
 
   const onSubmit = async (data: CheckoutFormData) => {
-    await handleCheckout({
-      buyerName: data.name,
-      buyerPhone: data.phone,
-      products: cartItems.map(cartItem => ({
-        name: cartItem.name,
-        price: cartItem.price,
-        productId: cartItem.id,
-        promoPrice: cartItem?.promoPrice,
-        quantity: cartItem.quantity,
-        selectedVariants: cartItem?.variants?.map(variant => variant.optionId)
-      }))
-    })
+    try {
+      await handleCheckout({
+        buyerName: data.name,
+        buyerPhone: data.phone,
+        products: cartItems.map(cartItem => ({
+          name: cartItem.name,
+          price: cartItem.price,
+          productId: cartItem.id,
+          promoPrice: cartItem?.promoPrice,
+          quantity: cartItem.quantity,
+          selectedVariants: cartItem?.variants?.map(variant => variant.optionId)
+        }))
+      })
+    } catch {}
   }
 
   const handleOpenWhatsapp = () => {
@@ -122,7 +134,7 @@ export const CheckoutFormDialog = ({ children }: CheckoutFormDialogProps) => {
   }, [open])
 
   return (
-    <CatalogDialog open={open} onOpenChange={setOpen} content={<CheckoutForm step={step} setStep={setStep} />} title={step === 1 ? "Preencha para prosseguir" : "Pedido criado!"} maxWidth="600px">
+    <CatalogDialog open={open} onOpenChange={setOpen} content={<CheckoutForm step={step} setStep={setStep} setOpen={setOpen} />} title={step === 1 ? "Preencha para prosseguir" : "Pedido criado!"} maxWidth="600px">
       {children}
     </CatalogDialog>
   )

@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CompanyService } from 'src/company/company.service';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { addStockFlag } from 'src/utils/addStockFlag';
 import { productDetailedToWeb, productToWeb } from './parser/product-to-web';
 
 export type OrderOptions = 'recent' | 'lowerPrice' | 'higherPrice';
@@ -81,11 +82,13 @@ export class CatalogService {
       where: {
         companyId: company.id,
         isHighlighted: true,
+        isVisible: true,
       },
       orderBy: {
         createdAt: 'desc',
       },
       include: {
+        stock: true,
         pictures: {
           orderBy: {
             createdAt: 'desc',
@@ -99,6 +102,7 @@ export class CatalogService {
       where: {
         companyId: company.id,
         isHighlighted: false,
+        isVisible: true,
       },
       orderBy: {
         createdAt: 'desc',
@@ -110,13 +114,17 @@ export class CatalogService {
           },
           take: 1,
         },
+        stock: true,
       },
       take: 8,
     });
 
+    const withStock = addStockFlag(products);
+    const highlightedWithStock = addStockFlag(highlightedProducts);
+
     return {
-      products: products.map(productToWeb),
-      highlights: highlightedProducts.map(productToWeb),
+      products: withStock.map(productToWeb),
+      highlights: highlightedWithStock.map(productToWeb),
     };
   }
 
@@ -155,6 +163,12 @@ export class CatalogService {
         variants: {
           include: {
             options: true,
+          },
+        },
+        stock: {
+          include: {
+            productVariantOption: true,
+            productVariantOption2: true,
           },
         },
       },
@@ -207,6 +221,7 @@ export class CatalogService {
 
     const whereQuery = {
       companyId: company.id,
+      isVisible: true,
       ...(!!search && {
         name: {
           search,
@@ -229,6 +244,7 @@ export class CatalogService {
       where: whereQuery,
       orderBy: order ? orderMap[order] : undefined,
       include: {
+        stock: true,
         pictures: {
           orderBy: {
             createdAt: 'desc',
@@ -244,7 +260,7 @@ export class CatalogService {
       total,
       offset: PAGE_SIZE * page,
       limit: PAGE_SIZE,
-      products: products.map(productToWeb),
+      products: addStockFlag(products).map(productToWeb),
     };
   }
 }

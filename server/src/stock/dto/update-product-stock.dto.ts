@@ -1,15 +1,9 @@
 import { Type } from 'class-transformer';
-import {
-  IsArray,
-  IsInt,
-  IsPositive,
-  IsString,
-  ValidateNested,
-} from 'class-validator';
+import { IsArray, IsInt, IsString, Min, ValidateNested } from 'class-validator';
 
 export class StockQuantityItemDto {
-  @IsPositive()
   @IsInt()
+  @Min(0)
   quantity: number;
 
   @IsString()

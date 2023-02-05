@@ -123,6 +123,7 @@ export class ProductController {
             name: product.category.name,
           }
         : null,
+      isVisible: product.isVisible,
     }));
   }
 
@@ -179,5 +180,14 @@ export class ProductController {
       productId,
       validSubscription,
     );
+  }
+
+  @Patch('/:companyId/:productId/visible')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async toggleIsVisible(
+    @Param('companyId') companyId: string,
+    @Param('productId') productId: string,
+  ) {
+    return this.productService.toggleIsVisible(companyId, productId);
   }
 }

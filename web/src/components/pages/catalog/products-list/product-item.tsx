@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
 import { checkColorReadability } from "src/helpers/check-color-readability";
@@ -16,7 +17,12 @@ export const ProductItem = ({ product }: ProductItemProps) => {
   const priceColor = colors?.primary ? checkColorReadability('#ffff', colors.primary, '#00000') : undefined
 
   return (
-    <Link href={`/${slug}/produtos/${product.slug}`} className="border hover:!border-primary transition-colors rounded-lg p-4 border-primaryLight">
+    <Link href={`/${slug}/produtos/${product.slug}`} className={clsx("border hover:!border-primary overflow-hidden transition-colors rounded-lg p-4 border-primaryLight", {
+      "grayscale": !product.hasStock
+    })}>
+      {!product.hasStock && (
+        <span className="absolute z-10 text-xs top-0 right-0 bg-red-500 text-white px-2 py-1 rounded-bl-lg">Sem estoque</span>
+      )}
       <div className="group w-full h-200 overflow-hidden">
         <Image height={200} width={200} src={product?.picture ?? '/images/product-placeholder.svg'} alt={product.name} className="w-full object-contain h-[200px] group-hover:scale-110 transition-all duration-300" />
       </div>

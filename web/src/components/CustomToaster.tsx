@@ -16,6 +16,13 @@ export const CustomToaster = () => {
         primary: 'white',
         secondary: 'var(--color-primary)',
       }
+    },
+    error: {
+      className: "!bg-red-500 !text-white",
+      iconTheme: {
+        primary: 'white',
+        secondary: '#ef4444',
+      }
     }
   }
 

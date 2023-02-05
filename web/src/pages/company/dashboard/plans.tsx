@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { Pricing } from "src/components/pages/onboarding/pricing";
+import { DashboardSEO } from "src/components/pages/shared/DashboardSEO";
 import { PageTitle } from "src/components/pages/shared/PageTitle";
 import { isSubscriptionValid } from "src/helpers/isSubscriptionValid";
 import { useCompany } from "src/store/company";
@@ -21,6 +22,8 @@ export default function PlansPage() {
 
   return (
     <div>
+      <DashboardSEO title="Planos" />
+
       <PageTitle title="Planos" />
 
       <h2 className="text-center text-slate-600 text-xl sm:text-2xl">

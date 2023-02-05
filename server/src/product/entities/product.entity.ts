@@ -8,4 +8,5 @@ export class Product implements Prisma.ProductUncheckedCreateInput {
   description?: string;
   categoryId?: string;
   companyId: string;
+  isVisible?: boolean;
 }

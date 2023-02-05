@@ -18,6 +18,7 @@ import clsx from "clsx";
 import { isSubscriptionValid } from "src/helpers/isSubscriptionValid";
 import { LIMITS } from "src/constants/constants";
 import { getOrders } from "src/services/orders";
+import { DashboardSEO } from "src/components/pages/shared/DashboardSEO";
 
 export default function CompanyOrders() {
   const { company, currentSubscription } = useCompany()
@@ -146,6 +147,8 @@ export default function CompanyOrders() {
 
   return (
     <>
+      <DashboardSEO title="Pedidos" />
+
       <PageTitle title="Pedidos" />
 
       <Table emptyState={{

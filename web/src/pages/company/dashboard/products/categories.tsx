@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { FiEdit, FiPlusCircle, FiTrash } from "react-icons/fi";
 import { CreateCategoryModal } from "src/components/pages/company/dashboard/categories/create-category-modal";
 import { ConfirmationPopover } from "src/components/pages/shared/ConfirmationPopover";
+import { DashboardSEO } from "src/components/pages/shared/DashboardSEO";
 import { PageTitle } from "src/components/pages/shared/PageTitle";
 import { Button } from "src/components/ui/Button";
 import { Table } from "src/components/ui/Table";
@@ -85,6 +86,8 @@ export default function CompanyProductsCategories() {
 
   return (
     <>
+      <DashboardSEO title="Categorias" />
+
       <PageTitle title="Categorias">
         <CreateCategoryModal>
           <Button onClick={checkCount}>

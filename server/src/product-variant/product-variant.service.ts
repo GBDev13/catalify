@@ -63,6 +63,12 @@ export class ProductVariantService {
     const createdVariations = [];
     const createdOptions = [];
 
+    const variantsCount = await this.prisma.productVariant.count({
+      where: {
+        productId,
+      },
+    });
+
     for (const added of parsedVariations.added || []) {
       const variationIsChecked = variationsIdCountChecked.includes(
         added.variationId,
@@ -224,6 +230,18 @@ export class ProductVariantService {
       }
 
       if (createdOptions.length > 0) {
+        if (variantsCount < 2) {
+          await this.prisma.stock.createMany({
+            data: createdOptions.map((x) => ({
+              companyId,
+              productId,
+              productVariantOptionId: x.id,
+              quantity: 0,
+            })),
+          });
+          return;
+        }
+
         const productVariations = await this.prisma.productVariant.findMany({
           where: {
             productId,

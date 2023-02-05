@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { FiArrowLeft } from "react-icons/fi";
 import { BannersForm } from "src/components/pages/company/dashboard/catalog/banners-form";
 import { LinksForm } from "src/components/pages/company/dashboard/catalog/links-form";
+import { DashboardSEO } from "src/components/pages/shared/DashboardSEO";
 import { PageTitle } from "src/components/pages/shared/PageTitle";
 import { Button } from "src/components/ui/Button";
 import { TipIcon } from "src/components/ui/TipIcon";
@@ -20,6 +21,8 @@ export default function CatalogCustomization() {
 
   return (
     <>
+      <DashboardSEO title="Customizações" />
+
       <PageTitle title="Customizações">
         <Link passHref href={previousPath}>
           <Button size="SMALL" variant="OUTLINE">

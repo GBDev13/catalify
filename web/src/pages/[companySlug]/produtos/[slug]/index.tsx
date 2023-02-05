@@ -12,7 +12,7 @@ import { getFormattedPrices } from "src/helpers/getFormattedPrices"
 import { useCart } from "src/store/cart"
 import { toast } from "react-hot-toast"
 import { useCatalog } from "src/store/catalog"
-import { useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 import clsx from "clsx"
 
 export default function Produto() {
@@ -28,7 +28,7 @@ export default function Produto() {
 
   const { formattedPrice, formattedPromoPrice, promoPercentage } = getFormattedPrices(productData?.price!, productData?.promoPrice)
 
-  const { addProductToCart, setCartIsOpen } = useCart();
+  const { addProductToCart, setCartIsOpen, cartItems } = useCart();
 
   const pictures = productData?.pictures?.length ? productData.pictures : ['/images/product-placeholder.svg']
 
@@ -45,7 +45,64 @@ export default function Produto() {
 
   const buyDisabled = Object.keys(selectedVariations).length !== productData?.variants?.length;
 
+  const currentStock = useMemo(() => {
+    const stock = productData?.stock;
+    if (stock === null) return null;
+
+    if(typeof stock === 'number') return stock;
+
+    if (typeof stock === 'object') {
+      const stockItem = stock.find(x => {
+        return x.variants.filter(x => !!x).every(variant => {
+          return Object.values(selectedVariations).includes(variant)
+        })
+      })
+
+      return stockItem?.quantity ?? 0;
+    }
+
+    return null
+  }, [productData?.stock, selectedVariations])
+
+  const renderStock = useCallback(() => {
+    if(productData?.variants && productData?.variants.length > 0 && Object.values(selectedVariations).length !== productData?.variants?.length) return null;
+    
+    if(typeof currentStock === 'number') {
+      if(currentStock === 1) return (
+        <span className="text-red-600/60 mt-2 block">
+          Última unidade
+        </span>
+      )
+
+      return (
+        <span className="text-gray-600/60 mt-2 block">
+          {currentStock <= 0 ? 'Sem estoque' : `Estoque: ${currentStock}`}
+        </span>
+      )
+    }
+    return null
+  }, [currentStock, productData?.variants, selectedVariations])
+
+  const checkoutDisabled = (typeof currentStock === 'number' ? currentStock <= 0 : false) || buyDisabled;
+
   const handleAddToCart = () => {
+    if(checkoutDisabled) return;
+
+    const productExistsOnCart = cartItems.find(x => {
+      const sameId = x.id === productData?.id;
+      const sameVariants = x?.variants?.every(variant => {
+        const selectedVariant = selectedVariations[variant.id];
+        return selectedVariant === variant.optionId;
+      })
+
+      return sameId && sameVariants;
+    });
+
+    if(typeof currentStock === 'number' && productExistsOnCart && productExistsOnCart.quantity + 1 > currentStock) {
+      toast.error('Quantidade máxima atingida')
+      return;
+    }
+
     const variants = Object.entries(selectedVariations).map(([variantId, optionId]) => {
       const productVariants = productData?.variants ?? [];
       const selectedVariant = productVariants.find(x => x.id === variantId);
@@ -84,7 +141,9 @@ export default function Produto() {
           </div>
           {productData?.promoPrice && <span className="text-gray-500 text-lg line-through">{formattedPrice}</span>}
 
-          {productData?.variants && (
+          {renderStock()}
+
+          {productData?.variants && productData?.variants.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-5">
               {productData?.variants.map((variant, index) => (
                 <div className={clsx("flex flex-col", {
@@ -108,11 +167,11 @@ export default function Produto() {
           )}
 
           <div className="mt-10 w-full grid grid-cols-1 gap-2 lg:grid-cols-2">
-            <button disabled={buyDisabled} onClick={handleAddToCart} className="disabled:opacity-50 disabled:cursor-not-allowed border justify-center flex items-center gap-2 border-primary py-3 px-6 text-primary rounded-md hover:bg-primary hover:text-white transition-all">
+            <button disabled={checkoutDisabled} onClick={handleAddToCart} className="disabled:grayscale disabled:opacity-50 disabled:cursor-not-allowed border justify-center flex items-center gap-2 border-primary py-3 px-6 text-primary rounded-md hover:bg-primary hover:text-white transition-all">
               <FaCartPlus />
               Adicionar ao carrinho
             </button>
-            <button disabled={buyDisabled} className="disabled:opacity-50 disabled:cursor-not-allowed bg-whatsapp text-white justify-center flex items-center gap-2 py-3 px-6 rounded-md hover:brightness-105 transition-all">
+            <button disabled={checkoutDisabled} className="disabled:grayscale disabled:opacity-50 disabled:cursor-not-allowed bg-whatsapp text-white justify-center flex items-center gap-2 py-3 px-6 rounded-md hover:brightness-105 transition-all">
               <FaWhatsapp />
               Comprar via Whatsapp
             </button>
@@ -149,6 +208,17 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   await queryClient.prefetchQuery(catalogKeys.companyCatalog(slug), () => getCompanyCatalog(slug))
   await queryClient.prefetchQuery(catalogKeys.companyCategories(slug), () => getCompanyCatalogCategories(slug))
   await queryClient.prefetchQuery(catalogKeys.companyProduct(productSlug), () => getCompanyCatalogProductBySlug(slug, productSlug))
+
+  const product = queryClient.getQueryData(catalogKeys.companyProduct(productSlug))
+
+  if(!product) {
+    return {
+      props: {},
+      redirect: {
+        destination: `/${slug}/produtos`
+      },
+    }
+  }
 
   return {
     props: {

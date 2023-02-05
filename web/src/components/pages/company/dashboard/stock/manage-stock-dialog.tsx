@@ -198,7 +198,8 @@ const AddStockForm = ({ selectedProductId, onSuccess }: AddStockFormProps) => {
         product: {
           label: product?.name ?? "",
           value: selectedProductId
-        }
+        },
+        stockQuantity: []
       })
     }
   }, [isEditing, isFetched, reset, selectedProductId, stockOptions])

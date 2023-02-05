@@ -8,6 +8,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { FiArrowLeft } from "react-icons/fi";
 import ProductVariations from "src/components/pages/company/dashboard/products/product-variations";
+import { DashboardSEO } from "src/components/pages/shared/DashboardSEO";
 import { PageTitle } from "src/components/pages/shared/PageTitle";
 import { Button } from "src/components/ui/Button";
 import { ControlledCheckbox } from "src/components/ui/Checkbox/controlled";
@@ -201,6 +202,8 @@ export default function NewProduct() {
 
   return (
     <>
+      <DashboardSEO title="Adicionar Produto" />
+
       <PageTitle title="Adicionar Produto">
         <Link passHref href={previousPath}>
           <Button size="SMALL" variant="OUTLINE">

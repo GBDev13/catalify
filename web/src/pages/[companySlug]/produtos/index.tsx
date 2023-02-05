@@ -66,6 +66,8 @@ export default function Produtos() {
   const showingLeftCount = data?.offset || 1;
   const showingRightCount = (page + 1) * limit;
 
+  const hasCategories = categories && categories?.length > 0;
+
   return (
     <CatalogLayout title="Produtos">
       <header className="flex items-center justify-between flex-col-reverse gap-2 sm:gap-0 sm:flex-row">
@@ -85,18 +87,22 @@ export default function Produtos() {
         </select>
       </header>
 
-      <div className="grid gap-6 mt-10 grid-cols-1 md:grid-cols-[0.5fr,2fr]">
-        <aside>
-          <h2 className="text-gray-500 font-semibold border-b pb-2">Filtros</h2>
+      <div className={clsx("grid gap-6 mt-10 grid-cols-1", {
+        "md:grid-cols-[0.5fr,2fr]": hasCategories,
+      })}>
+        {hasCategories && (
+          <aside>
+            <h2 className="text-gray-500 font-semibold border-b pb-2">Filtros</h2>
 
-          <ul className="flex flex-col gap-2 mt-4">
-            {categories?.map(category => (
-              <li key={category.id}>
-                <Checkbox label={category.name} checked={selectedCategories.includes(category.slug)} onCheckedChange={(value) => onChangeCategoryCheckbox(value, category.slug)} />
-              </li>
-            ))}
-          </ul>
-        </aside>
+            <ul className="flex flex-col gap-2 mt-4">
+              {categories?.map(category => (
+                <li key={category.id}>
+                  <Checkbox label={category.name} checked={selectedCategories.includes(category.slug)} onCheckedChange={(value) => onChangeCategoryCheckbox(value, category.slug)} />
+                </li>
+              ))}
+            </ul>
+          </aside>
+        )}
 
         
         <div className={clsx("grid gap-4 grid-cols-[repeat(auto-fit,minmax(250px,1fr))] text-center", {

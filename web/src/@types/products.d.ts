@@ -34,6 +34,7 @@ declare namespace Products {
     category: Products.Category
     variants: Products.Variant[]
     pictures?: Products.Picture[]
+    isVisible: boolean
   }
 
   export type CatalogProduct = {
@@ -43,6 +44,7 @@ declare namespace Products {
     price: number
     promoPrice: number
     picture?: string
+    hasStock: boolean
   }
   
   export type CatalogProductDetails = Omit<CatalogProduct, 'picture'> & {
@@ -53,5 +55,9 @@ declare namespace Products {
       name: string;
       slug: string
     }
+    stock: number | {
+      quantity: number;
+      variants: string[]
+    }[] | null
   }
 }

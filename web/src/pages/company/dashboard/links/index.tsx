@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { ManageLinksDialog } from "src/components/pages/company/dashboard/links/manage-links-dialog";
+import { DashboardSEO } from "src/components/pages/shared/DashboardSEO";
 import { LinksPage } from "src/components/pages/shared/LinksPage";
 import { PageTitle } from "src/components/pages/shared/PageTitle";
 import { Button } from "src/components/ui/Button";
@@ -142,6 +143,8 @@ export default function ManageLinksPage() {
 
   return (
     <div className="w-full lg:h-full flex flex-col">
+      <DashboardSEO title="Página de Links" />
+
       <PageTitle title="Gerenciar Página de Links">
         <Link href={`/links/${company?.slug}`} target="_blank">
           <Button variant="OUTLINE">

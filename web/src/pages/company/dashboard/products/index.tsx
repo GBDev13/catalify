@@ -17,6 +17,8 @@ import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
 import clsx from "clsx";
 import { isSubscriptionValid } from "src/helpers/isSubscriptionValid";
 import { LIMITS } from "src/constants/constants";
+import { ProductVisibilityToggle } from "src/components/pages/company/dashboard/products/product-visibility-toggle";
+import { DashboardSEO } from "src/components/pages/shared/DashboardSEO";
 
 export default function CompanyProducts() {
   const { company, currentSubscription } = useCompany()
@@ -97,6 +99,13 @@ export default function CompanyProducts() {
         footer: 'Categoria'
       },
       {
+        header: "Visível",
+        cell: (row) => <ProductVisibilityToggle isVisible={!!row.getValue()} productId={row.row.original.id} />,
+        accessorKey: 'isVisible',
+        footer: 'Visível no catalogo',
+        size: 80
+      },
+      {
         header: 'Ações',
         size: 80,
         accessorKey: 'id',
@@ -151,6 +160,8 @@ export default function CompanyProducts() {
 
   return (
     <>
+      <DashboardSEO title="Produtos" />
+
       <PageTitle title="Produtos">
         <div className="flex items-center gap-2">
           <Button variant="OUTLINE">

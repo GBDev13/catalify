@@ -5,6 +5,7 @@ import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
 import { Pricing } from "src/components/pages/onboarding/pricing";
 import clsx from "clsx";
+import { DashboardSEO } from "src/components/pages/shared/DashboardSEO";
 
 export default function Onboarding() {
   const [step, setStep] = useState(1)
@@ -13,6 +14,8 @@ export default function Onboarding() {
     <main className={clsx("min-h-screen min-w-screen grid gap-4 grid-cols-1 grid-rows-[1.5fr,1fr] md:grid-cols-[1.5fr,1fr] md:grid-rows-1", {
       "grid-rows-[1fr,200px]": step >= 2,
     })}>
+      <DashboardSEO title="Onboarding" />
+
       <section className={clsx("flex flex-col items-center justify-start w-full p-10 md:py-20 md:px-8 max-w-[750px] mx-auto", {
         "!px-4": step >= 2
       })}>

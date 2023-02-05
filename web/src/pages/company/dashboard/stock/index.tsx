@@ -6,6 +6,7 @@ import { toast } from "react-hot-toast";
 import { FiEdit, FiTrash } from "react-icons/fi";
 import { ManageStockDialog } from "src/components/pages/company/dashboard/stock/manage-stock-dialog";
 import { ConfirmationPopover } from "src/components/pages/shared/ConfirmationPopover";
+import { DashboardSEO } from "src/components/pages/shared/DashboardSEO";
 import { PageTitle } from "src/components/pages/shared/PageTitle";
 import { Button } from "src/components/ui/Button";
 import { Table } from "src/components/ui/Table";
@@ -107,6 +108,8 @@ export default function CompanyStock() {
 
   return (
     <>
+      <DashboardSEO title="Estoque" />
+
       <PageTitle title="Estoque">
         <ManageStockDialog open={manageIsOpen} selectedProductId={productStockId} onOpenChange={handleOpenChange}>
           <Button>

@@ -21,6 +21,49 @@ export class OrderService {
       throw new HttpException('Empresa não encontrada', HttpStatus.NOT_FOUND);
     }
 
+    const stockError = [];
+
+    for (const product of createOrderDto.products) {
+      if (product.selectedVariants.length <= 0) {
+        const productStock = await this.prisma.stock.findFirst({
+          where: {
+            productId: product.productId,
+          },
+        });
+
+        if (productStock.quantity < product.quantity) {
+          stockError.push(product.productId);
+        }
+      } else {
+        const productStock = await this.prisma.stock.findFirst({
+          where: {
+            productId: product.productId,
+            OR: [
+              {
+                productVariantOptionId: product.selectedVariants?.[0] ?? null,
+                productVariantOptionId2: product.selectedVariants?.[1] ?? null,
+              },
+              {
+                productVariantOptionId: product.selectedVariants?.[1] ?? null,
+                productVariantOptionId2: product.selectedVariants?.[0] ?? null,
+              },
+            ],
+          },
+        });
+
+        if (productStock.quantity < product.quantity) {
+          stockError.push(product.productId);
+        }
+      }
+    }
+
+    if (stockError.length > 0) {
+      throw new HttpException(
+        { invalidQuantity: stockError },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     const currentDate = new Date();
     const expiresAt = new Date(currentDate);
     expiresAt.setDate(currentDate.getDate() + 3);

@@ -8,6 +8,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { FiArrowLeft } from "react-icons/fi";
 import ProductVariations from "src/components/pages/company/dashboard/products/product-variations";
+import { DashboardSEO } from "src/components/pages/shared/DashboardSEO";
 import { PageTitle } from "src/components/pages/shared/PageTitle";
 import { Button } from "src/components/ui/Button";
 import { ControlledCheckbox } from "src/components/ui/Checkbox/controlled";
@@ -17,6 +18,7 @@ import { ControlledEditor } from "src/components/ui/Editor/controlled";
 import { ControlledFileUpload } from "src/components/ui/FileUpload/controlled";
 import { ControlledInput } from "src/components/ui/Input/controlled";
 import { ControlledSelect } from "src/components/ui/Select/controlled";
+import { Spinner } from "src/components/ui/Spinner";
 import { IMAGE_MAX_SIZE, IMAGE_TYPES, LIMITS } from "src/constants/constants";
 import { productsKey } from "src/constants/query-keys";
 import { isSubscriptionValid } from "src/helpers/isSubscriptionValid";
@@ -250,6 +252,8 @@ export default function EditProduct() {
 
   return (
     <>
+      <DashboardSEO title="Editar Produto" />
+
       <PageTitle title="Editar Produto">
         <Link passHref href="../">
           <Button size="SMALL" variant="OUTLINE">
@@ -267,7 +271,7 @@ export default function EditProduct() {
         onCancel={() => router.push("/company/dashboard/products")}
       />
 
-      {isLoadingProduct ? <p>carregando</p> : (
+      {isLoadingProduct ? <Spinner /> : (
         <FormProvider {...methods}>
           <form className="grid bg-slate-100 rounded grid-cols-1 gap-6 p-4 md:p- lg:gap-16 lg:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
             <div>

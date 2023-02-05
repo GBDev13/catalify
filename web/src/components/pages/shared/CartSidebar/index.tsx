@@ -5,6 +5,8 @@ import { useCart } from "src/store/cart"
 import { RiCloseCircleFill } from 'react-icons/ri'
 import { motion, AnimatePresence } from "framer-motion"
 import { CheckoutFormDialog } from "./checkout-form"
+import Link from "next/link"
+import { useCatalog } from "src/store/catalog"
 
 const CartSidebar = () => {
   const { cartItems, cartIsOpen, removeProductById, setCartIsOpen } = useCart()
@@ -17,6 +19,8 @@ const CartSidebar = () => {
   const formattedTotal = formatPrice(total)
 
   const isDisabled = cartItems.length <= 0
+
+  const { slug } = useCatalog(state => state.info)
 
   return (
     <AnimatePresence>
@@ -70,7 +74,7 @@ const CartSidebar = () => {
                   <img className="w-20 h-20 border border-gray-100 rounded-md" src={item?.picture ?? "/images/product-placeholder.svg"} />
       
                   <div className="flex flex-col">
-                    <strong className="font-normal text-gray-500 line-clamp-2">{`${item.quantity} x ${item.name}`}</strong>
+                    <Link href={`/${slug}/produtos/${item.slug}`} className="font-normal text-gray-500 line-clamp-2 hover:text-primary transition-colors">{`${item.quantity} x ${item.name}`}</Link>
                     {item?.variants && (
                       <span className="text-xs text-gray-400">
                         {item.variants.map(variant => variant.option).join(' - ')}
