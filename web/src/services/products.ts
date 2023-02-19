@@ -106,3 +106,17 @@ export const toggleHighlight = async (productId: string, companyId: string) => {
 export const toggleVisibility = async (productId: string, companyId: string) => {
   return api.patch(`/product/${companyId}/${productId}/visible`)
 }
+
+export type ImportProduct = {
+  categoryName?: string;
+  description: string;
+  highlight: boolean
+  name: string
+  price: number
+  promoPrice?: number
+  visible: boolean
+}
+
+export const importProducts = async (companyId: string, products: ImportProduct[]) => {
+  return api.post(`/product/${companyId}/import`, { products })
+}

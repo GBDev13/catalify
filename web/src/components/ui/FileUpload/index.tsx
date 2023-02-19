@@ -2,6 +2,7 @@ import clsx from "clsx";
 import { useMemo } from "react";
 import { Accept, useDropzone } from "react-dropzone";
 import { FiTrash, FiUploadCloud } from "react-icons/fi";
+import { HiOutlineDocumentDownload } from "react-icons/hi";
 
 type FileUploadProps = {
   acceptedTypes: Accept
@@ -15,9 +16,10 @@ type FileUploadProps = {
   onRemove?: (index: number) => void;
   previewMode?: 'INSIDE' | 'OUTSIDE'
   disabled?: boolean;
+  customAcceptTypesLabel?: string;
 }
 
-export const FileUpload = ({ disabled, acceptedTypes, maxSize, maxFiles = 1, onDrop, submittedFiles, error, withPreview, isMultiple, onRemove, previewMode = 'OUTSIDE' }: FileUploadProps) => {
+export const FileUpload = ({ disabled, acceptedTypes, maxSize, maxFiles = 1, onDrop, submittedFiles, error, withPreview, isMultiple, onRemove, previewMode = 'OUTSIDE', customAcceptTypesLabel }: FileUploadProps) => {
   const hasError = !!error;
 
   const isDisabled = submittedFiles && submittedFiles?.length >= maxFiles || disabled;
@@ -32,8 +34,9 @@ export const FileUpload = ({ disabled, acceptedTypes, maxSize, maxFiles = 1, onD
   });
 
   const supportedTypesText = useMemo(() => {
+    if(customAcceptTypesLabel) return customAcceptTypesLabel;
     return Object.values(acceptedTypes).flatMap((format) => format.map(x => x.split("/")[1].toUpperCase())).join(', ');
-  }, [acceptedTypes])
+  }, [acceptedTypes, customAcceptTypesLabel])
 
   const previewArray = useMemo(() => {
     if (submittedFiles) {
@@ -45,6 +48,10 @@ export const FileUpload = ({ disabled, acceptedTypes, maxSize, maxFiles = 1, onD
 
   const handleClear = () => {
     if (onRemove) onDrop([])
+  }
+
+  const isImageUrl = (url: string) => {
+    return url.match(/\.(jpeg|jpg|gif|png)$/) != null;
   }
 
   return (
@@ -62,7 +69,14 @@ export const FileUpload = ({ disabled, acceptedTypes, maxSize, maxFiles = 1, onD
             ) : (
               <>
                 <strong className="font-semibold text-indigo-500">Arquivo aceito</strong>
-                <img className="w-20 h-20 object-contain" src={previewArray[0]} />
+                {isImageUrl(previewArray[0]) ? (
+                  <img className="w-20 h-20 object-contain" src={previewArray[0]} />
+                ) : (
+                  <>
+                    <HiOutlineDocumentDownload className="my-2" size={40} />
+                    <span className="text-slate-500 text-sm font-light block mb-2">{submittedFiles[0].name}</span>
+                  </>
+                )}
                 <button type="button" className="underline text-slate-500 text-sm hover:text-indigo-500" onClick={handleClear}>Remover arquivo</button>
               </>
             )}

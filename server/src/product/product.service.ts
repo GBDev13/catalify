@@ -10,6 +10,7 @@ import {
 import { Product } from './entities/product.entity';
 import { v4 as uuid } from 'uuid';
 import { LIMITS } from 'src/config/limits';
+import { ImportProductsDto } from './dto/import-products.dto';
 
 @Injectable()
 export class ProductService {
@@ -492,5 +493,98 @@ export class ProductService {
         isVisible: !product.isVisible,
       },
     });
+  }
+
+  async importProducts(
+    importDto: ImportProductsDto,
+    companyId: string,
+    hasSubscription: boolean,
+  ) {
+    if (importDto.products.length >= 500) {
+      throw new HttpException(
+        'Não é possível importar mais de 500 produtos por vez',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const companyExists = await this.prisma.company.findUnique({
+      where: {
+        id: companyId,
+      },
+    });
+
+    if (!companyExists) {
+      throw new HttpException(
+        'Esta empresa não existe',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const products = await this.prisma.product.findMany({
+      where: {
+        companyId,
+      },
+    });
+
+    if (
+      !hasSubscription &&
+      products.length + importDto.products.length > LIMITS.FREE.MAX_PRODUCTS
+    ) {
+      throw new HttpException(
+        `Não é possível importar essa lista de produtos pois irá exceder o limite de produtos para sua conta gratuita. (${LIMITS.FREE.MAX_PRODUCTS} produtos)`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    await Promise.all(
+      importDto.products.map(async (product) => {
+        const createdProduct = await this.prisma.product.create({
+          data: {
+            name: product.name,
+            description: product.description,
+            price: product.price,
+            promoPrice: product.promoPrice,
+            isVisible: product.visible,
+            isHighlighted: product.highlight,
+            companyId,
+          },
+        });
+
+        if (product?.categoryName) {
+          let categoryId = null;
+
+          const category = await this.prisma.category.findFirst({
+            where: {
+              companyId,
+              name: product.categoryName,
+            },
+          });
+
+          if (category) {
+            categoryId = category.id;
+          }
+
+          if (!categoryId) {
+            const createdCategory = await this.prisma.category.create({
+              data: {
+                name: product.categoryName,
+                companyId,
+              },
+            });
+
+            categoryId = createdCategory.id;
+          }
+
+          await this.prisma.product.update({
+            where: {
+              id: createdProduct.id,
+            },
+            data: {
+              categoryId,
+            },
+          });
+        }
+      }),
+    );
   }
 }

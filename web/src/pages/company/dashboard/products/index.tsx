@@ -20,6 +20,7 @@ import { LIMITS } from "src/constants/constants";
 import { ProductVisibilityToggle } from "src/components/pages/company/dashboard/products/product-visibility-toggle";
 import { DashboardSEO } from "src/components/pages/shared/DashboardSEO";
 import { withAuth } from "src/helpers/withAuth";
+import { ImportProductsModal } from "src/components/pages/company/dashboard/products/import-products-modal";
 
 function CompanyProducts() {
   const { company, currentSubscription } = useCompany()
@@ -165,10 +166,12 @@ function CompanyProducts() {
 
       <PageTitle title="Produtos">
         <div className="flex items-center gap-2">
-          <Button variant="OUTLINE">
-            <FiDownload size={20} />
-            Importar Produtos
-          </Button>
+          <ImportProductsModal>
+            <Button variant="OUTLINE">
+              <FiDownload size={20} />
+              Importar Produtos
+            </Button>
+          </ImportProductsModal>
           <Link passHref href="./products/new" onClick={checkCount}>
             <Button>
               <FiPlusCircle size={20} />

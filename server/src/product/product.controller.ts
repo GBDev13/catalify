@@ -19,6 +19,7 @@ import { Validator } from 'class-validator';
 import { CurrentSubscriptionIsValid } from 'src/subscription/decorators/current-subscription.decorator';
 import { SubscriptionGuard } from 'src/subscription/guards/subscription.guard';
 import { CreateProductDto, VariationDto } from './dto/create-product.dto';
+import { ImportProductsDto } from './dto/import-products.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductService } from './product.service';
 
@@ -77,6 +78,22 @@ export class ProductController {
         HttpStatus.BAD_REQUEST,
       );
     }
+  }
+
+  @Post('/:companyId/import')
+  @UseGuards(SubscriptionGuard)
+  @UseGuards(SubscriptionGuard)
+  @HttpCode(HttpStatus.CREATED)
+  async import(
+    @Body() importProductsDto: ImportProductsDto,
+    @Param('companyId') companyId: string,
+    @CurrentSubscriptionIsValid() validSubscription: boolean,
+  ) {
+    return this.productService.importProducts(
+      importProductsDto,
+      companyId,
+      validSubscription,
+    );
   }
 
   @Put('/:companyId/:productId')

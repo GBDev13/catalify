@@ -10,7 +10,13 @@ export const IMAGE_TYPES = {
   'image/*': ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
 }
 
+export const SHEETS_TYPES = {
+  'text/csv': ['text/csv'],
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'],
+}
+
 export const IMAGE_MAX_SIZE = 5 * 1024 * 1024 // 5MB
+export const SHEETS_MAX_SIZE = 8 * 1024 * 1024 // 8MB
 
 export const LIMITS = {
   FREE: {
