@@ -17,6 +17,7 @@ import { Spinner } from "src/components/ui/Spinner";
 import { IMAGE_MAX_SIZE, IMAGE_TYPES } from "src/constants/constants";
 import { catalogKeys, companyKeys } from "src/constants/query-keys";
 import { urlToFile } from "src/helpers/url-to-file";
+import { withAuth } from "src/helpers/withAuth";
 import { useUnsavedChangesWarning } from "src/hooks/useUnsavedChangesWarning";
 import { getCompanyCatalog } from "src/services/catalog";
 import { updateCompany, UpdateCompanyDto } from "src/services/company";
@@ -25,7 +26,7 @@ import { z } from "zod";
 
 type CatalogCompanyFormData = z.infer<typeof companyStepFormSchema>
 
-export default function CatalogCompany() {
+function CatalogCompany() {
   const { data: session } = useSession();
   const { company } = useCompany(s => s)
   const slug = company?.slug!
@@ -146,3 +147,9 @@ export default function CatalogCompany() {
     </>
   )
 }
+
+export const getServerSideProps = withAuth(async (context) => {
+  return { props: {} };
+});
+
+export default CatalogCompany;

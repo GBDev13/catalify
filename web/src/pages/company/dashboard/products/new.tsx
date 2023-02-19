@@ -21,6 +21,7 @@ import { ControlledSelect } from "src/components/ui/Select/controlled";
 import { IMAGE_MAX_SIZE, IMAGE_TYPES, LIMITS } from "src/constants/constants";
 import { productsKey } from "src/constants/query-keys";
 import { isSubscriptionValid } from "src/helpers/isSubscriptionValid";
+import { withAuth } from "src/helpers/withAuth";
 import { useUnsavedChangesWarning } from "src/hooks/useUnsavedChangesWarning";
 import { createProduct, CreateProductDto, getCategories } from "src/services/products";
 import { useCompany } from "src/store/company";
@@ -98,7 +99,7 @@ const newProductFormSchema = z.object({
 
 export type NewProductFormData = z.infer<typeof newProductFormSchema>
 
-export default function NewProduct() {
+function NewProduct() {
   const router = useRouter()
   const { company, currentSubscription } = useCompany()
   const subscriptionIsValid = isSubscriptionValid(currentSubscription!)
@@ -264,3 +265,9 @@ export default function NewProduct() {
     </>
   )
 }
+
+export const getServerSideProps = withAuth(async (context) => {
+  return { props: {} };
+});
+
+export default NewProduct;

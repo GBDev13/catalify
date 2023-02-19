@@ -24,6 +24,7 @@ import { productsKey } from "src/constants/query-keys";
 import { isSubscriptionValid } from "src/helpers/isSubscriptionValid";
 import { ActionType, ChangeType, onChangeExistentVariation, ParseEditedResponse, parseEditedVariations, SaveItem } from "src/helpers/on-change-existent-variations";
 import { urlToFile } from "src/helpers/url-to-file";
+import { withAuth } from "src/helpers/withAuth";
 import { useUnsavedChangesWarning } from "src/hooks/useUnsavedChangesWarning";
 import { editProduct, EditProductDto, getCategories, getProductById } from "src/services/products";
 import { useCompany } from "src/store/company";
@@ -106,7 +107,7 @@ const editProductFormSchema = z.object({
 
 export type EditProductFormData = z.infer<typeof editProductFormSchema>
 
-export default function EditProduct() {
+function EditProduct() {
   const router = useRouter()
   const { company, currentSubscription } = useCompany()
   const subscriptionIsValid = isSubscriptionValid(currentSubscription!)
@@ -317,3 +318,9 @@ export default function EditProduct() {
     </>
   )
 }
+
+export const getServerSideProps = withAuth(async (context) => {
+  return { props: {} };
+});
+
+export default EditProduct;

@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { companyKeys } from "src/constants/query-keys";
 import { getCompanyOverview } from "src/services/company";
 import { useCompany } from "src/store/company";
+import { withAuth } from "src/helpers/withAuth";
 
 const CustomTooltip = (props: any) => {
   const { active, payload, label } = props;
@@ -25,7 +26,7 @@ const CustomTooltip = (props: any) => {
   return null;
 }
 
-export default function CompanyDashboard() {
+function CompanyDashboard() {
   const { company } = useCompany()
   const companyId = company?.id!;
 
@@ -76,3 +77,9 @@ export default function CompanyDashboard() {
     </>
   )
 }
+
+export const getServerSideProps = withAuth(async (context) => {
+  return { props: {} };
+});
+
+export default CompanyDashboard

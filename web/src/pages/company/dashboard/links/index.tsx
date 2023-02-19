@@ -17,6 +17,7 @@ import { IMAGE_MAX_SIZE, IMAGE_TYPES } from "src/constants/constants";
 import { companyKeys } from "src/constants/query-keys";
 import { isSubscriptionValid } from "src/helpers/isSubscriptionValid";
 import { urlToFile } from "src/helpers/url-to-file";
+import { withAuth } from "src/helpers/withAuth";
 import { getCompanyLinksPageCustomization, getCompanyLinksPageLinks, updateCompanyLinksPageCustomization, UpdateLinksPageCustomizationDto } from "src/services/company";
 import { revalidatePath } from "src/services/revalidate";
 import { useCompany } from "src/store/company";
@@ -53,7 +54,7 @@ const logoModeOptions = [
   { label: 'Livre', value: 'free' }
 ]
 
-export default function ManageLinksPage() {
+function ManageLinksPage() {
   const { company, currentSubscription } = useCompany()
   const companyId = company?.id!;
 
@@ -210,3 +211,9 @@ export default function ManageLinksPage() {
     </div>
   )
 }
+
+export const getServerSideProps = withAuth(async (context) => {
+  return { props: {} };
+});
+
+export default ManageLinksPage;

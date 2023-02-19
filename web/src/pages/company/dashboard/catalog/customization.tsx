@@ -8,9 +8,10 @@ import { PageTitle } from "src/components/pages/shared/PageTitle";
 import { Button } from "src/components/ui/Button";
 import { TipIcon } from "src/components/ui/TipIcon";
 import { isSubscriptionValid } from "src/helpers/isSubscriptionValid";
+import { withAuth } from "src/helpers/withAuth";
 import { useCompany } from "src/store/company";
 
-export default function CatalogCustomization() {
+function CatalogCustomization() {
   const router = useRouter();
 
   const finalSlashIndex = router.asPath.lastIndexOf('/')
@@ -63,3 +64,9 @@ export default function CatalogCustomization() {
     </>
   )
 }
+
+export const getServerSideProps = withAuth(async (context) => {
+  return { props: {} };
+});
+
+export default CatalogCustomization;

@@ -19,8 +19,9 @@ import { isSubscriptionValid } from "src/helpers/isSubscriptionValid";
 import { LIMITS } from "src/constants/constants";
 import { ProductVisibilityToggle } from "src/components/pages/company/dashboard/products/product-visibility-toggle";
 import { DashboardSEO } from "src/components/pages/shared/DashboardSEO";
+import { withAuth } from "src/helpers/withAuth";
 
-export default function CompanyProducts() {
+function CompanyProducts() {
   const { company, currentSubscription } = useCompany()
   const companyId = company?.id
 
@@ -184,3 +185,9 @@ export default function CompanyProducts() {
     </>
   )
 }
+
+export const getServerSideProps = withAuth(async (context) => {
+  return { props: {} };
+});
+
+export default CompanyProducts;

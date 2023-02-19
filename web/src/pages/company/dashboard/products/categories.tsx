@@ -13,10 +13,11 @@ import { Tooltip } from "src/components/ui/Tooltip";
 import { LIMITS } from "src/constants/constants";
 import { productsKey } from "src/constants/query-keys";
 import { isSubscriptionValid } from "src/helpers/isSubscriptionValid";
+import { withAuth } from "src/helpers/withAuth";
 import { deleteCategory, getCategories } from "src/services/products";
 import { useCompany } from "src/store/company";
 
-export default function CompanyProductsCategories() {
+function CompanyProductsCategories() {
   const { company, currentSubscription } = useCompany()
   const companyId = company?.id
 
@@ -104,3 +105,9 @@ export default function CompanyProductsCategories() {
     </>
   )
 }
+
+export const getServerSideProps = withAuth(async (context) => {
+  return { props: {} };
+});
+
+export default CompanyProductsCategories;

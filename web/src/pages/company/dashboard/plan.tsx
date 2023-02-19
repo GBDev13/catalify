@@ -2,8 +2,9 @@ import { CurrentPlan } from "src/components/pages/company/dashboard/plan/current
 import { DashboardSEO } from "src/components/pages/shared/DashboardSEO";
 import { PageTitle } from "src/components/pages/shared/PageTitle";
 import { Button } from "src/components/ui/Button";
+import { withAuth } from "src/helpers/withAuth";
 
-export default function Plan() {
+function Plan() {
   return (
     <>
       <DashboardSEO title="Plano" />
@@ -22,3 +23,9 @@ export default function Plan() {
     </>
   )
 }
+
+export const getServerSideProps = withAuth(async (context) => {
+  return { props: {} };
+});
+
+export default Plan;

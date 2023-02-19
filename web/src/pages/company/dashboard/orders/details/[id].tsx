@@ -9,10 +9,11 @@ import { Button } from "src/components/ui/Button";
 import { ordersKeys } from "src/constants/query-keys";
 import { formatPrice } from "src/helpers/format-price";
 import { orderStatusToText } from "src/helpers/order-status-to-text";
+import { withAuth } from "src/helpers/withAuth";
 import { completeOrder, getOrderById } from "src/services/orders";
 import { useCompany } from "src/store/company";
 
-export default function OrderDetails() {
+function OrderDetails() {
   const router = useRouter()
   const orderId = router.query.id as string
 
@@ -134,3 +135,9 @@ export default function OrderDetails() {
     </>
   )
 }
+
+export const getServerSideProps = withAuth(async (context) => {
+  return { props: {} };
+});
+
+export default OrderDetails;

@@ -1,9 +1,9 @@
-import NextAuth from "next-auth"
+import NextAuth, { NextAuthOptions } from "next-auth"
 import CredentialsProvider from 'next-auth/providers/credentials';
 import api from "../../../lib/axios";
 import jwt_decode from "jwt-decode";
 
-export default NextAuth({
+export const authOptions: NextAuthOptions = {
     secret: process.env.SECRET,
     providers: [
         CredentialsProvider({
@@ -60,7 +60,9 @@ export default NextAuth({
             return session;
         },
     },
-});
+};
+
+export default NextAuth(authOptions);
 
 const parseJWT = (token: string) => {
     if (!token) {

@@ -12,10 +12,11 @@ import { Button } from "src/components/ui/Button";
 import { Table } from "src/components/ui/Table";
 import { Tooltip } from "src/components/ui/Tooltip";
 import { companyKeys, stockKeys } from "src/constants/query-keys";
+import { withAuth } from "src/helpers/withAuth";
 import { deleteProductStock, getCompanyStock } from "src/services/stock";
 import { useCompany } from "src/store/company";
 
-export default function CompanyStock() {
+function CompanyStock() {
   const { company } = useCompany();
   const companyId = company?.id!;
 
@@ -125,3 +126,9 @@ export default function CompanyStock() {
     </>
   )
 }
+
+export const getServerSideProps = withAuth(async (context) => {
+  return { props: {} };
+});
+
+export default CompanyStock;

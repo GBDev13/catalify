@@ -4,9 +4,10 @@ import { Pricing } from "src/components/pages/onboarding/pricing";
 import { DashboardSEO } from "src/components/pages/shared/DashboardSEO";
 import { PageTitle } from "src/components/pages/shared/PageTitle";
 import { isSubscriptionValid } from "src/helpers/isSubscriptionValid";
+import { withAuth } from "src/helpers/withAuth";
 import { useCompany } from "src/store/company";
 
-export default function PlansPage() {
+function PlansPage() {
   const { currentSubscription } = useCompany()
   const hasSubscription = isSubscriptionValid(currentSubscription!);
 
@@ -36,3 +37,9 @@ export default function PlansPage() {
     </div>
   )
 }
+
+export const getServerSideProps = withAuth(async (context) => {
+  return { props: {} };
+});
+
+export default PlansPage;

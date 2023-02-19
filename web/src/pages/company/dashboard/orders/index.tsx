@@ -19,8 +19,9 @@ import { isSubscriptionValid } from "src/helpers/isSubscriptionValid";
 import { LIMITS } from "src/constants/constants";
 import { getOrders } from "src/services/orders";
 import { DashboardSEO } from "src/components/pages/shared/DashboardSEO";
+import { withAuth } from "src/helpers/withAuth";
 
-export default function CompanyOrders() {
+function CompanyOrders() {
   const { company, currentSubscription } = useCompany()
   const companyId = company?.id!
 
@@ -158,3 +159,9 @@ export default function CompanyOrders() {
     </>
   )
 }
+
+export const getServerSideProps = withAuth(async (context) => {
+  return { props: {} };
+});
+
+export default CompanyOrders;
