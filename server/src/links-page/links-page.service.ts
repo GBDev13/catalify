@@ -47,7 +47,7 @@ export class LinksPageService {
                 id: company.logoId,
               },
             }
-          : null,
+          : undefined,
       },
     });
 

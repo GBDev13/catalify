@@ -102,7 +102,7 @@ export const LinksPage = ({
         ))}
       </div>
 
-      <a href="https://catalify.com.br" target="_blank" className="flex items-center gap-1 mt-auto mb-4 pt-4 text-sm opacity-50 hover:opacity-100 transition-all" style={{ color: waterMarkTextColor }} rel="noreferrer">Desenvolvido por <Logo className="w-[60px]" /></a>
+      <a href="https://catalify.com.br" target="_blank" className="flex items-center gap-1 mt-auto mb-4 pt-4 text-sm opacity-50 hover:opacity-100 transition-all" style={{ color: waterMarkTextColor }} rel="noreferrer">Desenvolvido por <Logo className="w-[60px]" style={{ color: waterMarkTextColor }} /></a>
     </div>
   )
 }

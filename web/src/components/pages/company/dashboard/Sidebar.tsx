@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import { MouseEvent, useEffect, useState } from 'react'
 import { FiHome, FiShoppingCart, FiLogOut, FiMenu, FiX, FiLink, FiArchive } from 'react-icons/fi'
 import { CgWebsite } from 'react-icons/cg'
-import { HiOutlineChevronDown } from 'react-icons/hi'
+import { HiExternalLink, HiOutlineChevronDown } from 'react-icons/hi'
 import { Divider } from 'src/components/ui/Divider'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useBreakpoint } from 'src/hooks/useBreakpoint'
@@ -203,7 +203,7 @@ export const Sidebar = () => {
     }
   }, [isMobile, sideBarOpen])
 
-  const { currentSubscription } = useCompany()
+  const { currentSubscription, company } = useCompany()
 
   const subscriptionIsValid = isSubscriptionValid(currentSubscription!)
 
@@ -258,22 +258,28 @@ export const Sidebar = () => {
               ))}
             </div>
     
-            <div className="p-4 bg-indigo-900 mt-auto flex items-center justify-between gap-4">
-              <div className="flex flex-col gap-1">
-                <strong className="text-sm font-normal">{`${session?.user?.firstName} ${session?.user?.lastName ?? ''}`}</strong>
-                <Tooltip content="Gerenciar Plano">
-                  {subscriptionIsValid ? (
-                    <Link className="text-slate-100 bg-indigo-500 hover:bg-indigo-400 transition-colors text-xs text-center py-0.5 px-1 rounded" href="/company/dashboard/plan">PLANO PREMIUM</Link>
-                  ) : (
-                    <Link className="text-slate-100 bg-blue-500 hover:bg-blue-400 transition-colors text-xs text-center py-0.5 px-1 rounded" href="/company/dashboard/plan">PLANO GRATIS</Link>
-                  )}
-                </Tooltip>
-              </div>
-    
-              <div className="flex items-center gap-2">
-                <button onClick={handleSignOut}>
-                  <FiLogOut />
-                </button>
+            <div className="mt-auto flex flex-col">
+              <Link target="_blank" href={`/${company?.slug}`} className="py-3 bg-indigo-600 hover:bg-indigo-500 transition-colors flex items-center justify-center gap-2">
+                Acessar o Catálogo
+                <HiExternalLink size={20} />
+              </Link>
+              <div className="p-4 bg-indigo-900 flex items-center justify-between gap-4">
+                <div className="flex flex-col gap-1">
+                  <strong className="text-sm font-normal">{`${session?.user?.firstName} ${session?.user?.lastName ?? ''}`}</strong>
+                  <Tooltip content="Gerenciar Plano">
+                    {subscriptionIsValid ? (
+                      <Link className="text-slate-100 bg-indigo-500 hover:bg-indigo-400 transition-colors text-xs text-center py-0.5 px-1 rounded" href="/company/dashboard/plan">PLANO PREMIUM</Link>
+                    ) : (
+                      <Link className="text-slate-100 bg-blue-500 hover:bg-blue-400 transition-colors text-xs text-center py-0.5 px-1 rounded" href="/company/dashboard/plan">PLANO GRATIS</Link>
+                    )}
+                  </Tooltip>
+                </div>
+      
+                <div className="flex items-center gap-2">
+                  <button onClick={handleSignOut}>
+                    <FiLogOut />
+                  </button>
+                </div>
               </div>
             </div>
           </motion.aside>

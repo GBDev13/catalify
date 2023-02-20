@@ -29,7 +29,7 @@ export default function OrderDetails() {
   const { mutate: handleCompleteOrder } = useMutation(() => toast.promise(completeOrder(order?.id!), {
     loading: 'Concluindo pedido...',
     success: 'Pedido concluído com sucesso!',
-    error: 'Ocorreu um erro ao concluir o pedido'
+    error: (err) => err?.response?.data?.message ?? 'Erro ao concluir pedido'
   }), {
     onSuccess: () => {
       queryClient.setQueryData<Catalog.Order>(catalogKeys.orderById(orderId), (oldData) => {

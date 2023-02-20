@@ -2,6 +2,7 @@ import * as Dialog from "@radix-ui/react-dialog"
 import { FaPlay } from "react-icons/fa"
 import { motion } from "framer-motion";
 import { fadeAnimProps, scaleUpAnimProps } from "src/lib/animations";
+import ReactPlayer from "react-player"
 
 const VideoDialog = () => {
   return (
@@ -11,9 +12,9 @@ const VideoDialog = () => {
       <FaPlay />
     </Dialog.Trigger>
     <Dialog.Content className="fixed left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 z-30 bg-slate-100 p-4 sm:p-6 rounded-md w-full max-w-[1000px]">
-      <video className="aspect-video" controls autoPlay>
-        <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4" />
-      </video>
+      <div className="aspect-video">
+        <ReactPlayer playing={true} controls url="https://www.youtube.com/watch?v=eYsHhd4CRGA" width="100%" height="100%" />
+      </div>
     </Dialog.Content>
   </Dialog.Root>
   )
@@ -38,7 +39,7 @@ export const DemoVideoSection = () => {
             ...scaleUpAnimProps.viewport,
             once: true
           }}>
-            <img className="w-full h-full object-cover" src="https://s3-alpha-sig.figma.com/img/a81f/c1a0/2ae6277b51e3fe22bf7bd6b1c5b8dc4c?Expires=1677456000&Signature=CmiBpvCh3k1DDRFeV7JMXXpmjEM1z-guNxXaUIHqp3~zW7FPMVdT1Mj7EqDWYYfT~h6HHfXDdvVk2peQlow6RWxMGwnu8myzQ8c5BIjQEyDhysvcjvaPMHWvPFr7RtpoSrckylDxmrSlaAAtON7iS7njvbyEZ6~iekPjfp7-1gg1u4XtStTQfYFooy2LD8gfg6CAiS3OU7ADOQYAx3YzUJnNzuHs67ii9YD0qYxr~36pSa-qLI-ngXzEdLry0Et2LquYlA5xhmqQrME17KFUz2UY3aIRXXt1kY-JoSdeDKXeUb7Ef3yNSO1nHW31muwa6R~-h3WhASt2b5VfOS6ExQ__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4" />
+            <img className="w-full h-full object-cover" src="/images/home-placeholder.png" />
             <div className="absolute inset-0 flex items-center justify-center bg-transparent hover:bg-indigo-300/50 group transition-colors">
               <VideoDialog />
             </div>

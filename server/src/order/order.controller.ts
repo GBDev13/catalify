@@ -10,6 +10,7 @@ export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
   @Post('/:companySlug')
+  @IsPublic()
   async createOrder(
     @Body() createOrderDto: CreateOrderDto,
     @Param('companySlug') companySlug: string,

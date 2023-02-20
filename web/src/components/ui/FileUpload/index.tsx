@@ -50,9 +50,9 @@ export const FileUpload = ({ disabled, acceptedTypes, maxSize, maxFiles = 1, onD
     if (onRemove) onDrop([])
   }
 
-  const isImageUrl = (url: string) => {
-    return url.match(/\.(jpeg|jpg|gif|png)$/) != null;
-  }
+  const isImage = useMemo(() => {
+    return submittedFiles?.[0]?.type.split("/")[0] === "image"
+  }, [submittedFiles])
 
   return (
     <>
@@ -69,7 +69,7 @@ export const FileUpload = ({ disabled, acceptedTypes, maxSize, maxFiles = 1, onD
             ) : (
               <>
                 <strong className="font-semibold text-indigo-500">Arquivo aceito</strong>
-                {isImageUrl(previewArray[0]) ? (
+                {isImage ? (
                   <img className="w-20 h-20 object-contain" src={previewArray[0]} />
                 ) : (
                   <>

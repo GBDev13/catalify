@@ -183,6 +183,7 @@ export class OrderService {
         HttpStatus.UNAUTHORIZED,
       );
     }
+
     order.products.forEach(async (product) => {
       if (product.selectedVariants.length > 0) {
         const ids = product.selectedVariants.map((x) => x.id);
@@ -221,14 +222,16 @@ export class OrderService {
             productId: product.productId,
           },
         });
-        await this.prisma.stock.update({
-          where: {
-            id: productStock.id,
-          },
-          data: {
-            quantity: productStock.quantity - product.quantity,
-          },
-        });
+        if (productStock) {
+          await this.prisma.stock.update({
+            where: {
+              id: productStock.id,
+            },
+            data: {
+              quantity: productStock.quantity - product.quantity,
+            },
+          });
+        }
       }
     });
 
