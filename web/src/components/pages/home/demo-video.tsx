@@ -1,5 +1,7 @@
 import * as Dialog from "@radix-ui/react-dialog"
 import { FaPlay } from "react-icons/fa"
+import { motion } from "framer-motion";
+import { fadeAnimProps, scaleUpAnimProps } from "src/lib/animations";
 
 const VideoDialog = () => {
   return (
@@ -25,19 +27,22 @@ export const DemoVideoSection = () => {
         backgroundSize: "cover"
       }}>
         <div className="home-container">
-          <div className="text-center sm:px-14 mb-14">
+          <motion.div className="text-center sm:px-14 mb-14" {...fadeAnimProps}>
             <h2 className="font-semibold text-4xl">Catalify em ação</h2>
             <p className="text-slate-500 sm:text-lg mt-2">
               Assista a um breve vídeo que mostra como o Catalify pode ajudar a sua empresa a ter um catálogo digital completo, fácil de usar e eficiente.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="aspect-[77/40] rounded-md overflow-hidden relative border border-indigo-500">
+          <motion.div className="aspect-[77/40] rounded-md overflow-hidden relative border border-indigo-500" {...scaleUpAnimProps} viewport={{
+            ...scaleUpAnimProps.viewport,
+            once: true
+          }}>
             <img className="w-full h-full object-cover" src="https://s3-alpha-sig.figma.com/img/a81f/c1a0/2ae6277b51e3fe22bf7bd6b1c5b8dc4c?Expires=1677456000&Signature=CmiBpvCh3k1DDRFeV7JMXXpmjEM1z-guNxXaUIHqp3~zW7FPMVdT1Mj7EqDWYYfT~h6HHfXDdvVk2peQlow6RWxMGwnu8myzQ8c5BIjQEyDhysvcjvaPMHWvPFr7RtpoSrckylDxmrSlaAAtON7iS7njvbyEZ6~iekPjfp7-1gg1u4XtStTQfYFooy2LD8gfg6CAiS3OU7ADOQYAx3YzUJnNzuHs67ii9YD0qYxr~36pSa-qLI-ngXzEdLry0Et2LquYlA5xhmqQrME17KFUz2UY3aIRXXt1kY-JoSdeDKXeUb7Ef3yNSO1nHW31muwa6R~-h3WhASt2b5VfOS6ExQ__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4" />
             <div className="absolute inset-0 flex items-center justify-center bg-transparent hover:bg-indigo-300/50 group transition-colors">
               <VideoDialog />
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
     </>

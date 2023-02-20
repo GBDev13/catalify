@@ -4,6 +4,7 @@ import { getSession, signIn } from "next-auth/react"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { useForm } from "react-hook-form"
+import { Logo } from "src/assets/Logo"
 import { DashboardSEO } from "src/components/pages/shared/DashboardSEO"
 import { Button } from "src/components/ui/Button"
 import { Divider } from "src/components/ui/Divider"
@@ -51,6 +52,9 @@ export default function Login() {
 
       <section className="p-8 flex flex-col items-center">
         <div className="w-full max-w-[600px] mt-10 md:mt-20">
+          <Link href="/">
+            <Logo className="w-[180px] !text-indigo-500 mb-20" />
+          </Link>
           <h1 className="text-4xl font-semibold">Entrar</h1>
           <form onSubmit={handleSubmit(handleLogin)} className="flex flex-col gap-3 mt-10">
             <ControlledInput control={control} fieldName="email" type="email" label="Email" placeholder="usuario@email.com" />

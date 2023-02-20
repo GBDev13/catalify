@@ -1,14 +1,16 @@
 import { ReactNode } from "react"
 import { FaPalette, FaWhatsapp, FaRegFlag, FaBoxOpen, FaLink, FaBox } from 'react-icons/fa';
+import { fadeAnimProps } from "src/lib/animations";
+import { motion } from "framer-motion";
 
 type FeatureItemProps = {
   title: string
   description: string
   icon: ReactNode
+  index: number
 }
 
-
-const features: FeatureItemProps[] = [
+const features: Omit<FeatureItemProps, 'index'>[] = [
   {
     title: "Catálogo Personalizado",
     icon: <FaPalette />,
@@ -41,9 +43,13 @@ const features: FeatureItemProps[] = [
   },
 ]
 
-const FeatureItem = ({ title, description, icon }: FeatureItemProps) => {
+const FeatureItem = ({ title, description, icon, index }: FeatureItemProps) => {
   return (
-    <div className="p-2 hover:bg-white transition-colors rounded-md">
+    <motion.div
+      className="p-2 hover:bg-white transition-colors rounded-md"
+      {...fadeAnimProps}
+      transition={{ delay: index * 0.1 }}
+    >
       <div className="w-12 h-12 bg-indigo-300/30 text-indigo-500 flex items-center justify-center rounded-md text-2xl">
         {icon}
       </div>
@@ -52,7 +58,7 @@ const FeatureItem = ({ title, description, icon }: FeatureItemProps) => {
         <h3 className="text-xl font-semibold mb-2">{title}</h3>
         <p className="text-sm text-slate-500">{description}</p>
       </div>
-    </div>
+    </motion.div>
   )
 }
 
@@ -60,15 +66,15 @@ export const FeaturesSection = () => {
   return (
     <section className="w-full bg-slate-50 py-16 mt-20" id="features">
       <div className="home-container">
-        <div className="text-center md:px-6 mb-14">
+        <motion.div className="text-center md:px-6 mb-14" {...fadeAnimProps}>
           <h2 className="font-semibold text-4xl">Principais Funcionalidades</h2>
           <p className="text-slate-500 sm:text-lg mt-2">
             Nossas funcionalidades oferecem um catálogo digital <span className="text-indigo-500">completo e eficiente</span> para a sua empresa. Aproveite ao máximo as possibilidades do Catalify e aumente suas vendas hoje mesmo!
           </p>
-        </div>
+        </motion.div>
         <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-6">
-          {features.map(feature => (
-            <FeatureItem key={feature.title} {...feature} />
+          {features.map((feature, index) => (
+            <FeatureItem key={feature.title} {...feature} index={index} />
           ))}
         </div>
       </div>

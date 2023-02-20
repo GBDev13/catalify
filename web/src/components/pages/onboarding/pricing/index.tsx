@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query"
 import clsx from "clsx"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/router"
+import { useCallback, useEffect } from "react"
 import { toast } from "react-hot-toast"
 import { FiCheck, FiCheckCircle } from "react-icons/fi"
 import { Button } from "src/components/ui/Button"
@@ -70,7 +71,7 @@ export const Pricing = ({ hideFree, onClickFree, onClickPaid }: PricingProps) =>
 
   const router = useRouter()
 
-  const onCheckout = (isPaid: boolean) => {
+  const onCheckout = useCallback((isPaid: boolean) => {
     if (isPaid) {
       if(onClickPaid) {
         onClickPaid()
@@ -85,7 +86,15 @@ export const Pricing = ({ hideFree, onClickFree, onClickPaid }: PricingProps) =>
       return
     }
     router.push('/company/dashboard')
-  }
+  }, [handleCheckoutPremium, onClickFree, onClickPaid, router])
+
+  const routerPlan = router.query.plan as string
+
+  useEffect(() => {
+    if(routerPlan) {
+      onCheckout(routerPlan === 'premium')
+    }
+  }, [onCheckout, routerPlan])
 
   return (
     <section className="w-full mt-16 gap-6 flex flex-col-reverse lg:grid lg:grid-cols-2">
@@ -110,7 +119,7 @@ export const Pricing = ({ hideFree, onClickFree, onClickPaid }: PricingProps) =>
 
             <div className="mt-4 sm:mt-10">
               <h4>Funcionalidades:</h4>
-              <ul className="flex flex-col gap-1.5 mt-2 min-h-[315px]">
+              <ul className="flex flex-col gap-1.5 mt-2 min-h-[333px]">
                 {plan.features.map((feature, index) => (
                   <li key={feature} className="text-slate-400 text-sm font-light flex items-center gap-1">
                     {isPaid ? index > similarFeatures.length - 1 ? (

@@ -1,5 +1,7 @@
 import { HomeFooter } from "src/components/pages/home/footer";
 import { HomeHeader } from "src/components/pages/home/header";
+import { motion } from "framer-motion";
+import { fadeAnimProps } from "src/lib/animations";
 
 const sections = [
   {
@@ -40,10 +42,10 @@ export default function PrivacyPolicy() {
         <h1 className="text-4xl font-semibold text-center">Política de Privacidade</h1>
 
         {sections.map((section, i) => (
-          <div key={`section-${i}`} className="mt-10">
+          <motion.div key={`section-${i}`} className="mt-10" {...fadeAnimProps} viewport={undefined} transition={{ delay: i * 0.1 }}>
             {section.title && <h2 className="text-2xl font-semibold">{section.title}</h2>}
             <p className="text-gray-500 mt-2">{section.description}</p>
-          </div>
+          </motion.div>
         ))}
       </section>
       <HomeFooter />

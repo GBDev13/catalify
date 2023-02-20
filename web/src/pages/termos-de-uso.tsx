@@ -1,5 +1,7 @@
 import { HomeFooter } from "src/components/pages/home/footer";
 import { HomeHeader } from "src/components/pages/home/header";
+import { motion } from "framer-motion";
+import { fadeAnimProps } from "src/lib/animations";
 
 const sections = [
   "O uso do sistema Catalify é de responsabilidade do usuário.",
@@ -26,9 +28,9 @@ export default function PrivacyPolicy() {
 
         <ul className="flex flex-col gap-2 list-disc pl-4 mt-6">
           {sections.map((item, i) => (
-            <li key={`item-${i}`} className="text-gray-500">
+            <motion.li key={`item-${i}`} className="text-gray-500" {...fadeAnimProps} transition={{ delay: i * 0.05 }} viewport={undefined}>
               {item}
-            </li>
+            </motion.li>
           ))}
         </ul>
       </section>

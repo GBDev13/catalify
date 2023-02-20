@@ -31,7 +31,7 @@ export const CompanyDashboardLayout = ({ children }: CompanyDashboardLayout) => 
   })
 
   return (
-    <main className="flex w-screen">
+    <main className="flex w-screen overflow-x-hidden">
       <Sidebar />
       <AnimatePresence
         exitBeforeEnter
@@ -39,7 +39,7 @@ export const CompanyDashboardLayout = ({ children }: CompanyDashboardLayout) => 
         onExitComplete={() => window.scrollTo(0, 0)}
       >
         <motion.div
-          className="h-screen overflow-y-auto flex-1 p-3 md:p-8"
+          className="h-screen overflow-y-auto overflow-x-hidden flex-1 p-3 md:p-8"
           variants={variants}
           initial="hidden"
           animate="enter"

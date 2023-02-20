@@ -70,7 +70,7 @@ export const PersonalStep = ({ onNextStep }: PersonalStepProps) => {
   return (
     <>
       <div className="self-start">
-        <h2 className="flex items-center gap-2 font-semibold text-2xl">Obrigado por escolher a <Logo className="!text-indigo-500" /></h2>
+        <h2 className="flex items-center gap-2 font-semibold text-2xl">Obrigado por escolher <Logo className="!text-indigo-500" /></h2>
         <p className="text-slate-500">Para começar, precisamos que você nos forneça alguns dados sobre a sua conta.</p>
       </div>
       <form className="w-full grid grid-cols-2 gap-4 mt-10" onSubmit={handleSubmit(onSubmit)}>
