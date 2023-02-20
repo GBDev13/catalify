@@ -4,12 +4,37 @@
 
 @layer base {
   body {
-    @apply bg-slate-200 text-slate-800
+    @apply bg-slate-200 text-slate-800;
   }
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* Track */
+*::-webkit-scrollbar-track {
+  background: #e2e8f0;
+}
+
+/* Handle */
+*::-webkit-scrollbar-thumb {
+  background: #6366f1;
 }
 
 #body {
   pointer-events: auto !important;
+}
+
+.home-container {
+  @apply w-full max-w-[1000px] mx-auto px-2 sm:px-4
+}
+
+#gradient-canvas {
+  --gradient-color-1: #6366f1;
+  --gradient-color-2: #4f46e5;
+  --gradient-color-3: #818cf8;
+  --gradient-color-4: #6366f1;
 }
 
 /* React Select */

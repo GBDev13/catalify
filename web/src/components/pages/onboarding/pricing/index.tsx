@@ -40,6 +40,7 @@ export const PLANS = [
       'Até 5 imagens por produto',
       'Até 2 variações por produto',
       'Até 10 links de contato',
+      'Controle de estoque',
       'Destaque de produtos',
       'Página de links customizável',
       '3 Imagens de destaque no catálogo',
@@ -50,9 +51,11 @@ export const PLANS = [
 
 type PricingProps = {
   hideFree?: boolean
+  onClickFree?: () => void
+  onClickPaid?: () => void
 }
 
-export const Pricing = ({ hideFree }: PricingProps) => {
+export const Pricing = ({ hideFree, onClickFree, onClickPaid }: PricingProps) => {
   const { data: session } = useSession()
 
   const { mutate: handleCheckoutPremium, isLoading } = useMutation(() => toast.promise(createSubscriptionCheckout(session?.user?.email!), {
@@ -69,10 +72,18 @@ export const Pricing = ({ hideFree }: PricingProps) => {
 
   const onCheckout = (isPaid: boolean) => {
     if (isPaid) {
+      if(onClickPaid) {
+        onClickPaid()
+        return
+      }
       handleCheckoutPremium()
       return
     }
 
+    if(onClickFree) {
+      onClickFree()
+      return
+    }
     router.push('/company/dashboard')
   }
 

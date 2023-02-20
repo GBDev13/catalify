@@ -6,6 +6,7 @@ import { renderLayoutByPath } from 'src/helpers/render-layout-by-path'
 import { GlobalState } from 'src/components/GlobalState'
 import { useState } from 'react'
 import { CustomToaster } from 'src/components/CustomToaster'
+import Script from 'next/script'
 
 export default function App({
   Component,
@@ -21,7 +22,7 @@ export default function App({
     }
   }))
   
-  // const isCatalogRoute = Object.keys(router?.components ?? {}).some(x => x.includes('companySlug'));
+  const isCatalogRoute = Object.keys(router?.components ?? {}).some(x => x.includes('companySlug'));
   return (
     <QueryClientProvider client={queryClient}>
       <Hydrate state={pageProps.dehydratedState}>
@@ -30,6 +31,12 @@ export default function App({
           <GlobalState>
             {renderLayoutByPath(router.pathname, <Component {...pageProps} />)}
           </GlobalState>
+          {!isCatalogRoute && (
+            <Script
+              strategy='lazyOnload'
+              src={process.env.NEXT_PUBLIC_CHAT_EMBED}
+            />
+          )}
         </SessionProvider>
       </Hydrate>
     </QueryClientProvider>
