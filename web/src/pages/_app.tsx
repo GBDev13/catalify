@@ -7,6 +7,7 @@ import { GlobalState } from 'src/components/GlobalState'
 import { useState } from 'react'
 import { CustomToaster } from 'src/components/CustomToaster'
 import Script from 'next/script'
+import { CookiesPopup } from 'src/components/pages/shared/CookiesPopup'
 
 export default function App({
   Component,
@@ -37,6 +38,7 @@ export default function App({
               src={process.env.NEXT_PUBLIC_CHAT_EMBED}
             />
           )}
+          <CookiesPopup />
         </SessionProvider>
       </Hydrate>
     </QueryClientProvider>
