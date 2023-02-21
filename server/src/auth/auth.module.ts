@@ -7,14 +7,15 @@ import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
 import { LoginValidationMiddleware } from './middlewares/login-validation.middleware';
+import { TokenModule } from 'src/token/token.module';
 
 @Module({
   imports: [
     UserModule,
     PassportModule,
+    TokenModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '30d' },
     }),
   ],
   controllers: [AuthController],

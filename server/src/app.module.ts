@@ -19,6 +19,7 @@ import { SubscriptionModule } from './subscription/subscription.module';
 import { StorageModule } from './storage/storage.module';
 import { LinksPageModule } from './links-page/links-page.module';
 import { StockModule } from './stock/stock.module';
+import { TokenModule } from './token/token.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { StockModule } from './stock/stock.module';
     StorageModule,
     LinksPageModule,
     StockModule,
+    TokenModule,
   ],
   providers: [
     AppService,

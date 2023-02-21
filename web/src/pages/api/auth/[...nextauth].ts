@@ -3,6 +3,34 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import api from "../../../lib/axios";
 import jwt_decode from "jwt-decode";
 
+type TokenType = {
+    accessToken: string;
+    refreshToken: string;
+}
+
+const refreshAccessToken = async (token: TokenType) => {
+    try {
+        console.log('refreshing token', token)
+        const { status, data } = await api.post("/auth/refresh", {
+            refreshToken: token.refreshToken,
+        })
+
+        if (status !== 200) {
+            throw token
+        }
+
+        return {
+            ...token,
+            accessToken: data.access_token
+        }
+    } catch (error) {
+        return {
+            ...token,
+            error: "RefreshAccessTokenError",
+        }
+    }
+}
+
 export const authOptions: NextAuthOptions = {
     secret: process.env.SECRET,
     providers: [
@@ -31,11 +59,20 @@ export const authOptions: NextAuthOptions = {
             },
         }),
     ],
-    session: {
-        maxAge: 6 * 24 * 60 * 60, // 6 days
-    },
+    // session: {
+    //     maxAge: 6 * 24 * 60 * 60, // 6 days
+    // },
     pages: {
         signIn: "/login",
+    },
+    events: {
+        signOut: async (session) => {
+            if(session?.token?.refreshToken) {
+                await api.post("/auth/logout", {
+                    refreshToken: session.token.refreshToken,
+                })
+            }
+        }
     },
     callbacks: {
         async jwt({ token, user , account}) {
@@ -43,9 +80,18 @@ export const authOptions: NextAuthOptions = {
                 return {
                     ...token,
                     accessToken: user.access_token,
+                    refreshToken: user.refresh_token,
                 };
             }
-            return token
+
+            const parsedToken = parseJWT(token.accessToken as string) as any;
+            const expiresAt = new Date(parsedToken.exp * 1000);
+
+            if(Date.now() < expiresAt.getTime()) {
+                return token;
+            }
+
+            return refreshAccessToken(token as TokenType)
         },
 
         async session({ session, token }) {
@@ -56,6 +102,7 @@ export const authOptions: NextAuthOptions = {
             session.user.lastName = parsed.lastName;
             session.user.email = parsed.email;
             session.user.access_token = String(token.accessToken);
+            session.user.refresh_token = String(token.refreshToken);
             
             return session;
         },

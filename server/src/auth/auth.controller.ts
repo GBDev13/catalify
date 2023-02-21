@@ -10,10 +10,9 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
-import { AuthRequest } from './models/AuthRequest';
+import { AuthRequest, RefreshPayload } from './models/AuthRequest';
 import { IsPublic } from './decorators/is-public.decorator';
 import { UserService } from 'src/user/user.service';
-import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { User } from 'src/user/entities/user.entity';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { OnboardingDto } from './dto/onboarding.dto';
@@ -43,5 +42,19 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async login(@Request() req: AuthRequest) {
     return this.authService.login(req.user);
+  }
+
+  @IsPublic()
+  @Post('logout')
+  @HttpCode(HttpStatus.OK)
+  async logout(@Request() req: RefreshPayload) {
+    return this.authService.logout(req.refreshToken);
+  }
+
+  @IsPublic()
+  @Post('refresh')
+  @HttpCode(HttpStatus.OK)
+  async refresh(@Body() body: RefreshPayload) {
+    return this.authService.refreshToken(body.refreshToken);
   }
 }

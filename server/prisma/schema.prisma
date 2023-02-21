@@ -19,6 +19,7 @@ model User {
 
   company   Company? @relation(fields: [companyId], references: [id])
   companyId String?
+  tokens    Tokens[]
 
   @@map("users")
 }
@@ -308,4 +309,27 @@ model Stock {
   companyId String
 
   @@map("stocks")
+}
+
+enum TokenType {
+  PASSWORD_RESET
+  EMAIL_VERIFICATION
+  REFRESH_TOKEN
+}
+
+model Tokens {
+  id String @id @default(uuid())
+
+  token     String
+  type      TokenType
+  expiresAt DateTime
+
+  user   User?   @relation(fields: [userId], references: [id])
+  userId String?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+
+  @@index([token], name: "token")
+  @@map("tokens")
 }

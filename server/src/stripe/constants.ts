@@ -16,3 +16,8 @@ export const BLOCKED_COMPANY_SLUGS = [
   'politica-de-privacidade',
   'termos-de-uso',
 ];
+
+export const TOKENS_DURATION = {
+  ACCESS_TOKEN: '30m',
+  REFRESH_TOKEN: '7d',
+};

@@ -17,6 +17,13 @@ export class SubscriptionService {
       },
     });
 
+    if (!company) {
+      throw new HttpException(
+        'Ocorreu um erro ao buscar sua empresa',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     const companyHasSubscription = await this.prisma.subscription.findFirst({
       where: {
         companyId: company.id,
