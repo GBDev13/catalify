@@ -137,7 +137,7 @@ export default function Produto() {
           <h1 className="font-semibold text-2xl sm:text-4xl text-gray-700">{productData?.name}</h1>
           <div className="flex items-center gap-4 mt-5 text-gray-600">
             <strong className="font-semibold text-3xl">{formattedPromoPrice ?? formattedPrice}</strong>
-            {productData?.promoPrice && <span className="font-semibold bg-primaryLight px-2 py-0.5 rounded">{promoPercentage}%</span>}
+            {productData?.promoPrice && <span className="font-semibold bg-primaryLight text-readable px-2 py-0.5 rounded">{promoPercentage}%</span>}
           </div>
           {productData?.promoPrice && <span className="text-gray-500 text-lg line-through">{formattedPrice}</span>}
 

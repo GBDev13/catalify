@@ -26,7 +26,7 @@ export const ProductSlider = ({ pictures = [] }: ProductsSliderProps) => {
       <div ref={sliderRef} className="keen-slider border border-gray-200 rounded-lg">
         {pictures.map((thumbnail, index) => (
           <div key={index} className="keen-slider__slide aspect-square rounded-lg overflow-hidden">
-            <img src={thumbnail} className="w-full h-full object-cover" />
+            <img src={thumbnail} className="w-full h-full object-contain" />
           </div>
         ))}
       </div>
@@ -34,7 +34,7 @@ export const ProductSlider = ({ pictures = [] }: ProductsSliderProps) => {
       <div ref={thumbnailRef} className="keen-slider">
         {pictures.map((thumbnail, index) => (
           <div key={index} className="cursor-pointer keen-slider__slide mt-[10px] [&.active]:!border-primary border-2 border-gray-100 rounded overflow-hidden transition-colors aspect-square">
-            <img src={thumbnail} className="w-full h-full object-cover" />
+            <img src={thumbnail} className="w-full h-full object-contain" />
           </div>
         ))}
       </div>

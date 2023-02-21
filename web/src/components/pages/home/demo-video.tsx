@@ -7,15 +7,17 @@ import ReactPlayer from "react-player"
 const VideoDialog = () => {
   return (
   <Dialog.Root>
-    <Dialog.Overlay className="fixed inset-0 bg-black/50 z-20" />
     <Dialog.Trigger className="bg-indigo-100 backdrop-blur-sm w-16 h-16 text-2xl rounded-full flex items-center justify-center text-indigo-500 group-hover:bg-indigo-500 group-hover:text-white transition-all">
       <FaPlay />
     </Dialog.Trigger>
-    <Dialog.Content className="fixed left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 z-30 bg-slate-100 p-4 sm:p-6 rounded-md w-full max-w-[1000px]">
-      <div className="aspect-video">
-        <ReactPlayer playing={true} controls url="https://www.youtube.com/watch?v=eYsHhd4CRGA" width="100%" height="100%" />
-      </div>
-    </Dialog.Content>
+    <Dialog.Portal>
+      <Dialog.Overlay className="fixed inset-0 bg-black/50 z-20" />
+      <Dialog.Content className="fixed left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 z-30 bg-slate-100 p-4 sm:p-6 rounded-md w-full max-w-[1000px]">
+        <div className="aspect-video">
+          <ReactPlayer playing={true} controls url="https://www.youtube.com/watch?v=eYsHhd4CRGA" width="100%" height="100%" />
+        </div>
+      </Dialog.Content>
+    </Dialog.Portal>
   </Dialog.Root>
   )
 }

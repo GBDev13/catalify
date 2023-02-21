@@ -2,6 +2,7 @@ import Head from "next/head";
 import Script from "next/script";
 import { useEffect } from "react";
 import { DemoVideoSection } from "src/components/pages/home/demo-video";
+import { ExamplesSection } from "src/components/pages/home/examples";
 import { FeaturesSection } from "src/components/pages/home/features";
 import { HomeFooter } from "src/components/pages/home/footer";
 import { HomeHeader } from "src/components/pages/home/header";
@@ -35,6 +36,7 @@ export default function Home() {
         <HeroSection />
         <FeaturesSection />
         <DemoVideoSection />
+        <ExamplesSection />
         <PricingSection />
         <HomeFooter />
       </main>

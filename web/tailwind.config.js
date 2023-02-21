@@ -13,6 +13,8 @@ module.exports = {
         primary: "var(--color-primary)",
         primaryLight: "var(--color-primary-light)",
         readable: "var(--color-readable)",
+        scrollThumb: "var(--color-scroll-thumb, #6366f1)",
+        scrollTrack: "var(--color-scroll-track, #e2e8f0)",
         whatsapp: "#25D366"
       }
     },

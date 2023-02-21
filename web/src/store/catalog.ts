@@ -1,8 +1,8 @@
 import create from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
-import { lighten, readableColor } from 'polished'
-import { setCssVariable } from 'src/helpers/set-css-variable'
+import { lighten } from 'polished'
+import { setCssVariable, setScrollColors } from 'src/helpers/set-css-variable'
 import { checkColorReadability } from 'src/helpers/check-color-readability'
 
 type CatalogInfo = {
@@ -46,6 +46,7 @@ export const useCatalog = create<CatalogStore>()(
           setCssVariable('--color-primary', state.colors.primary)
           setCssVariable('--color-primary-light', state.colors.lighter)
           setCssVariable('--color-readable', state.colors.readableColor)
+          setScrollColors(state.colors.primary, state.colors.lighter)
         })
       }
     })),

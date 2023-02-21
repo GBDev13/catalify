@@ -46,6 +46,15 @@ export class PaymentGatewayService {
 
     const customerId = await this.createCustomer(customerEmail);
 
+    await this.prisma.company.update({
+      where: {
+        id: user.company.id,
+      },
+      data: {
+        customerId,
+      },
+    });
+
     const checkoutSession = await this.stripe.checkout.sessions.create({
       success_url: successUrl,
       cancel_url: cancelUrl,

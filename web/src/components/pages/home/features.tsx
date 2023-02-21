@@ -67,7 +67,7 @@ export const FeaturesSection = () => {
     <section className="w-full bg-slate-50 py-16 mt-20" id="features">
       <div className="home-container">
         <motion.div className="text-center md:px-6 mb-14" {...fadeAnimProps}>
-          <h2 className="font-semibold text-4xl">Principais Funcionalidades</h2>
+          <h2 className="font-semibold text-3xl sm:text-4xl">Principais Funcionalidades</h2>
           <p className="text-slate-500 sm:text-lg mt-2">
             Nossas funcionalidades oferecem um catálogo digital <span className="text-indigo-500">completo e eficiente</span> para a sua empresa. Aproveite ao máximo as possibilidades do Catalify e aumente suas vendas hoje mesmo!
           </p>

@@ -20,7 +20,7 @@ const LinkWrapper = ({ url, children, className }: LinkWrapperProps) => {
     </div>
   );
 
-  if (url.startsWith("http")) {
+  if (!url.startsWith(location.origin)) {
     return (
       <a href={url} className={className}>
         {children}
@@ -47,7 +47,7 @@ export const HomeBanners = () => {
   return (
     <section className={clsx("grid gap-4", {
       "auto-rows-[250px] sm:auto-rows-[300px] grid-cols-1 sm:grid-cols-2 lg:grid-cols-3": banners.length === 3,
-      "auto-rows-[250px] sm:auto-rows-[300px] grid-cols-[repeat(auto-fit,minmax(400px,1fr))]": banners.length < 3,
+      "auto-rows-[250px] sm:auto-rows-[300px] grid-cols-1 sm:grid-cols-[repeat(auto-fit,minmax(400px,1fr))]": banners.length < 3,
       "auto-rows-[250px] sm:auto-rows-[400px]": banners.length === 1
     })}>
       {banners.map((banner, i) => {
@@ -55,6 +55,7 @@ export const HomeBanners = () => {
           <LinkWrapper url={banner?.url} key={banner.id}
             className={clsx("w-full h-full hover:brightness-105 transition-all", {
               "col-span-full lg:col-auto": banners.length === 3 && i === banners.length - 1,
+              "cursor-pointer": !!banner?.url
             })}
           >
             <div className="w-full h-full rounded-3xl overflow-hidden relative border border-primaryLight hover:border-primary transition-colors">

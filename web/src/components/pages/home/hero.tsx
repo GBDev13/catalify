@@ -30,12 +30,15 @@ export const HeroSection = () => {
           </motion.button>
         </div>
 
-        <motion.img
-        src="/images/landing.png"
-        className="relative sm:-mr-[400px] md:-mr-[480px] lg:-mr-[550px] w-[950px]"
-        initial={{ opacity: 0, x: 100 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        transition={{ type: 'spring' }}
+        <motion.video
+          src="/videos/hero-video.webm"
+          autoPlay
+          loop
+          muted
+          className="relative sm:-mr-[400px] md:-mr-[480px] lg:-mr-[550px] w-[950px] drop-shadow-lg"
+          initial={{ opacity: 0, x: 100 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ type: 'spring' }}
         />
       </div>
     </section>

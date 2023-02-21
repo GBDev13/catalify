@@ -17,6 +17,10 @@ const sections = [
     id: "demo"
   },
   {
+    title: "Nichos",
+    id: "examples"
+  },
+  {
     title: "Planos",
     id: "pricing"
   }
