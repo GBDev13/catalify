@@ -28,7 +28,7 @@ export default function Produto() {
 
   const { formattedPrice, formattedPromoPrice, promoPercentage } = getFormattedPrices(productData?.price!, productData?.promoPrice)
 
-  const { addProductToCart, setCartIsOpen, cartItems } = useCart();
+  const { addProductToCart, setCartIsOpen, cartItems, setCheckoutFormDialogIsOpen } = useCart();
 
   const pictures = productData?.pictures?.length ? productData.pictures : ['/images/product-placeholder.svg']
 
@@ -85,7 +85,7 @@ export default function Produto() {
 
   const checkoutDisabled = (typeof currentStock === 'number' ? currentStock <= 0 : false) || buyDisabled;
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (silent = false) => {
     if(checkoutDisabled) return;
 
     const productExistsOnCart = cartItems.find(x => {
@@ -115,7 +115,6 @@ export default function Produto() {
       }
     });
 
-    toast.success('Produto adicionado ao carrinho')
     addProductToCart({
       id: productData?.id!,
       name: productData?.name!,
@@ -126,6 +125,15 @@ export default function Produto() {
       variants
     })
     setCartIsOpen(true);
+
+    if(!silent) {
+      toast.success('Produto adicionado ao carrinho')
+    }
+  }
+
+  const handleBuy = () => {
+    handleAddToCart(true)
+    setCheckoutFormDialogIsOpen(true);
   }
 
   return (
@@ -167,11 +175,11 @@ export default function Produto() {
           )}
 
           <div className="mt-10 w-full grid grid-cols-1 gap-2 lg:grid-cols-2">
-            <button disabled={checkoutDisabled} onClick={handleAddToCart} className="disabled:grayscale disabled:opacity-50 disabled:cursor-not-allowed border justify-center flex items-center gap-2 border-primary py-3 px-6 text-primary rounded-md hover:bg-primary hover:text-white transition-all">
+            <button disabled={checkoutDisabled} onClick={() => handleAddToCart()} className="disabled:grayscale disabled:opacity-50 disabled:cursor-not-allowed border justify-center flex items-center gap-2 border-primary py-3 px-6 text-primary rounded-md hover:bg-primary hover:text-white transition-all">
               <FaCartPlus />
               Adicionar ao carrinho
             </button>
-            <button disabled={checkoutDisabled} className="disabled:grayscale disabled:opacity-50 disabled:cursor-not-allowed bg-whatsapp text-white justify-center flex items-center gap-2 py-3 px-6 rounded-md hover:brightness-105 transition-all">
+            <button disabled={checkoutDisabled} onClick={handleBuy} className="disabled:grayscale disabled:opacity-50 disabled:cursor-not-allowed bg-whatsapp text-white justify-center flex items-center gap-2 py-3 px-6 rounded-md hover:brightness-105 transition-all">
               <FaWhatsapp />
               Comprar via Whatsapp
             </button>

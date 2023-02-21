@@ -127,14 +127,14 @@ type CheckoutFormDialogProps = {
 export const CheckoutFormDialog = ({ children }: CheckoutFormDialogProps) => {
   const [step, setStep] = useState(1)
 
-  const [open, setOpen] = useState(false)
+  const { checkoutFormDialogIsOpen, setCheckoutFormDialogIsOpen } = useCart()
 
   useEffect(() => {
-    if(!open) setStep(1)
-  }, [open])
+    if(!checkoutFormDialogIsOpen) setStep(1)
+  }, [checkoutFormDialogIsOpen])
 
   return (
-    <CatalogDialog open={open} onOpenChange={setOpen} content={<CheckoutForm step={step} setStep={setStep} setOpen={setOpen} />} title={step === 1 ? "Preencha para prosseguir" : "Pedido criado!"} maxWidth="600px">
+    <CatalogDialog open={checkoutFormDialogIsOpen} onOpenChange={setCheckoutFormDialogIsOpen} content={<CheckoutForm step={step} setStep={setStep} setOpen={setCheckoutFormDialogIsOpen} />} title={step === 1 ? "Preencha para prosseguir" : "Pedido criado!"} maxWidth="600px">
       {children}
     </CatalogDialog>
   )

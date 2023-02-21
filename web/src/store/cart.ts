@@ -21,6 +21,8 @@ type CartStore = {
   removeProductById: (cartId: string) => void;
   resetCart: () => void;
   setCartItems: (cartItems: CartItem[]) => void;
+  checkoutFormDialogIsOpen: boolean
+  setCheckoutFormDialogIsOpen: (isOpen: boolean) => void
 }
 
 export const useCart = create<CartStore>()(
@@ -29,9 +31,15 @@ export const useCart = create<CartStore>()(
       persist((set, get) => ({
         cartItems: [],
         cartIsOpen: false,
+        checkoutFormDialogIsOpen: false,
         setCartIsOpen: (isOpen) => {
           set((state) => {
             state.cartIsOpen = isOpen
+          })
+        },
+        setCheckoutFormDialogIsOpen: (isOpen) => {
+          set((state) => {
+            state.checkoutFormDialogIsOpen = isOpen
           })
         },
         addProductToCart: (product) => {
