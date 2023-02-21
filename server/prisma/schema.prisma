@@ -45,6 +45,8 @@ model Company {
 
   customerId String?
 
+  isExample Boolean @default(false)
+
   links        CompanyLinks[]
   banners      CompanyBanners[]
   order        Order[]

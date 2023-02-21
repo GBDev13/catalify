@@ -41,11 +41,11 @@ export const PLANS = [
       'Até 5 imagens por produto',
       'Até 2 variações por produto',
       'Até 10 links de contato',
+      'Suporte prioritário',
       'Controle de estoque',
       'Destaque de produtos',
       'Página de links customizável',
-      '3 Imagens de destaque no catálogo',
-      'Suporte prioritário'
+      '3 Imagens de destaque no catálogo'
     ]
   }
 ]

@@ -9,6 +9,7 @@ import { catalogKeys } from "src/constants/query-keys";
 import Head from "next/head";
 import { NextSeo } from 'next-seo';
 import dynamic from "next/dynamic";
+import { ExampleBanner } from "src/components/pages/catalog/example-banner";
 const CartSidebar = dynamic(() => import("src/components/pages/shared/CartSidebar"), { ssr: false });
 
 type CatalogLayoutProps = {
@@ -47,6 +48,7 @@ export const CatalogLayout = ({ title, children, withoutLayout = false }: Catalo
         title={title}
       />
       <main className="w-screen min-h-screen h-screen bg-white overflow-y-auto flex flex-col">
+        {info.isExample && <ExampleBanner />}
         <CartSidebar />
 
         <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 flex flex-col">

@@ -11,6 +11,7 @@ type CatalogInfo = {
   logo: string
   phone: string
   links: string[]
+  isExample: boolean
 }
 
 type CatalogColors = {

@@ -44,6 +44,7 @@ export class CatalogService {
       slug: company.slug,
       links: company.links.map((link) => link.url),
       phone: company.phone,
+      isExample: company.isExample,
     };
   }
 
