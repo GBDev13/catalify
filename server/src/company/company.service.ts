@@ -11,6 +11,7 @@ import { LIMITS } from 'src/config/limits';
 import { UpdateCompanyBannerImagesDto } from './dto/update-company-banner-images-dto';
 import { StorageService } from 'src/storage/storage.service';
 import { LinksPageService } from 'src/links-page/links-page.service';
+import { BLOCKED_COMPANY_SLUGS } from 'src/stripe/constants';
 
 @Injectable()
 export class CompanyService {
@@ -21,6 +22,22 @@ export class CompanyService {
   ) {}
 
   async create(createCompanyDto: CreateCompanyDto, user: User) {
+    if (BLOCKED_COMPANY_SLUGS.includes(createCompanyDto.slug)) {
+      throw new HttpException(
+        'Este slug não está disponível',
+        HttpStatus.CONFLICT,
+      );
+    }
+
+    const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+    if (!slugRegex.test(createCompanyDto.slug)) {
+      throw new HttpException(
+        'O slug deve conter apenas letras minúsculas e números',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     const userAlreadyHaveCompany = await this.prisma.company.findFirst({
       where: {
         ownerId: user.id,
@@ -92,6 +109,22 @@ export class CompanyService {
     updateCompanyDto: UpdateCompanyDto,
     user: User,
   ) {
+    if (BLOCKED_COMPANY_SLUGS.includes(updateCompanyDto.slug)) {
+      throw new HttpException(
+        'Este slug não está disponível',
+        HttpStatus.CONFLICT,
+      );
+    }
+
+    const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+    if (!slugRegex.test(updateCompanyDto.slug)) {
+      throw new HttpException(
+        'O slug deve conter apenas letras minúsculas e números',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     const companyExists = await this.prisma.company.findUnique({
       where: {
         id: companyId,
