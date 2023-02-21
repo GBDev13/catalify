@@ -7,7 +7,7 @@ export const VARIANT_MODELS = [
 ]
 
 export const IMAGE_TYPES = {
-  'image/*': ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+  'image': ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
 }
 
 export const SHEETS_TYPES = {
