@@ -130,10 +130,13 @@ function NewProduct() {
     onSuccess: (createdProduct) => {
       reset()
       queryClient.invalidateQueries(productsKey.all)
+      setProductId(createdProduct.id)
+
       if(subscriptionIsValid) {
         setShowCreateStockModal(true)
+      } else {
+        router.push('/company/dashboard/products')
       }
-      setProductId(createdProduct.id)
     }
   })
 
