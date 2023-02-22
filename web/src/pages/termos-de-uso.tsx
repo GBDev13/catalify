@@ -2,6 +2,7 @@ import { HomeFooter } from "src/components/pages/home/footer";
 import { HomeHeader } from "src/components/pages/home/header";
 import { motion } from "framer-motion";
 import { fadeAnimProps } from "src/lib/animations";
+import { LandingSEO } from "src/components/pages/shared/LandingSEO";
 
 const sections = [
   "O uso do sistema Catalify é de responsabilidade do usuário.",
@@ -18,10 +19,12 @@ const sections = [
   "O Catalify não se responsabiliza por qualquer tipo de dano causado por terceiros, como roubo, furto, violência ou qualquer outro tipo de dano que possa ocorrer durante a realização de uma transação."
 ]
 
-export default function PrivacyPolicy() {
+export default function Terms() {
   return (
     <main className="flex flex-col h-full min-h-screen">
       <HomeHeader withSolidBg withoutLinks mode="static" />
+
+      <LandingSEO title="Termos de Uso" />
 
       <section className="home-container my-14">
         <h1 className="text-4xl font-semibold text-center">Termos de Uso</h1>

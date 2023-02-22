@@ -2,6 +2,8 @@ import { HomeFooter } from "src/components/pages/home/footer";
 import { HomeHeader } from "src/components/pages/home/header";
 import { motion } from "framer-motion";
 import { fadeAnimProps } from "src/lib/animations";
+import Head from "next/head";
+import { LandingSEO } from "src/components/pages/shared/LandingSEO";
 
 const sections = [
   {
@@ -37,6 +39,8 @@ export default function PrivacyPolicy() {
   return (
     <main>
       <HomeHeader withSolidBg withoutLinks mode="static" />
+      
+      <LandingSEO title="Política de Privacidade" />
 
       <section className="home-container my-14">
         <h1 className="text-4xl font-semibold text-center">Política de Privacidade</h1>

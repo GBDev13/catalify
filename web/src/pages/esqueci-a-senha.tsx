@@ -7,6 +7,7 @@ import { Logo } from "src/assets/Logo"
 import { EmailStep } from "src/components/pages/forgot-password/steps/email-step"
 import { NewPasswordStep } from "src/components/pages/forgot-password/steps/new-password-step"
 import { DashboardSEO } from "src/components/pages/shared/DashboardSEO"
+import { LandingSEO } from "src/components/pages/shared/LandingSEO"
 
 export default function ForgotPassword() {
   const router = useRouter()
@@ -23,7 +24,7 @@ export default function ForgotPassword() {
 
   return (
     <main className="w-screen h-screen grid grid-cols-1 grid-rows-[1.5fr,1fr] md:grid-rows-1 md:grid-cols-2">
-      <DashboardSEO title="Entrar" />
+      <LandingSEO title="Esqueci a Senha" />
 
       <section className="p-8 flex flex-col items-center">
         <div className="w-full max-w-[600px] mt-10 md:mt-20">
