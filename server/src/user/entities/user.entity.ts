@@ -6,4 +6,5 @@ export class User implements Prisma.UserUncheckedCreateInput {
   lastName?: string;
   email: string;
   password: string;
+  emailVerifiedAt?: Date;
 }

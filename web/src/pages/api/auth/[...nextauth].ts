@@ -10,7 +10,6 @@ type TokenType = {
 
 const refreshAccessToken = async (token: TokenType) => {
     try {
-        console.log('refreshing token', token)
         const { status, data } = await api.post("/auth/refresh", {
             refreshToken: token.refreshToken,
         })
@@ -54,7 +53,7 @@ export const authOptions: NextAuthOptions = {
 
                   return null;
                 } catch (err) {
-                  return null;
+                  return Promise.reject(new Error((err as any)?.response?.data?.message ?? "Email e/ou senha inválidos"))
                 }
             },
         }),

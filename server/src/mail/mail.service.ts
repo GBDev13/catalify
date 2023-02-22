@@ -17,8 +17,6 @@ export class MailService {
   async sendMail(mailDto: SendMailDto) {
     let html = null;
     if (mailDto.template) {
-      console.log(process.cwd());
-
       const template = Handlebars.compile(
         readFileSync(
           `./src/mail/templates/${mailDto.template.name}.hbs`,

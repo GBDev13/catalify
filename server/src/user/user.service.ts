@@ -3,6 +3,9 @@ import { Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { OnboardingDto } from 'src/auth/dto/onboarding.dto';
 import { CompanyService } from 'src/company/company.service';
+import { MailService } from 'src/mail/mail.service';
+import { TOKENS_DURATION } from 'src/stripe/constants';
+import { TokenService } from 'src/token/token.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
@@ -12,6 +15,8 @@ export class UserService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly companyService: CompanyService,
+    private readonly mailService: MailService,
+    private readonly tokenService: TokenService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -48,6 +53,39 @@ export class UserService {
     });
   }
 
+  async sendEmailVerification({
+    userId,
+    email,
+    firstName,
+  }: {
+    userId: string;
+    email: string;
+    firstName: string;
+  }) {
+    const emailToken = await this.tokenService.createToken({
+      expiresIn: TOKENS_DURATION.EMAIL_VERIFICATION,
+      type: 'EMAIL_VERIFICATION',
+      userId: userId,
+    });
+
+    await this.mailService.sendMail({
+      subject: 'Verificação de email',
+      to: [
+        {
+          email: email,
+          name: firstName,
+        },
+      ],
+      template: {
+        name: 'verify-email',
+        context: {
+          name: firstName,
+          href: `${process.env.FRONT_END_URL}/onboarding?token=${emailToken.token}`,
+        },
+      },
+    });
+  }
+
   async onboard(onboardingDto: OnboardingDto) {
     let userId: string;
 
@@ -60,6 +98,12 @@ export class UserService {
         onboardingDto.company,
         user,
       );
+
+      await this.sendEmailVerification({
+        userId: user.id,
+        email: user.email,
+        firstName: user.firstName,
+      });
 
       return {
         user,
@@ -88,5 +132,14 @@ export class UserService {
 
   findById(id: string) {
     return this.prisma.user.findUnique({ where: { id } });
+  }
+
+  async updateEmailVerified(id: string, emailVerified: boolean) {
+    await this.prisma.user.update({
+      where: { id },
+      data: {
+        emailVerifiedAt: emailVerified ? new Date() : null,
+      },
+    });
   }
 }

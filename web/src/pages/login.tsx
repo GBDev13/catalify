@@ -39,9 +39,16 @@ export default function Login() {
       password: data.password
     }).then(async (res) => {
       if(res?.ok) {
+        const shouldShowPlans = !!localStorage.getItem("catalify:showPlans")
+        console.log('shouldShowPlans', shouldShowPlans)
+        if(shouldShowPlans) {
+          localStorage.removeItem("catalify:showPlans")
+          await router.push("/onboarding/plans")
+          return
+        }
         await router.push("/company/dashboard")
       } else {
-        notify("error", "Email ou senha incorretos")
+        notify("error", res?.error ?? "Email ou senha incorretos")
       }
     })
   }

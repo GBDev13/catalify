@@ -17,6 +17,8 @@ model User {
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
 
+  emailVerifiedAt DateTime?
+
   company   Company? @relation(fields: [companyId], references: [id])
   companyId String?
   tokens    Tokens[]
@@ -324,7 +326,7 @@ model Tokens {
   type      TokenType
   expiresAt DateTime
 
-  user   User?   @relation(fields: [userId], references: [id])
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String?
 
   createdAt DateTime  @default(now())

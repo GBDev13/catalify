@@ -35,11 +35,6 @@ export const OnboardingForm = ({ step, setStep }: OnboardingFormProps) => {
 
   const { mutateAsync: handleCreateAccount } = useMutation(createAccount, {
     onSuccess: async (_, variables) => {
-      await signIn("credentials", {
-        redirect: false,
-        email: variables.user.email,
-        password: variables.user.password
-      })
       onNextStep()
     }
   })

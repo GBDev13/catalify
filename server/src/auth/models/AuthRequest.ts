@@ -23,3 +23,13 @@ export class ResetPasswordPayload {
   @IsString()
   token: string;
 }
+
+export class VerifyEmailPayload {
+  @IsString()
+  token: string;
+}
+
+export class ResendVerificationPayload {
+  @IsString()
+  oldToken: string;
+}

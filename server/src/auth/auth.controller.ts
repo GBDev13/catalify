@@ -14,7 +14,9 @@ import {
   AuthRequest,
   ForgotPasswordPayload,
   RefreshPayload,
+  ResendVerificationPayload,
   ResetPasswordPayload,
+  VerifyEmailPayload,
 } from './models/AuthRequest';
 import { IsPublic } from './decorators/is-public.decorator';
 import { UserService } from 'src/user/user.service';
@@ -78,5 +80,19 @@ export class AuthController {
       resetPayload.token,
       resetPayload.password,
     );
+  }
+
+  @IsPublic()
+  @Post('verify-email')
+  @HttpCode(HttpStatus.OK)
+  async verifyEmail(@Body() body: VerifyEmailPayload) {
+    return this.authService.verifyEmail(body.token);
+  }
+
+  @IsPublic()
+  @Post('resend-verification-email')
+  @HttpCode(HttpStatus.OK)
+  async resendVerificationEmail(@Body() body: ResendVerificationPayload) {
+    return this.authService.resendVerificationEmail(body.oldToken);
   }
 }

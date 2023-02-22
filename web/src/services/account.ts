@@ -43,3 +43,13 @@ export const resetPassword = async (token: string, password: string) => {
   const { data } = await api.post("/auth/reset-password", { token, password })
   return data
 }
+
+export const verifyEmail = async (token: string) => {
+  const { data } = await api.post("/auth/verify-email", { token })
+  return data
+}
+
+export const resendVerificationEmail = async (oldToken: string) => {
+  const { data } = await api.post("/auth/resend-verification-email", { oldToken })
+  return data
+}

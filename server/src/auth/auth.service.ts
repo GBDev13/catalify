@@ -1,7 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { UnauthorizedError } from './errors/unauthorized.error';
 import { User } from '../user/entities/user.entity';
 import { UserService } from '../user/user.service';
 import { UserToken } from './models/UserToken';
@@ -36,6 +39,12 @@ export class AuthService {
   }
 
   async login(user: User): Promise<UserToken> {
+    if (!user?.emailVerifiedAt) {
+      throw new UnauthorizedException(
+        'Sua conta ainda não foi verificada. Verifique seu email.',
+      );
+    }
+
     const payload = {
       sub: user.id,
       email: user.email,
@@ -65,7 +74,7 @@ export class AuthService {
       }
     }
 
-    throw new UnauthorizedError('Email e/ou senha inválidos.');
+    throw new UnauthorizedException('Email e/ou senha inválidos.');
   }
 
   async logout(token: string) {
@@ -98,14 +107,14 @@ export class AuthService {
       }
     }
 
-    throw new UnauthorizedError('Token inválido.');
+    throw new HttpException('Token de verificação inválido.', 400);
   }
 
   async forgotPassword(email: string) {
     const user = await this.userService.findByEmail(email);
 
     if (!user) {
-      throw new UnauthorizedError('Email não cadastrado.');
+      throw new HttpException('Email não cadastrado.', 404);
     }
 
     await this.tokensService.deleteUserTokensByType(user.id, 'PASSWORD_RESET');
@@ -138,7 +147,7 @@ export class AuthService {
     const passwordResetToken = await this.tokensService.findToken(token);
 
     if (!passwordResetToken) {
-      new UnauthorizedError('Token inválido.');
+      throw new HttpException('Token de verificação inválido.', 400);
     }
 
     const { sub } = await this.jwtService.verifyAsync(passwordResetToken.token);
@@ -146,12 +155,64 @@ export class AuthService {
     const user = await this.userService.findById(sub);
 
     if (!user) {
-      new UnauthorizedError('Usuário não encontrado.');
+      throw new HttpException('Usuário não encontrado.', 404);
     }
 
     await this.userService.updatePassword(user.id, password);
     await this.tokensService.deleteUserTokens(user.id);
 
     return;
+  }
+
+  async verifyEmail(token: string) {
+    const emailVerificationToken = await this.tokensService.findToken(token);
+
+    if (!emailVerificationToken) {
+      throw new HttpException('Token de verificação inválido.', 400);
+    }
+
+    const { sub } = await this.jwtService.verifyAsync(
+      emailVerificationToken.token,
+    );
+
+    const user = await this.userService.findById(sub);
+
+    if (!user) {
+      throw new HttpException('Usuário não encontrado.', 404);
+    }
+
+    await this.userService.updateEmailVerified(user.id, true);
+    await this.tokensService.deleteUserTokens(user.id);
+    return;
+  }
+
+  async resendVerificationEmail(oldToken: string) {
+    const emailVerificationToken = await this.tokensService.findToken(oldToken);
+
+    if (!emailVerificationToken) {
+      throw new HttpException('Token de verificação inválido.', 400);
+    }
+
+    const decoded = this.jwtService.decode(emailVerificationToken.token);
+
+    const user = await this.userService.findById(decoded.sub);
+
+    if (!user) {
+      throw new HttpException('Usuário não encontrado.', 404);
+    }
+
+    if (user.emailVerifiedAt) {
+      throw new HttpException('Email já verificado.', 400);
+    }
+
+    await this.tokensService.deleteUserTokensByType(
+      user.id,
+      'EMAIL_VERIFICATION',
+    );
+    await this.userService.sendEmailVerification({
+      email: user.email,
+      firstName: user.firstName,
+      userId: user.id,
+    });
   }
 }
