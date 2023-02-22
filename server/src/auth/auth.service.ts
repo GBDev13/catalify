@@ -7,6 +7,7 @@ import { UserService } from '../user/user.service';
 import { UserToken } from './models/UserToken';
 import { TokenService } from 'src/token/token.service';
 import { TOKENS_DURATION } from 'src/stripe/constants';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class AuthService {
@@ -14,6 +15,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
     private readonly tokensService: TokenService,
+    private readonly mailService: MailService,
   ) {}
 
   async getTokens(userId: string, payload: Record<string, unknown>) {
@@ -97,5 +99,59 @@ export class AuthService {
     }
 
     throw new UnauthorizedError('Token inválido.');
+  }
+
+  async forgotPassword(email: string) {
+    const user = await this.userService.findByEmail(email);
+
+    if (!user) {
+      throw new UnauthorizedError('Email não cadastrado.');
+    }
+
+    await this.tokensService.deleteUserTokensByType(user.id, 'PASSWORD_RESET');
+
+    const token = await this.tokensService.createToken({
+      expiresIn: TOKENS_DURATION.PASSWORD_RESET,
+      userId: user.id,
+      type: 'PASSWORD_RESET',
+    });
+
+    await this.mailService.sendMail({
+      to: [
+        {
+          email: user.email,
+          name: user.firstName,
+        },
+      ],
+      subject: 'Recuperação de senha',
+      template: {
+        name: 'forgot-password',
+        context: {
+          name: user.firstName,
+          href: `${process.env.FRONT_END_URL}/esqueci-a-senha?token=${token.token}`,
+        },
+      },
+    });
+  }
+
+  async resetPassword(token: string, password: string) {
+    const passwordResetToken = await this.tokensService.findToken(token);
+
+    if (!passwordResetToken) {
+      new UnauthorizedError('Token inválido.');
+    }
+
+    const { sub } = await this.jwtService.verifyAsync(passwordResetToken.token);
+
+    const user = await this.userService.findById(sub);
+
+    if (!user) {
+      new UnauthorizedError('Usuário não encontrado.');
+    }
+
+    await this.userService.updatePassword(user.id, password);
+    await this.tokensService.deleteUserTokens(user.id);
+
+    return;
   }
 }

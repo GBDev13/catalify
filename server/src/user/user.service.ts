@@ -39,6 +39,15 @@ export class UserService {
     };
   }
 
+  async updatePassword(id: string, newPassword: string) {
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await this.prisma.user.update({
+      where: { id },
+      data: { password: hashedPassword },
+    });
+  }
+
   async onboard(onboardingDto: OnboardingDto) {
     let userId: string;
 

@@ -18,6 +18,7 @@ export const BLOCKED_COMPANY_SLUGS = [
 ];
 
 export const TOKENS_DURATION = {
-  ACCESS_TOKEN: '30m',
+  ACCESS_TOKEN: '15m',
   REFRESH_TOKEN: '7d',
+  PASSWORD_RESET: '1h',
 };

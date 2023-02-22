@@ -1,5 +1,6 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { TokenType } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateTokenDto } from './dto/create-token-dto';
 
@@ -63,5 +64,22 @@ export class TokenService {
     });
 
     return tokenRecord;
+  }
+
+  async deleteUserTokens(userId: string) {
+    await this.prisma.tokens.deleteMany({
+      where: {
+        userId,
+      },
+    });
+  }
+
+  async deleteUserTokensByType(userId: string, type: TokenType) {
+    await this.prisma.tokens.deleteMany({
+      where: {
+        userId,
+        type,
+      },
+    });
   }
 }

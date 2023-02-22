@@ -10,7 +10,12 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
-import { AuthRequest, RefreshPayload } from './models/AuthRequest';
+import {
+  AuthRequest,
+  ForgotPasswordPayload,
+  RefreshPayload,
+  ResetPasswordPayload,
+} from './models/AuthRequest';
 import { IsPublic } from './decorators/is-public.decorator';
 import { UserService } from 'src/user/user.service';
 import { User } from 'src/user/entities/user.entity';
@@ -56,5 +61,22 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async refresh(@Body() body: RefreshPayload) {
     return this.authService.refreshToken(body.refreshToken);
+  }
+
+  @IsPublic()
+  @Post('forgot-password')
+  @HttpCode(HttpStatus.OK)
+  async forgotPassword(@Body() body: ForgotPasswordPayload) {
+    return this.authService.forgotPassword(body.email);
+  }
+
+  @IsPublic()
+  @Post('reset-password')
+  @HttpCode(HttpStatus.OK)
+  async resetPassword(@Body() resetPayload: ResetPasswordPayload) {
+    return this.authService.resetPassword(
+      resetPayload.token,
+      resetPayload.password,
+    );
   }
 }
