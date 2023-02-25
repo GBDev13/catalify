@@ -587,4 +587,51 @@ export class ProductService {
       }),
     );
   }
+
+  async getProductsVariantsToCopy(companyId: string) {
+    const company = await this.prisma.company.findUnique({
+      where: {
+        id: companyId,
+      },
+    });
+
+    if (!company) {
+      throw new HttpException(
+        'Esta empresa não existe',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const products = await this.prisma.product.findMany({
+      where: {
+        companyId,
+        variants: {
+          some: {
+            options: {
+              some: {
+                id: {
+                  not: undefined,
+                },
+              },
+            },
+          },
+        },
+      },
+      include: {
+        variants: {
+          include: {
+            options: true,
+          },
+        },
+      },
+    });
+
+    return products.map((product) => ({
+      productName: product.name,
+      variants: product.variants.map((variant) => ({
+        name: variant.name,
+        options: variant.options.map((option) => option.name),
+      })),
+    }));
+  }
 }

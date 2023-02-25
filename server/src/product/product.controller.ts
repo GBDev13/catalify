@@ -207,4 +207,10 @@ export class ProductController {
   ) {
     return this.productService.toggleIsVisible(companyId, productId);
   }
+
+  @Get('/:companyId/productsVariantsToCopy')
+  @HttpCode(HttpStatus.OK)
+  async getProductsVariantsToCopy(@Param('companyId') companyId: string) {
+    return this.productService.getProductsVariantsToCopy(companyId);
+  }
 }

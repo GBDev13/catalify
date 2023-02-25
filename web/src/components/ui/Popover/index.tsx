@@ -16,7 +16,7 @@ export const Popover = ({ content, children, side, className, ...props }: Popove
         {children}
       </PopoverPrimitive.Trigger>
       <PopoverPrimitive.Portal>
-        <PopoverPrimitive.Content side={side} className={clsx("p-4 rounded-md shadow-md bg-slate-200 !z-[999]", className)}>
+        <PopoverPrimitive.Content side={side} className={clsx("p-4 rounded-md shadow-md bg-slate-200 !z-[999] focus:outline-none", className)}>
           <PopoverPrimitive.Arrow  className="fill-slate-200"/>
           {content}
         </PopoverPrimitive.Content>

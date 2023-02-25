@@ -2,6 +2,7 @@ export const productsKey = {
   all: ['products'],
   categories: ['categories'],
   single: (productId: string) => ['product', productId],
+  productsVariantsToCopy: (companyId: string) => [companyId, 'productsVariantsToCopy'],
 }
 
 export const companyKeys = {

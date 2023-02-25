@@ -60,4 +60,12 @@ declare namespace Products {
       variants: string[]
     }[] | null
   }
+
+  export type ProductVariantToCopy = {
+    productName: string;
+    variants: {
+      name: string;
+      options: string[]
+    }[]
+  }
 }

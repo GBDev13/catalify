@@ -3,6 +3,16 @@ export const VARIANT_MODELS = [
     value: 'sizes',
     label: 'Tamanhos',
     options: ["PP", "P", "M", "G", "GG", "XG", "XGG"]
+  },
+  {
+    value: 'voltages',
+    label: 'Voltagens',
+    options: ["110V", "220V", "Bivolt"]
+  },
+  {
+    value: 'cloth',
+    label: 'Tipo de tecido',
+    options: ["Algodão", "Seda", "Lã", "Poliéster", "Nylon"]
   }
 ]
 

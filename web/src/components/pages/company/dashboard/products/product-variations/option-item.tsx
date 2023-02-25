@@ -62,7 +62,7 @@ export const OptionItem = ({ nestIndex, control, register, onChangeExistent, exi
                 error={errors.variations?.[nestIndex]?.options?.[k]?.value}
               />
 
-              <div className={clsx("grid grid-cols-1 gap-2", { "grid-cols-2": isLast })}>
+              <div className={clsx("grid grid-cols-1 gap-2", { "!grid-cols-2": isLast })}>
                 <Tooltip content={`Remover Opção ${currPos}`}>
                   <button className="h-6 w-6 rounded-full mt-[26px] flex items-center justify-center border border-indigo-500 transition-colors  text-indigo-500 hover:bg-indigo-500 hover:text-white" type="button" onClick={() => handleRemoveVariationOption(k)}>
                     <FiX size={15} />

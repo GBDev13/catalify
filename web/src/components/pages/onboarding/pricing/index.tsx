@@ -44,6 +44,7 @@ export const PLANS = [
       'Suporte prioritário',
       'Controle de estoque',
       'Destaque de produtos',
+      'Copiar variações de outro produto',
       'Página de links customizável',
       '3 Imagens de destaque no catálogo'
     ]
@@ -119,7 +120,7 @@ export const Pricing = ({ hideFree, onClickFree, onClickPaid }: PricingProps) =>
 
             <div className="mt-4 sm:mt-10">
               <h4>Funcionalidades:</h4>
-              <ul className="flex flex-col gap-1.5 mt-2 min-h-[333px]">
+              <ul className="flex flex-col gap-1.5 mt-2 min-h-[365px]">
                 {plan.features.map((feature, index) => (
                   <li key={feature} className="text-slate-400 text-sm font-light flex items-center gap-1">
                     {isPaid ? index > similarFeatures.length - 1 ? (

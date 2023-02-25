@@ -120,3 +120,8 @@ export type ImportProduct = {
 export const importProducts = async (companyId: string, products: ImportProduct[]) => {
   return api.post(`/product/${companyId}/import`, { products })
 }
+
+export const getProductsVariantsToCopy = async (companyId: string) => {
+  const { data } = await api.get<Products.ProductVariantToCopy[]>(`/product/${companyId}/productsVariantsToCopy`);
+  return data
+}

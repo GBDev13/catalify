@@ -1,4 +1,4 @@
-import React, { MouseEvent } from "react";
+import React, { MouseEvent, useCallback } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { FiX } from "react-icons/fi";
@@ -11,6 +11,7 @@ import { ActionType, ChangeType } from "src/helpers/on-change-existent-variation
 import { NewProductFormData } from "src/pages/app/dashboard/products/new";
 import { useCompany } from "src/store/company";
 import { VariantModel, VariantModelSelectorPopover } from "../variant-select-popover";
+import { CopyVariantsPopover } from "./copy-variants-dropdown";
 import { OptionItem } from "./option-item";
 
 type ProductVariationsProps = {
@@ -42,12 +43,27 @@ export default function ProductVariations({ onChangeExistent }: ProductVariation
     append({ name: model.name, options: model.options.map(option => ({ value: option })) });
   }
 
+  const removeAllVariations = useCallback(() => {
+    fields.forEach(() => {
+      remove(0);
+    })
+  }, [fields, remove])
+
   const handleRemoveVariation = (index: number) => {
     const field = watch('variations')[index] as any;
     if(field.originalId && onChangeExistent) {
       onChangeExistent('variation', 'remove', field.originalId);
     }
     remove(index);
+  }
+
+  const handleAddCopyVariation = (productToCopy: Products.ProductVariantToCopy) => {
+    removeAllVariations()
+    productToCopy.variants
+    .slice(0, limit)
+    .forEach(variant => {
+      append({ name: variant.name, options: variant.options.map(option => ({ value: option })) });
+    })
   }
 
   const handleOpenModelSelector = (event: MouseEvent) => {
@@ -64,11 +80,12 @@ export default function ProductVariations({ onChangeExistent }: ProductVariation
         <h4 className="text-2xl font-semibold text-slate-500">Variações do Produto</h4>
       </div>
 
-      <div className="grid mt-2 grid-cols-1 gap-2 sm:gap-4 sm:grid-cols-2">
+      <div className="grid mt-2 grid-cols-1 !gap-y-3 gap-2 sm:gap-4 lg:grid-cols-2">
         <VariantModelSelectorPopover onSelectModel={handleAddModelVariation}>
           <Button className="min-h-0 py-2.5 text-sm" size="WIDE" onClick={handleOpenModelSelector}>Adicionar modelo</Button>
         </VariantModelSelectorPopover>
         <Button type="button" onClick={handleAddVariation} className="min-h-0 py-2.5 text-sm" size="WIDE">Adicionar nova variação</Button>
+        <CopyVariantsPopover onCopy={handleAddCopyVariation} />
       </div>
 
       <section className="flex flex-col gap-8">
