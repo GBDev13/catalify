@@ -12,8 +12,20 @@ export const DashboardSEO = ({ title }: DashboardSEOProps) => {
         <link rel="icon" href="/favicon.svg" />
       </Head>
       <NextSeo
-        titleTemplate="Catalify - %s"
+        titleTemplate="%s - Catalify"
         title={title}
+        openGraph={{
+          title: `${title} - Catalify`,
+          type: "website",
+          images: [
+            {
+              url: "/images/og-image.png",
+              width: 800,
+              height: 420,
+              alt: "Catalify"
+            }
+          ]
+        }}
       />
     </>
   )

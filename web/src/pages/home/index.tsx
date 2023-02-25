@@ -8,6 +8,7 @@ import { HomeFooter } from "src/components/pages/home/footer";
 import { HomeHeader } from "src/components/pages/home/header";
 import { HeroSection } from "src/components/pages/home/hero";
 import { PricingSection } from "src/components/pages/home/pricing";
+import { LandingSEO } from "src/components/pages/shared/LandingSEO";
 
 export default function Home() {
   useEffect(() => {
@@ -26,10 +27,7 @@ export default function Home() {
         gradient.initGradient('#gradient-canvas');
       }} />
 
-      <Head>
-        <title>Catalify | Catálogo digital que simplifica suas vendas</title>
-        <link rel="shortcut icon" href="/favicon.svg" type="image/svg" />
-      </Head>
+      <LandingSEO title="O melhor catálogo digital para sua loja online" />
 
       <main className="flex flex-col">
         <HomeHeader />
