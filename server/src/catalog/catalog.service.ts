@@ -30,6 +30,11 @@ export class CatalogService {
       include: {
         logo: true,
         links: true,
+        siteDetail: {
+          include: {
+            favicon: true,
+          },
+        },
       },
     });
 
@@ -45,6 +50,10 @@ export class CatalogService {
       links: company.links.map((link) => link.url),
       phone: company.phone,
       isExample: company.isExample,
+      config: {
+        ...company.siteDetail,
+        favicon: company?.siteDetail?.favicon?.fileUrl,
+      },
     };
   }
 

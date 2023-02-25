@@ -19,6 +19,7 @@ import { UpdateCompanyBannerImagesDto } from './dto/update-company-banner-images
 import { SubscriptionService } from 'src/subscription/subscription.service';
 import { SubscriptionGuard } from 'src/subscription/guards/subscription.guard';
 import { CurrentSubscriptionIsValid } from 'src/subscription/decorators/current-subscription.decorator';
+import { UpdateCompanySiteDetailsDto } from './dto/update-company-site-details-dto';
 
 @Controller('/company')
 export class CompanyController {
@@ -105,5 +106,21 @@ export class CompanyController {
   @Get('/:companyId/overview')
   async getCompanyOverview(@Param('companyId') companyId: string) {
     return this.companyService.getCompanyOverview(companyId);
+  }
+
+  @Get('/:companyId/site-details')
+  async getCompanySiteDetails(@Param('companyId') companyId: string) {
+    return this.companyService.getCompanySiteDetails(companyId);
+  }
+
+  @Put('/:companyId/site-details')
+  async updateCompanySiteDetails(
+    @Param('companyId') companyId: string,
+    @Body() updateCompanySiteDetailsDto: UpdateCompanySiteDetailsDto,
+  ) {
+    return this.companyService.updateCompanySiteDetails(
+      companyId,
+      updateCompanySiteDetailsDto,
+    );
   }
 }

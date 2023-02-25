@@ -17,6 +17,7 @@ export const SHEETS_TYPES = {
 
 export const IMAGE_MAX_SIZE = 5 * 1024 * 1024 // 5MB
 export const SHEETS_MAX_SIZE = 8 * 1024 * 1024 // 8MB
+export const FAVICON_MAX_SIZE = 1 * 1024 * 1024 // 1MB
 
 export const LIMITS = {
   FREE: {

@@ -10,7 +10,7 @@ type ProductItemProps = {
 }
 
 export const ProductItem = ({ product }: ProductItemProps) => {
-  const { colors } = useCatalog();
+  const { colors, info } = useCatalog();
 
   const { formattedPrice, formattedPromoPrice, promoPercentage } = getFormattedPrices(product.price, product.promoPrice);
 
@@ -24,7 +24,9 @@ export const ProductItem = ({ product }: ProductItemProps) => {
         <span className="absolute z-10 text-xs top-0 right-0 bg-red-500 text-white px-2 py-1 rounded-bl-lg">Sem estoque</span>
       )}
       <div className="group w-full h-200 overflow-hidden">
-        <Image height={200} width={200} src={product?.picture ?? '/images/product-placeholder.svg'} alt={product.name} className="w-full object-contain h-[200px] group-hover:scale-110 transition-all duration-300" />
+        <Image height={200} width={200} src={product?.picture ?? '/images/product-placeholder.svg'} alt={product.name} className={clsx("w-full object-contain h-[200px] group-hover:scale-110 transition-all duration-300", {
+          "!object-cover": info?.config?.imageFitMode === 'cover',
+        })} />
       </div>
       <strong title={product.name} className="text-sm my-2 font-normal text-gray-500 block line-clamp-2">{product.name}</strong>
       <div className="flex items-center gap-2 justify-center mt-auto">

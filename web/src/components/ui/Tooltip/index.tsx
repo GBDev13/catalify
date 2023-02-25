@@ -5,7 +5,7 @@ import { fadeAnim } from 'src/lib/animations';
 
 type TooltipProps = {
   children: ReactNode
-  content: string
+  content: string | ReactNode
   maxWidth?: number
 }
 

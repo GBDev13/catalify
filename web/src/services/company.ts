@@ -112,3 +112,23 @@ export const getCompanyOverview = async (companyId: string) => {
   const { data } = await api.get<Company.CompanyOverview>(`/company/${companyId}/overview`)
   return data
 }
+
+export const getCompanySiteDetails = async (companyId: string) => {
+  const { data } = await api.get<Company.SiteDetail>(`/company/${companyId}/site-details`)
+  return data
+}
+
+export type UpdateSiteDetailsDto = Omit<Company.SiteDetail, 'favicon'> & { favicon?: File | null }
+
+export const updateCompanySiteDetails = async (companyId: string, dto: UpdateSiteDetailsDto) => {
+  let companyFavicon: string | undefined = undefined
+
+  if (dto?.favicon) {
+    companyFavicon = await getBase64(dto.favicon)
+  }
+
+  return await api.put(`/company/${companyId}/site-details`, {
+    ...dto,
+    favicon: companyFavicon ?? dto?.favicon,
+  })
+}

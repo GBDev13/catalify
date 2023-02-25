@@ -2,6 +2,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { FiArrowLeft } from "react-icons/fi";
 import { BannersForm } from "src/components/pages/company/dashboard/catalog/banners-form";
+import { CatalogDetails } from "src/components/pages/company/dashboard/catalog/catalog-details";
 import { LinksForm } from "src/components/pages/company/dashboard/catalog/links-form";
 import { DashboardSEO } from "src/components/pages/shared/DashboardSEO";
 import { PageTitle } from "src/components/pages/shared/PageTitle";
@@ -34,6 +35,7 @@ function CatalogCustomization() {
       </PageTitle>
 
       <section className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-10">
+        <CatalogDetails /> 
         <div>
           <h4 className="text-2xl font-semibold text-slate-500 border-b border-b-slate-300 pb-4 mb-6 flex items-center gap-2">
             Links de Contato

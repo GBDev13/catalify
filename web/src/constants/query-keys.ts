@@ -14,6 +14,7 @@ export const companyKeys = {
   companyPublicLinksPage: (companySlug: string) => [companySlug, 'public-links-page'],
   companyStock: (companyId: string) => [companyId, 'stock'],
   companyOverview: (companyId: string) => [companyId, 'overview'],
+  companySiteDetails: (companyId: string) => [companyId, 'site-details'],
 }
 
 export const catalogKeys = {

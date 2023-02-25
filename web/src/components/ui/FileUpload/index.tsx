@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Accept, FileRejection, useDropzone } from "react-dropzone";
 import { FiTrash, FiUploadCloud } from "react-icons/fi";
 import { HiOutlineDocumentDownload } from "react-icons/hi";
@@ -17,6 +17,10 @@ type FileUploadProps = {
   previewMode?: 'INSIDE' | 'OUTSIDE'
   disabled?: boolean;
   customAcceptTypesLabel?: string;
+  maxDimensions?: {
+    width: number;
+    height: number;
+  }
 }
 
 const errorCodeToMessage = {
@@ -26,7 +30,7 @@ const errorCodeToMessage = {
   'too-many-files': 'Máximo de arquivos excedido'
 }
 
-export const FileUpload = ({ disabled, acceptedTypes, maxSize, maxFiles = 1, onDrop, submittedFiles, error, withPreview, isMultiple, onRemove, previewMode = 'OUTSIDE', customAcceptTypesLabel }: FileUploadProps) => {
+export const FileUpload = ({ disabled, acceptedTypes, maxSize, maxFiles = 1, onDrop, submittedFiles, error, withPreview, isMultiple, onRemove, previewMode = 'OUTSIDE', customAcceptTypesLabel, maxDimensions }: FileUploadProps) => {
 
   const isDisabled = submittedFiles && submittedFiles?.length >= maxFiles || disabled;
 
@@ -34,13 +38,47 @@ export const FileUpload = ({ disabled, acceptedTypes, maxSize, maxFiles = 1, onD
 
   const hasError = !!error || !!inputError;
 
-  const handleOnDrop = (acceptedFiles: File[], fileRejections: FileRejection[]) => {
-    console.log(fileRejections)
+  useEffect(() => {
+    setInputError(null)
+  }, [disabled])
 
+  function getImageSizeAsync(url: string): Promise<{ width: number; height: number }> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        resolve({ width: img.width, height: img.height });
+      };
+      img.onerror = (err) => {
+        reject(err);
+      };
+      img.src = url;
+    });
+  }
+
+  const handleOnDrop = async (acceptedFiles: File[], fileRejections: FileRejection[]) => {
     setInputError(null)
     if(fileRejections.length > 0) {
       setInputError(errorCodeToMessage[(fileRejections?.[0]?.errors?.[0]?.code ?? 'generic') as keyof typeof errorCodeToMessage])
       return
+    }
+    if(maxDimensions) {
+      const { width, height } = maxDimensions;
+
+      const invalidImages: File[] = [];
+
+      await Promise.all(
+        acceptedFiles.map(async (file) => {
+          const size = await getImageSizeAsync(URL.createObjectURL(file))
+          if (size.width > width && size.height > height) {
+            invalidImages.push(file)
+          }
+        })
+      )
+
+      if(invalidImages.length > 0) {
+        setInputError(`Dimensões máximas de ${width}x${height} pixels`)
+        return
+      }
     }
     onDrop(acceptedFiles)
   }

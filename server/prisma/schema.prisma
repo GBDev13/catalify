@@ -57,6 +57,9 @@ model Company {
   linksPage    CompanyLinksPage[]
   stock        Stock[]
 
+  siteDetail   SiteDetail? @relation(fields: [siteDetailId], references: [id])
+  siteDetailId String?
+
   @@map("companies")
 }
 
@@ -199,6 +202,7 @@ model File {
   company          Company[]
   companyBanners   CompanyBanners[]
   companyLinksPage CompanyLinksPage[]
+  siteDetail       SiteDetail[]
 }
 
 model CompanyLinks {
@@ -334,4 +338,19 @@ model Tokens {
 
   @@index([token], name: "token")
   @@map("tokens")
+}
+
+model SiteDetail {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+  company   Company[]
+
+  favicon       File?   @relation(fields: [faviconFileId], references: [id])
+  faviconFileId String?
+
+  withFloatingButton Boolean @default(true)
+  imageFitMode       String  @default("cover")
+
+  @@map("site_details")
 }

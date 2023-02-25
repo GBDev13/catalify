@@ -108,7 +108,8 @@ const SidebarItem = ({ item, onOpenSubscriptionRequired }: SidebarItemProps) => 
   const hasSubscription = isSubscriptionValid(currentSubscription!)
 
   const hasSubItems = item.subItems?.length
-  const isActive = hasSubItems ? router.pathname.startsWith(item.path) : router.pathname === item.path
+  const routerPathname = router.pathname.replace("/app", "")
+  const isActive = hasSubItems ? routerPathname.startsWith(item.path) : routerPathname === item.path
 
   const [submenuOpen, setSubmenuOpen] = useState(false)
   
@@ -126,9 +127,9 @@ const SidebarItem = ({ item, onOpenSubscriptionRequired }: SidebarItemProps) => 
 
   useEffect(() => {
     if(hasSubItems) {
-      setSubmenuOpen(router.pathname.startsWith(item.path))
+      setSubmenuOpen(routerPathname.startsWith(item.path))
     }
-  }, [hasSubItems, item.path, router.pathname])
+  }, [hasSubItems, item.path, routerPathname])
 
   return (
     <div>
@@ -164,7 +165,7 @@ const SidebarItem = ({ item, onOpenSubscriptionRequired }: SidebarItemProps) => 
           }}
         >
           {item.subItems?.map((subItem, i) => {
-            const isSubActive = router.pathname === subItem.path
+            const isSubActive = routerPathname === subItem.path
 
             return (
               <Link key={subItem.label} href={subItem.path} className={clsx("p-2 hover:bg-indigo-700 rounded-md transition-all", {

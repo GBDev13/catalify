@@ -12,6 +12,7 @@ import { UpdateCompanyBannerImagesDto } from './dto/update-company-banner-images
 import { StorageService } from 'src/storage/storage.service';
 import { LinksPageService } from 'src/links-page/links-page.service';
 import { BLOCKED_COMPANY_SLUGS } from 'src/stripe/constants';
+import { UpdateCompanySiteDetailsDto } from './dto/update-company-site-details-dto';
 
 @Injectable()
 export class CompanyService {
@@ -514,5 +515,94 @@ export class CompanyService {
       monthOrders: monthOrdersCount,
       weekOrders: parsedWeekOrdersGroupedByDay,
     };
+  }
+
+  async getCompanySiteDetails(companyId: string) {
+    const companyExists = await this.prisma.company.findUnique({
+      where: {
+        id: companyId,
+      },
+      include: {
+        siteDetail: {
+          include: {
+            favicon: true,
+          },
+        },
+      },
+    });
+
+    if (!companyExists) {
+      throw new HttpException('Empresa não encontrada', HttpStatus.NOT_FOUND);
+    }
+
+    return {
+      imageFitMode: companyExists.siteDetail.imageFitMode,
+      withFloatingButton: companyExists.siteDetail.withFloatingButton,
+      favicon: companyExists?.siteDetail?.favicon?.fileUrl,
+    };
+  }
+
+  async updateCompanySiteDetails(
+    companyId: string,
+    updateCompanySiteDetailsDto: UpdateCompanySiteDetailsDto,
+  ) {
+    const companyExists = await this.prisma.company.findUnique({
+      where: {
+        id: companyId,
+      },
+      include: {
+        siteDetail: {
+          include: {
+            favicon: true,
+          },
+        },
+      },
+    });
+
+    if (!companyExists) {
+      throw new HttpException('Empresa não encontrada', HttpStatus.NOT_FOUND);
+    }
+
+    const { imageFitMode, withFloatingButton, favicon } =
+      updateCompanySiteDetailsDto;
+
+    let newFaviconId: string | null =
+      companyExists?.siteDetail?.faviconFileId ?? null;
+
+    if (
+      (favicon || favicon === null) &&
+      companyExists.siteDetail.faviconFileId &&
+      companyExists.logoId !== companyExists.siteDetail.faviconFileId
+    ) {
+      await this.storageService.deleteFile(
+        companyExists.siteDetail.favicon.key,
+      );
+      newFaviconId = null;
+    }
+
+    if (favicon) {
+      const mimeType = getMimeType(favicon);
+
+      if (mimeType) {
+        const createdFavicon = await this.storageService.uploadBase64Image({
+          fileType: mimeType,
+          base64: favicon,
+          fileName: `${uuid()}.${mimeType.split('/')[1]}`,
+          path: 'company-site-details/',
+        });
+
+        newFaviconId = createdFavicon.id;
+      }
+    }
+    await this.prisma.siteDetail.update({
+      where: {
+        id: companyExists.siteDetail.id,
+      },
+      data: {
+        imageFitMode,
+        withFloatingButton,
+        faviconFileId: newFaviconId,
+      },
+    });
   }
 }

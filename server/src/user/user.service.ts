@@ -99,6 +99,15 @@ export class UserService {
         user,
       );
 
+      await this.prisma.siteDetail.create({
+        data: {
+          company: {
+            connect: { id: company.id },
+          },
+          faviconFileId: company?.logoId ?? null,
+        },
+      });
+
       await this.sendEmailVerification({
         userId: user.id,
         email: user.email,

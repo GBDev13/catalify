@@ -12,6 +12,7 @@ type CatalogInfo = {
   phone: string
   links: string[]
   isExample: boolean
+  config: Company.SiteDetail
 }
 
 type CatalogColors = {

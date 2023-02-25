@@ -10,6 +10,7 @@ import Head from "next/head";
 import { NextSeo } from 'next-seo';
 import dynamic from "next/dynamic";
 import { ExampleBanner } from "src/components/pages/catalog/example-banner";
+import { FloatingWhatsApp } from "src/components/pages/catalog/floating-whatsapp.";
 const CartSidebar = dynamic(() => import("src/components/pages/shared/CartSidebar"), { ssr: false });
 
 type CatalogLayoutProps = {
@@ -42,6 +43,8 @@ export const CatalogLayout = ({ title, children, withoutLayout = false }: Catalo
     </>
   )
 
+  const favicon = info?.config?.favicon;
+
   return (
     <>
       <NextSeo
@@ -52,6 +55,8 @@ export const CatalogLayout = ({ title, children, withoutLayout = false }: Catalo
         {info.isExample && <ExampleBanner />}
         <CartSidebar />
 
+        {info?.config?.withFloatingButton && <FloatingWhatsApp />}
+
         <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 flex flex-col">
           <Header />
           
@@ -59,9 +64,9 @@ export const CatalogLayout = ({ title, children, withoutLayout = false }: Catalo
         </div>
         <Footer />
 
-        {info?.logo && (
+        {!!favicon && (
           <Head>
-            <link rel="icon" href={info.logo} />
+            <link rel="icon" href={favicon} />
           </Head>
         )}
       </main>

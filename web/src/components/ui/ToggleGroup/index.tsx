@@ -5,7 +5,7 @@ import { ErrorOption } from 'react-hook-form';
 
 type ToggleGroupProps = ComponentProps<typeof ToggleGroupPrimitive.Root> & {
   options: {
-    value: string;
+    value: unknown;
     label: string;
   }[]
   label?: string
@@ -25,9 +25,11 @@ export const ToggleGroup = ({ options, label, error, ...props }: ToggleGroupProp
 
       <ToggleGroupPrimitive.Root className="bg-slate-100 rounded-md overflow-hidden border-slate-200 h-[38px] flex" {...props}>
         {options.map(option => (
-          <ToggleGroupPrimitive.Item key={option.value} value={option.value} className={
-            clsx("flex-1 text-slate-400 text-sm border-l first:border-l-0 border-l-slate-300 hover:text-indigo-500 transition-colors", {
-              "text-indigo-500 bg-indigo-500/20": props.value === option.value
+          <ToggleGroupPrimitive.Item key={option.value as string} value={option.value as string} className={
+            clsx("flex-1 text-slate-400 text-sm border-l first:border-l-0 border-l-slate-300 transition-colors", {
+              "text-indigo-500 bg-indigo-500/20": props.value === option.value,
+              "hover:text-indigo-500": !props?.disabled,
+              "!opacity-80 cursor-not-allowed": props?.disabled
             })
           }>
             {option.label}

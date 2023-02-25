@@ -1,8 +1,9 @@
+import { ReactNode } from "react"
 import { BsQuestionCircle } from "react-icons/bs"
 import { Tooltip } from "../Tooltip"
 
 type TipIconProps = {
-  tip: string
+  tip: string | ReactNode
   size?: number
   maxWidth?: number
 }

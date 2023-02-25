@@ -59,4 +59,10 @@ declare namespace Company {
       orders: number;
     }[]
   }
+
+  export type SiteDetail = {
+    favicon?: string;
+    withFloatingButton: boolean;
+    imageFitMode: 'cover' | 'contain';
+  }
 }
