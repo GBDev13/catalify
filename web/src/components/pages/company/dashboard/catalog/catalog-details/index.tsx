@@ -103,7 +103,7 @@ export const CatalogDetails = () => {
 
         <Button type="button" onClick={handleStartEditing} size="MEDIUM" disabled={isEditing}>
           <FaEdit className="mb-0.5" size={15} />
-          Editar
+          Editar Detalhes
         </Button>
       </div>
 

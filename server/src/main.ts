@@ -26,7 +26,10 @@ async function bootstrap() {
   );
 
   app.enableCors({
-    origin: process.env.CORS_ORIGIN.split(','),
+    origin:
+      process.env.NODE_ENV === 'production'
+        ? /^https?:\/\/([^.]+\.)?catalify\.com\.br(:\d+)?$/
+        : /^https?:\/\/([^.]+\.)?test\.com(:\d+)?$/,
   });
 
   await app.listen(port);

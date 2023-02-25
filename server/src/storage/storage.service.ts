@@ -7,6 +7,8 @@ import {
 } from './dto/upload-base64-file.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { File } from '@prisma/client';
+import * as sharp from 'sharp';
+import { IMAGE_COMPRESSION } from 'src/config/image';
 
 @Injectable()
 export class StorageService {
@@ -30,15 +32,20 @@ export class StorageService {
   }: UploadBase64FileDto) {
     try {
       const bucket = this.storage.bucket(StorageConfig.mediaBucket);
-      const blob = bucket.file(path + fileName);
+      const newFileName = fileName.replace(/\.[^/.]+$/, '') + '.webp';
+      const blob = bucket.file(path + newFileName);
       const imageBuffer = Buffer.from(
         base64.replace(/^data:image\/\w+;base64,/, ''),
         'base64',
       );
 
+      const compressedBuffer = await sharp(imageBuffer)
+        .webp({ quality: IMAGE_COMPRESSION.quality })
+        .toBuffer();
+
       const blobStream = blob.createWriteStream({
         resumable: false,
-        contentType: fileType,
+        contentType: 'image/webp',
       });
 
       const finishPromise = new Promise((resolve, reject) => {
@@ -47,7 +54,7 @@ export class StorageService {
 
           const createdFile = await this.prisma.file.create({
             data: {
-              fileName,
+              fileName: newFileName,
               fileUrl: publicUrl,
               key: blob.name,
             },
@@ -57,7 +64,7 @@ export class StorageService {
         });
       });
 
-      blobStream.end(imageBuffer);
+      blobStream.end(compressedBuffer);
 
       const fileStored = await finishPromise;
 
@@ -90,15 +97,30 @@ export class StorageService {
 
   async uploadFile({ dataBuffer, fileName, path, productId }: UploadFileDto) {
     try {
+      const imageTypes = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+      let compressedBuffer = dataBuffer;
+      const fileType = fileName.split('.').pop();
+      const isImage = imageTypes.includes(fileType);
+
+      if (isImage) {
+        compressedBuffer = await sharp(dataBuffer)
+          .webp({ quality: IMAGE_COMPRESSION.quality })
+          .toBuffer();
+      }
+
+      const newFileName = isImage
+        ? fileName.replace(/\.[^/.]+$/, '') + '.webp'
+        : fileName;
+
       const file = this.storage
         .bucket(StorageConfig.mediaBucket)
-        .file(path + fileName);
+        .file(path + newFileName);
 
-      await file.save(Buffer.from(dataBuffer.buffer));
+      await file.save(compressedBuffer);
 
       const fileStored = await this.prisma.file.create({
         data: {
-          fileName,
+          fileName: newFileName,
           fileUrl: `https://storage.googleapis.com/${StorageConfig.mediaBucket}/${file.name}`,
           key: file.name,
           productId,
