@@ -1,8 +1,9 @@
-import { ArrayMinSize, IsArray, IsString } from 'class-validator';
+import { ArrayMinSize, IsArray, IsString, MaxLength } from 'class-validator';
 import { ProductVariant } from '../entities/product-variant.entity';
 
 export class CreateProductVariantDto extends ProductVariant {
   @IsString()
+  @MaxLength(100)
   name: string;
 
   @IsString()

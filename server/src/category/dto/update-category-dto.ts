@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsString, MaxLength } from 'class-validator';
 import { Category } from '../entities/category.entity';
 
 export class UpdateCategoryDto extends Category {
@@ -6,5 +6,6 @@ export class UpdateCategoryDto extends Category {
   id: string;
 
   @IsString()
+  @MaxLength(30)
   name: string;
 }

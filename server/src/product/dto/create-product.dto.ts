@@ -10,12 +10,14 @@ import {
 import { Product } from '../entities/product.entity';
 export class VariationDto {
   @IsString()
+  @MaxLength(100)
   name: string;
   @IsArray()
   options: string[];
 }
 export class CreateProductDto extends Product {
   @IsString()
+  @MaxLength(100)
   name: string;
 
   @Transform(({ value }) => Number(value))

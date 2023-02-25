@@ -13,10 +13,10 @@ import { ControlledPhoneInput } from "src/components/ui/PhoneInput/controlled";
 export const companyStepFormSchema = z.object({
   companyName: z.string({
     required_error: "Nome da empresa é obrigatório"
-  }).min(3, {
+  }).min(2, {
     message: "Nome da empresa deve ter no mínimo 3 caracteres"
-  }).max(20, {
-    message: "Nome da empresa deve ter no máximo 20 caracteres"
+  }).max(30, {
+    message: "Nome da empresa deve ter no máximo 30 caracteres"
   }),
   color: z.string({
     required_error: "Cor é obrigatória"

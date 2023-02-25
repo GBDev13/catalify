@@ -19,7 +19,11 @@ import { z } from "zod"
 const linksFormSchema = z.object({
   links: z.array(z.object({
     originalId: z.string().optional(),
-    title: z.string(),
+    title: z.string().max(
+      40, {
+        message: 'O título deve ter no máximo 40 caracteres'
+      }
+    ),
     url: z.string().url({
       message: 'Insira um link válido'
     })

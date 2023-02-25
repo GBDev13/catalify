@@ -24,8 +24,11 @@ import { useCompany } from "src/store/company";
 import { z } from "zod";
 
 const linksFormSchema = z.object({
-  title: z.string(),
-  headline: z.string().optional(),
+  title: z.string().max(40, { message: 'O título deve ter no máximo 40 caracteres' }),
+  headline: z.string().max(
+    100,
+    { message: 'O subtítulo deve ter no máximo 100 caracteres' }
+  ).optional(),
   textColor: z.string(),
   textColor2: z.string(),
   boxColor: z.string(),

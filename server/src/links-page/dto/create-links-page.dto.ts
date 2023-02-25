@@ -1,10 +1,12 @@
-import { IsHexColor, IsOptional, IsString } from 'class-validator';
+import { IsHexColor, IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class CreateLinksPageDto {
   @IsString()
+  @MaxLength(40)
   title: string;
 
   @IsString()
+  @MaxLength(100)
   @IsOptional()
   headLine?: string;
 

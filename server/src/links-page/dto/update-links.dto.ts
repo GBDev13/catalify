@@ -1,5 +1,11 @@
 import { Type } from 'class-transformer';
-import { IsArray, IsOptional, IsString, ValidateNested } from 'class-validator';
+import {
+  IsArray,
+  IsOptional,
+  IsString,
+  MaxLength,
+  ValidateNested,
+} from 'class-validator';
 
 class LinkDto {
   @IsString()
@@ -7,6 +13,7 @@ class LinkDto {
   originalId: string;
 
   @IsString()
+  @MaxLength(40)
   title: string;
 
   @IsString()

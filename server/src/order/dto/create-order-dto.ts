@@ -6,12 +6,14 @@ import {
   IsOptional,
   IsPositive,
   IsString,
+  MaxLength,
   ValidateNested,
 } from 'class-validator';
 import { Order } from '../entities/order.entity';
 
 class OrderProductDto {
   @IsString()
+  @MaxLength(100)
   name: string;
 
   @IsString()
@@ -37,6 +39,7 @@ class OrderProductDto {
 
 export class CreateOrderDto extends Order {
   @IsString()
+  @MaxLength(100)
   buyerName: string;
 
   @IsString()

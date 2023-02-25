@@ -12,6 +12,7 @@ import {
 
 export class UpdateProductDto {
   @IsString()
+  @MaxLength(100)
   @IsOptional()
   name: string;
 

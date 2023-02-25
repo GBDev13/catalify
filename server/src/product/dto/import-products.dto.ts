@@ -12,6 +12,7 @@ import {
 
 class ImportProductItemDto {
   @IsString()
+  @MaxLength(100)
   name: string;
 
   @IsString()

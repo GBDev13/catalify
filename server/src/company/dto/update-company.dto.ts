@@ -1,8 +1,15 @@
-import { IsHexColor, IsOptional, IsString, Matches } from 'class-validator';
+import {
+  IsHexColor,
+  IsOptional,
+  IsString,
+  Matches,
+  MaxLength,
+} from 'class-validator';
 import { Company } from '../entities/company.entity';
 
 export class UpdateCompanyDto extends Company {
   @IsString()
+  @MaxLength(30)
   name: string;
 
   @IsString()

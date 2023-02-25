@@ -12,8 +12,14 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
         ['Category', 'Product'].includes(params.model)
       ) {
         const {
-          args: { data },
+          args: { data, where, ...args },
         } = params;
+
+        if (!data.name) {
+          const result = await next(params);
+          return result;
+        }
+
         data.slug = slugify(`${data.name}`, {
           lower: true,
           strict: true,
@@ -22,6 +28,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 
         const existent = await this[params.model].count({
           where: {
+            id: {
+              not: where?.id,
+            },
             slug: {
               startsWith: data.slug,
             },
