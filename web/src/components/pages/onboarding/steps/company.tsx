@@ -77,7 +77,7 @@ export const CompanyStep = ({ onPrevStep, onSubmitForm }: CompanyStepProps) => {
           <ControlledPhoneInput label="Whatsapp que irá receber os pedidos" fieldName="phone" control={control} />
         </div>
 
-        <ControlledInput tip="Texto que será usado para acessar sua loja através do link do navegador (ex: catalify.com.br/sualoja)" className="col-span-full" label="Slug da loja" placeholder="sualoja" fieldName="slug" control={control} />
+        <ControlledInput tip="Texto que será usado para acessar sua loja através do link do navegador (ex: sualoja.catalify.com.br)" className="col-span-full" label="Slug da loja" placeholder="sualoja" fieldName="slug" control={control} />
 
         <div className="col-span-full">
           <label htmlFor="logo" className="block text-xs font-medium text-slate-500 mb-1">Logo da Empresa (opcional)</label>

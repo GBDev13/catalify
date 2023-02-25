@@ -41,8 +41,8 @@ export class PaymentGatewayService {
 
     const subscription = await this.getSubscriptionProduct();
 
-    const successUrl = `${process.env.FRONT_END_URL}/company/success`;
-    const cancelUrl = `${process.env.FRONT_END_URL}/company/cancel-order`;
+    const successUrl = `${process.env.FRONT_END_URL}/success`;
+    const cancelUrl = `${process.env.FRONT_END_URL}/cancel-order`;
 
     const customerId = await this.createCustomer(customerEmail);
 

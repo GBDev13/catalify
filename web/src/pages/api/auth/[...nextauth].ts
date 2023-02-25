@@ -30,8 +30,22 @@ const refreshAccessToken = async (token: TokenType) => {
     }
 }
 
+const useSecureCookies = !!process.env.VERCEL_URL
+
 export const authOptions: NextAuthOptions = {
     secret: process.env.SECRET,
+    cookies: {
+        sessionToken: {
+            name: `${useSecureCookies ? '__Secure-' : ''}next-auth.session-token`,
+            options: {
+                domain: useSecureCookies ? ".catalify.com.br" : ".test.com",
+                path: "/",
+                httpOnly: true,
+                sameSite: "lax",
+                secure: useSecureCookies
+            }
+        }
+    },
     providers: [
         CredentialsProvider({
             name: 'digital-catalog',

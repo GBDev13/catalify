@@ -10,14 +10,14 @@ type ProductItemProps = {
 }
 
 export const ProductItem = ({ product }: ProductItemProps) => {
-  const { colors, info: { slug } } = useCatalog();
+  const { colors } = useCatalog();
 
   const { formattedPrice, formattedPromoPrice, promoPercentage } = getFormattedPrices(product.price, product.promoPrice);
 
   const priceColor = colors?.primary ? checkColorReadability('#ffff', colors.primary, '#00000') : undefined
 
   return (
-    <Link href={`/${slug}/produtos/${product.slug}`} className={clsx("flex flex-col border hover:!border-primary overflow-hidden transition-colors rounded-lg p-4 border-primaryLight", {
+    <Link href={`/produtos/${product.slug}`} className={clsx("flex flex-col border hover:!border-primary overflow-hidden transition-colors rounded-lg p-4 border-primaryLight", {
       "grayscale": !product.hasStock
     })}>
       {!product.hasStock && (

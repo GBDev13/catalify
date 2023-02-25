@@ -5,7 +5,7 @@ import { FiPlus, FiX } from "react-icons/fi";
 import { Input } from "src/components/ui/Input";
 import { Tooltip } from "src/components/ui/Tooltip";
 import { ActionType, ChangeType } from "src/helpers/on-change-existent-variations";
-import { NewProductFormData } from "src/pages/company/dashboard/products/new";
+import { NewProductFormData } from "src/pages/app/dashboard/products/new";
 
 type OptionItemProps = {
   nestIndex: number;

@@ -37,7 +37,7 @@ const FeatureExplanation = ({ explanation, onClose }: FeatureExplanationProps) =
             <Button variant="OUTLINE" size="WIDE">Vídeo demonstrativo</Button>
           </a>
         )}
-        <Link href="./dashboard/plans" onClick={onClose}>
+        <Link href="/dashboard/plans" onClick={onClose}>
           <Button size="WIDE">
             Assinar Premium
           </Button>

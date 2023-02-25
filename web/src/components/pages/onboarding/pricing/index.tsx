@@ -85,7 +85,7 @@ export const Pricing = ({ hideFree, onClickFree, onClickPaid }: PricingProps) =>
       onClickFree()
       return
     }
-    router.push('/company/dashboard')
+    router.push('/dashboard')
   }, [handleCheckoutPremium, onClickFree, onClickPaid, router])
 
   const routerPlan = router.query.plan as string

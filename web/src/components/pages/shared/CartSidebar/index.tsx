@@ -74,7 +74,7 @@ const CartSidebar = () => {
                   <img className="w-20 h-20 border border-gray-100 rounded-md" src={item?.picture ?? "/images/product-placeholder.svg"} />
       
                   <div className="flex flex-col">
-                    <Link href={`/${slug}/produtos/${item.slug}`} className="font-normal text-gray-500 line-clamp-2 hover:text-primary transition-colors">{`${item.quantity} x ${item.name}`}</Link>
+                    <Link href={`/produtos/${item.slug}`} className="font-normal text-gray-500 line-clamp-2 hover:text-primary transition-colors">{`${item.quantity} x ${item.name}`}</Link>
                     {item?.variants && (
                       <span className="text-xs text-gray-400">
                         {item.variants.map(variant => variant.option).join(' - ')}

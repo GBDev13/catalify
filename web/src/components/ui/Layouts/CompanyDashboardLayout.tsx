@@ -1,11 +1,11 @@
 import { ReactNode } from "react"
-import { Sidebar } from "src/components/pages/company/dashboard/Sidebar"
 import { motion, AnimatePresence, Variants } from "framer-motion"
 import { useRouter } from "next/router"
 import { useQuery } from "@tanstack/react-query"
 import { companyKeys } from "src/constants/query-keys"
 import { useCompany } from "src/store/company"
 import { getCompanySubscriptionBySlug } from "src/services/company"
+import { Sidebar } from "src/components/pages/company/dashboard/Sidebar"
 
 type CompanyDashboardLayout = {
   children: ReactNode

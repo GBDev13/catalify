@@ -25,7 +25,7 @@ export const CurrentPlan = () => {
         )
       default:
         return (
-          <Link href="./plans">
+          <Link href="/dashboard/plans">
             <Button>
               Assinar Premium
             </Button>

@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react"
-import { variationsSchema } from "src/pages/company/dashboard/products/edit/[id]"
+import { variationsSchema } from "src/pages/app/dashboard/products/edit/[id]"
 import { z } from "zod"
 
 export type ChangeType = 'variation' | 'option'

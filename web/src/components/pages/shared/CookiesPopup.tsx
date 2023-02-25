@@ -3,18 +3,29 @@ import { useEffect, useState } from "react"
 import { BiCookie } from "react-icons/bi"
 import { Button } from "src/components/ui/Button"
 import { AnimatePresence, motion } from "framer-motion"
+import { parseCookies, setCookie } from "nookies"
+
+export const useSecureCookies = !!process.env.VERCEL_URL
 
 export const CookiesPopup = () => {
   const [accepted, setAccepted] = useState(true)
 
   useEffect(() => {
     if(typeof window !== 'undefined') {
-      setAccepted(document.cookie.includes('acceptCookies=true'))
+      const cookies = parseCookies();
+      setAccepted(cookies?.acceptCookies === "true")
     }
   }, [])
 
   const handleAccept = () => {
     document.cookie = 'acceptCookies=true;max-age=31536000;path=/'
+    setCookie(null, 'acceptCookies', "true", {
+      maxAge: 365 * 24 * 60 * 60, // 365 days
+      domain: useSecureCookies ? ".catalify.com.br" : ".test.com",
+      path: "/",
+      sameSite: "lax",
+      secure: useSecureCookies
+    })
     setAccepted(true)
   }
 

@@ -20,11 +20,12 @@ type CatalogLayoutProps = {
 
 export const CatalogLayout = ({ title, children, withoutLayout = false }: CatalogLayoutProps) => {
   const router = useRouter();
-  const slug = String(router.query.companySlug ?? '');
+  const slug = String(router.query.site ?? '');
 
   const { setCatalogInfo, setCatalogColors, info } = useCatalog()
 
   useQuery(catalogKeys.companyCatalog(slug), () => getCompanyCatalog(slug), {
+    enabled: !!slug,
     onSuccess: (data) => {
       setCatalogInfo(data)
       setCatalogColors(data.themeColor)

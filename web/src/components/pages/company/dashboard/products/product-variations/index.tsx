@@ -8,7 +8,7 @@ import { Tooltip } from "src/components/ui/Tooltip";
 import { LIMITS } from "src/constants/constants";
 import { isSubscriptionValid } from "src/helpers/isSubscriptionValid";
 import { ActionType, ChangeType } from "src/helpers/on-change-existent-variations";
-import { NewProductFormData } from "src/pages/company/dashboard/products/new";
+import { NewProductFormData } from "src/pages/app/dashboard/products/new";
 import { useCompany } from "src/store/company";
 import { VariantModel, VariantModelSelectorPopover } from "../variant-select-popover";
 import { OptionItem } from "./option-item";

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { getSession, signOut } from 'next-auth/react';
+import { onSignOut } from 'src/helpers/sign-out';
 
 const baseURL = process.env.NEXT_PUBLIC_API_URL
 
@@ -22,9 +23,7 @@ const ApiClient = () => {
     (response) => response,
     async (error) => {
       if (typeof window !== 'undefined' && error?.response?.status && error.response.status === 401) {
-        await signOut({
-          callbackUrl: '/login'
-        })
+        await onSignOut()
       }
       return Promise.reject(error);
     }

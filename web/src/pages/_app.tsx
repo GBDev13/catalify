@@ -23,7 +23,8 @@ export default function App({
     }
   }))
   
-  const isCatalogRoute = Object.keys(router?.components ?? {}).some(x => x.includes('companySlug'));
+  const isCatalogRoute = Object.keys(router?.components ?? {}).some(x => x.includes('/_sites/[site]'));
+      
   return (
     <QueryClientProvider client={queryClient}>
       <Hydrate state={pageProps.dehydratedState}>

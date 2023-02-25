@@ -19,7 +19,7 @@ export const GlobalState = ({ children }: GlobalStateProps) => {
   const router = useRouter()
 
   useQuery(companyKeys.userCompanyInfo(userId), getUserCompany, {
-    enabled: !!userId && router.pathname.startsWith('/company/dashboard'),
+    enabled: !!userId && router.pathname.startsWith('/app/dashboard'),
     onSuccess(data) {
       setCompany(data)
     },

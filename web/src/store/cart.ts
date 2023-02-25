@@ -55,7 +55,8 @@ export const useCart = create<CartStore>()(
             } else {
               state.cartItems.push({
                 ...product,
-                cartId: crypto.randomUUID(),
+                // cartId: crypto.randomUUID(),
+                cartId: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
                 quantity: 1
               })
             }

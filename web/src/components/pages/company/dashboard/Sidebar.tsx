@@ -2,7 +2,7 @@ import clsx from 'clsx'
 import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { MouseEvent, useEffect, useState } from 'react'
+import { MouseEvent, useEffect, useMemo, useState } from 'react'
 import { FiHome, FiShoppingCart, FiLogOut, FiMenu, FiX, FiLink, FiArchive } from 'react-icons/fi'
 import { CgWebsite } from 'react-icons/cg'
 import { HiExternalLink, HiOutlineChevronDown } from 'react-icons/hi'
@@ -17,51 +17,53 @@ import { AiOutlineDollar } from 'react-icons/ai'
 import { FeatureExplanation, SubscriptionRequiredDialog } from '../../shared/SubscriptionRequiredDialog'
 import { Logo } from 'src/assets/Logo'
 import { TfiReceipt } from 'react-icons/tfi'
+import { onSignOut } from 'src/helpers/sign-out'
+import { LOCALHOST_URL } from 'src/constants/config'
 
 const sidebarItems = [
   {
     icon: <FiHome size={20} />,
     label: "Resumo",
-    path: "/company/dashboard"
+    path: "/dashboard"
   },
   {
     icon: <FiShoppingCart size={20} />,
     label: "Produtos",
-    path: "/company/dashboard/products",
+    path: "/dashboard/products",
     subItems: [
       {
         label: "Todos",
-        path: "/company/dashboard/products"
+        path: "/dashboard/products"
       },
       {
         label: "Categorias",
-        path: "/company/dashboard/products/categories"
+        path: "/dashboard/products/categories"
       }
     ]
   },
   {
     icon: <TfiReceipt size={20} />,
     label: "Pedidos",
-    path: "/company/dashboard/orders",
+    path: "/dashboard/orders",
     subItems: [
       {
         label: "Todos",
-        path: "/company/dashboard/orders"
+        path: "/dashboard/orders"
       }
     ]
   },
   {
     icon: <CgWebsite size={20} />,
     label: "Catálogo",
-    path: "/company/dashboard/catalog",
+    path: "/dashboard/catalog",
     subItems: [
       {
         label: "Empresa",
-        path: "/company/dashboard/catalog/company"
+        path: "/dashboard/catalog/company"
       },
       {
         label: "Customizações",
-        path: "/company/dashboard/catalog/customization"
+        path: "/dashboard/catalog/customization"
       }
     ]
   },
@@ -74,12 +76,12 @@ const sidebarItems = [
       videoUrl: "https://youtu.be/xMh7BfqYTDc"
     },
     label: "Estoque",
-    path: "/company/dashboard/stock",
+    path: "/dashboard/stock",
   },
   {
     icon: <FiLink size={20} />,
     label: "Página de Links",
-    path: "/company/dashboard/links",
+    path: "/dashboard/links",
     needsSubscription: true,
     subscriptionExplanation: {
       title: "Página de Links",
@@ -90,7 +92,7 @@ const sidebarItems = [
   {
     icon: <AiOutlineDollar size={20} />,
     label: "Gerenciar Plano",
-    path: "/company/dashboard/plan"
+    path: "/dashboard/plan"
   },
 ]
 
@@ -183,10 +185,8 @@ const SidebarItem = ({ item, onOpenSubscriptionRequired }: SidebarItemProps) => 
 export const Sidebar = () => {
   const { data: session } = useSession()
 
-  const handleSignOut = () => {
-    signOut({
-      callbackUrl: "/login"
-    })
+  const handleSignOut = async () => {
+    await onSignOut()
   }
 
   const isMobile = useBreakpoint(900)
@@ -208,6 +208,10 @@ export const Sidebar = () => {
   const subscriptionIsValid = isSubscriptionValid(currentSubscription!)
 
   const [subscriptionRequiredDialogOpen, setSubscriptionRequiredDialogOpen] = useState<FeatureExplanation | null>(null)
+
+  const catalogUrl = useMemo(() => {
+    return process.env.NODE_ENV === "development" ? `http://${company?.slug}.${LOCALHOST_URL}` : `https://${company?.slug}.catalify.com.br`
+  }, [company?.slug])
 
   return (
     <>
@@ -241,7 +245,7 @@ export const Sidebar = () => {
                 "justify-between px-6": isMobile,
               })
             }>
-              <Link href="/company/dashboard" className="flex items-center gap-2">
+              <Link href="/dashboard" className="flex items-center gap-2">
                 <Logo className="w-[130px]" />
               </Link>
               {isMobile && (
@@ -259,7 +263,7 @@ export const Sidebar = () => {
             </div>
     
             <div className="mt-auto flex flex-col">
-              <Link target="_blank" href={`/${company?.slug}`} className="py-3 bg-indigo-600 hover:bg-indigo-500 transition-colors flex items-center justify-center gap-2">
+              <Link target="_blank" href={catalogUrl} className="py-3 bg-indigo-600 hover:bg-indigo-500 transition-colors flex items-center justify-center gap-2">
                 Acessar o Catálogo
                 <HiExternalLink size={20} />
               </Link>
@@ -268,9 +272,9 @@ export const Sidebar = () => {
                   <strong className="text-sm font-normal">{`${session?.user?.firstName} ${session?.user?.lastName ?? ''}`}</strong>
                   <Tooltip content="Gerenciar Plano">
                     {subscriptionIsValid ? (
-                      <Link className="text-slate-100 bg-indigo-500 hover:bg-indigo-400 transition-colors text-xs text-center py-0.5 px-1 rounded" href="/company/dashboard/plan">PLANO PREMIUM</Link>
+                      <Link className="text-slate-100 bg-indigo-500 hover:bg-indigo-400 transition-colors text-xs text-center py-0.5 px-1 rounded" href="/dashboard/plan">PLANO PREMIUM</Link>
                     ) : (
-                      <Link className="text-slate-100 bg-blue-500 hover:bg-blue-400 transition-colors text-xs text-center py-0.5 px-1 rounded" href="/company/dashboard/plan">PLANO GRATIS</Link>
+                      <Link className="text-slate-100 bg-blue-500 hover:bg-blue-400 transition-colors text-xs text-center py-0.5 px-1 rounded" href="/dashboard/plan">PLANO GRATIS</Link>
                     )}
                   </Tooltip>
                 </div>

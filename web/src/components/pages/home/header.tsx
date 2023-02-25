@@ -2,10 +2,11 @@ import * as Dialog from "@radix-ui/react-dialog"
 import clsx from "clsx"
 import { AnimatePresence, motion } from "framer-motion"
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { AiFillCloseCircle } from "react-icons/ai"
 import { FiArrowRight, FiMenu } from "react-icons/fi"
 import { Logo } from "src/assets/Logo"
+import { LOCALHOST_URL } from "src/constants/config"
 
 const sections = [
   {
@@ -113,6 +114,10 @@ export const HomeHeader = ({ withSolidBg, withoutLinks, mode = 'fixed' }: HomeHe
   }
 
   const [showMenuMobile, setShowMenuMobile] = useState(false)
+
+  const loginUrl = useMemo(() => {
+    return process.env.NODE_ENV === "development" ? `http://app.${LOCALHOST_URL}/login` : `https://app.catalify.com.br/login`
+  }, [])
   
   return (
     <>
@@ -135,12 +140,12 @@ export const HomeHeader = ({ withSolidBg, withoutLinks, mode = 'fixed' }: HomeHe
             )}
           </div>
 
-          <Link href="/login" className="hidden md:block">
+          <a href={loginUrl} className="hidden md:block">
             <button className="bg-indigo-300/40 hover:bg-indigo-300/60 transition-colors text-white py-1 rounded-full flex items-center gap-2 text-sm px-4 lg:px-5 lg:text-base">
               Entrar
               <FiArrowRight />
             </button>
-          </Link>
+          </a>
 
           <button onClick={() => setShowMenuMobile(true)} className="flex md:hidden bg-indigo-300/40 hover:bg-indigo-300/60 transition-colors text-white py-1 rounded-full items-center gap-2 text-sm px-4">
             <FiMenu size={22} />
