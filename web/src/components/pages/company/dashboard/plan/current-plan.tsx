@@ -20,7 +20,7 @@ export const CurrentPlan = () => {
         return (
           <div className="flex flex-col items-center gap-2">
             <span className="text-slate-100 bg-red-500 px-3 py-1 rounded">CANCELADA</span>
-            <p className="text-sm text-slate-500">Valida até {new Date(currentSubscription?.expiresAt ?? '').toLocaleDateString()}</p>
+            <p className="text-sm text-slate-500">Valida até {new Date(currentSubscription?.expiresAt ?? '').toLocaleDateString('pt-BR')}</p>
           </div>
         )
       default:
@@ -32,7 +32,7 @@ export const CurrentPlan = () => {
           </Link>
         )
     }
-  }, [currentSubscription?.status])
+  }, [currentSubscription])
 
   return (
     <div className="bg-slate-100 shadow-sm p-4 rounded">

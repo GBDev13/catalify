@@ -105,7 +105,7 @@ export const BannersForm = () => {
           <label className="flex gap-1.5 text-xs font-medium text-slate-500 mb-1">
             Clique ou arraste uma imagem para adicionar um novo banner
           </label>
-          <FileUpload maxFiles={LIMITS.PREMIUM.MAX_BANNERS} acceptedTypes={IMAGE_TYPES} maxSize={IMAGE_MAX_SIZE} onDrop={onDropFile} />
+          <FileUpload maxFiles={LIMITS.PREMIUM.MAX_BANNERS} acceptedTypes={IMAGE_TYPES} maxSize={IMAGE_MAX_SIZE * 2} onDrop={onDropFile} />
         </div>
 
         <div className="mt-4 flex flex-col gap-4">

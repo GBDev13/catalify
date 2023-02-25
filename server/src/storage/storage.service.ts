@@ -1,5 +1,5 @@
 import { Storage } from '@google-cloud/storage';
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { StorageConfig } from './storage-config';
 import {
   UploadBase64FileDto,
@@ -29,50 +29,52 @@ export class StorageService {
     fileName,
     fileType,
     path = '',
+    fileSizeLimit,
   }: UploadBase64FileDto) {
-    try {
-      const bucket = this.storage.bucket(StorageConfig.mediaBucket);
-      const newFileName = fileName.replace(/\.[^/.]+$/, '') + '.webp';
-      const blob = bucket.file(path + newFileName);
-      const imageBuffer = Buffer.from(
-        base64.replace(/^data:image\/\w+;base64,/, ''),
-        'base64',
-      );
+    const imageBuffer = Buffer.from(
+      base64.replace(/^data:image\/\w+;base64,/, ''),
+      'base64',
+    );
+    const bytes = imageBuffer.byteLength;
 
-      const compressedBuffer = await sharp(imageBuffer)
-        .webp({ quality: IMAGE_COMPRESSION.quality })
-        .toBuffer();
-
-      const blobStream = blob.createWriteStream({
-        resumable: false,
-        contentType: 'image/webp',
-      });
-
-      const finishPromise = new Promise((resolve, reject) => {
-        blobStream.on('finish', async () => {
-          const publicUrl = `https://storage.googleapis.com/${StorageConfig.mediaBucket}/${blob.name}`;
-
-          const createdFile = await this.prisma.file.create({
-            data: {
-              fileName: newFileName,
-              fileUrl: publicUrl,
-              key: blob.name,
-            },
-          });
-
-          resolve(createdFile);
-        });
-      });
-
-      blobStream.end(compressedBuffer);
-
-      const fileStored = await finishPromise;
-
-      return fileStored as File;
-    } catch (err) {
-      console.log('erro - uploadBase64Image');
-      console.log(err);
+    if (fileSizeLimit && bytes > fileSizeLimit) {
+      throw new HttpException('Arquivo muito grande', 400);
     }
+
+    const bucket = this.storage.bucket(StorageConfig.mediaBucket);
+    const newFileName = fileName.replace(/\.[^/.]+$/, '') + '.webp';
+    const blob = bucket.file(path + newFileName);
+
+    const compressedBuffer = await sharp(imageBuffer)
+      .webp({ quality: IMAGE_COMPRESSION.quality })
+      .toBuffer();
+
+    const blobStream = blob.createWriteStream({
+      resumable: false,
+      contentType: 'image/webp',
+    });
+
+    const finishPromise = new Promise((resolve, reject) => {
+      blobStream.on('finish', async () => {
+        const publicUrl = `https://storage.googleapis.com/${StorageConfig.mediaBucket}/${blob.name}`;
+
+        const createdFile = await this.prisma.file.create({
+          data: {
+            fileName: newFileName,
+            fileUrl: publicUrl,
+            key: blob.name,
+          },
+        });
+
+        resolve(createdFile);
+      });
+    });
+
+    blobStream.end(compressedBuffer);
+
+    const fileStored = await finishPromise;
+
+    return fileStored as File;
   }
 
   async deleteFile(fileKey: string) {
@@ -95,43 +97,50 @@ export class StorageService {
     return result;
   }
 
-  async uploadFile({ dataBuffer, fileName, path, productId }: UploadFileDto) {
-    try {
-      const imageTypes = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-      let compressedBuffer = dataBuffer;
-      const fileType = fileName.split('.').pop();
-      const isImage = imageTypes.includes(fileType);
+  async uploadFile({
+    dataBuffer,
+    fileName,
+    path,
+    productId,
+    fileSizeLimit,
+  }: UploadFileDto) {
+    let compressedBuffer = dataBuffer;
+    const bytes = compressedBuffer.byteLength;
 
-      if (isImage) {
-        compressedBuffer = await sharp(dataBuffer)
-          .webp({ quality: IMAGE_COMPRESSION.quality })
-          .toBuffer();
-      }
-
-      const newFileName = isImage
-        ? fileName.replace(/\.[^/.]+$/, '') + '.webp'
-        : fileName;
-
-      const file = this.storage
-        .bucket(StorageConfig.mediaBucket)
-        .file(path + newFileName);
-
-      await file.save(compressedBuffer);
-
-      const fileStored = await this.prisma.file.create({
-        data: {
-          fileName: newFileName,
-          fileUrl: `https://storage.googleapis.com/${StorageConfig.mediaBucket}/${file.name}`,
-          key: file.name,
-          productId,
-        },
-      });
-
-      return fileStored;
-    } catch (err) {
-      console.log('erro - uploadFile');
-      console.log(err);
+    if (fileSizeLimit && bytes > fileSizeLimit) {
+      throw new HttpException('Arquivo muito grande', 400);
     }
+
+    const imageTypes = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+    const fileType = fileName.split('.').pop();
+    const isImage = imageTypes.includes(fileType);
+
+    if (isImage) {
+      compressedBuffer = await sharp(dataBuffer)
+        .webp({ quality: IMAGE_COMPRESSION.quality })
+        .toBuffer();
+    }
+
+    const newFileName = isImage
+      ? fileName.replace(/\.[^/.]+$/, '') + '.webp'
+      : fileName;
+
+    const file = this.storage
+      .bucket(StorageConfig.mediaBucket)
+      .file(path + newFileName);
+
+    await file.save(compressedBuffer);
+
+    const fileStored = await this.prisma.file.create({
+      data: {
+        fileName: newFileName,
+        fileUrl: `https://storage.googleapis.com/${StorageConfig.mediaBucket}/${file.name}`,
+        key: file.name,
+        productId,
+      },
+    });
+
+    return fileStored;
   }
 
   async deleteFilesByIds(ids: string[]) {

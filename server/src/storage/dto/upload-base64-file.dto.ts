@@ -3,6 +3,7 @@ export type UploadBase64FileDto = {
   fileName: string;
   fileType: string;
   path?: string;
+  fileSizeLimit?: number;
 };
 
 export type UploadFileDto = {
@@ -10,4 +11,5 @@ export type UploadFileDto = {
   fileName: string;
   productId?: string;
   path?: string;
+  fileSizeLimit?: number;
 };

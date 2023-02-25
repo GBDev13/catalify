@@ -10,12 +10,12 @@ const socialMedias = [
   },
   {
     name: "Instagram",
-    url: "https://www.instagram.com/catalify_",
+    url: "https://www.instagram.com/CatalifyBR",
     icon: <FaInstagram />
   },
   {
     name: "Twitter",
-    url: "https://twitter.com/catalify_",
+    url: "https://twitter.com/CatalifyBR",
     icon: <FaTwitter />
   },
   {

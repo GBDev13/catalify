@@ -11,6 +11,7 @@ import { Product } from './entities/product.entity';
 import { v4 as uuid } from 'uuid';
 import { LIMITS } from 'src/config/limits';
 import { ImportProductsDto } from './dto/import-products.dto';
+import { IMAGE_LIMITS } from 'src/config/image';
 
 @Injectable()
 export class ProductService {
@@ -153,6 +154,7 @@ export class ProductService {
               fileName: `${uuid()}.${image.mimetype.split('/')[1]}`,
               productId: createdProduct.id,
               path: 'products/',
+              fileSizeLimit: IMAGE_LIMITS.baseLimit,
             });
           }),
         );
@@ -255,6 +257,7 @@ export class ProductService {
             fileName: `${uuid()}.${image.mimetype.split('/')[1]}`,
             productId,
             path: 'products/',
+            fileSizeLimit: IMAGE_LIMITS.baseLimit,
           });
         }),
       );

@@ -13,6 +13,7 @@ import { StorageService } from 'src/storage/storage.service';
 import { LinksPageService } from 'src/links-page/links-page.service';
 import { BLOCKED_COMPANY_SLUGS } from 'src/stripe/constants';
 import { UpdateCompanySiteDetailsDto } from './dto/update-company-site-details-dto';
+import { IMAGE_LIMITS } from 'src/config/image';
 
 @Injectable()
 export class CompanyService {
@@ -89,6 +90,7 @@ export class CompanyService {
           fileName: `${uuid()}.${mimeType.split('/')[1]}`,
           fileType: mimeType,
           path: 'company-logos/',
+          fileSizeLimit: IMAGE_LIMITS.baseLimit,
         });
 
         await this.prisma.company.update({
@@ -174,6 +176,7 @@ export class CompanyService {
           base64: logo,
           fileName: `${uuid()}.${mimeType.split('/')[1]}`,
           path: 'company-logos/',
+          fileSizeLimit: IMAGE_LIMITS.baseLimit,
         });
 
         newLogoId = createdLogo.id;
@@ -402,6 +405,7 @@ export class CompanyService {
               fileName: `${uuid()}.${mimeType.split('/')[1]}`,
               fileType: mimeType,
               path: 'company-banners/',
+              fileSizeLimit: IMAGE_LIMITS.baseLimit,
             });
 
             await this.prisma.companyBanners.create({
@@ -589,6 +593,7 @@ export class CompanyService {
           base64: favicon,
           fileName: `${uuid()}.${mimeType.split('/')[1]}`,
           path: 'company-site-details/',
+          fileSizeLimit: IMAGE_LIMITS.favicon,
         });
 
         newFaviconId = createdFavicon.id;

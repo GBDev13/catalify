@@ -7,6 +7,7 @@ import { UpdateLinksPageDto } from './dto/update-links-page.dto';
 import { v4 as uuid } from 'uuid';
 import { UpdateLinksDto } from './dto/update-links.dto';
 import { LIMITS } from 'src/config/limits';
+import { IMAGE_LIMITS } from 'src/config/image';
 @Injectable()
 export class LinksPageService {
   constructor(
@@ -121,6 +122,7 @@ export class LinksPageService {
           fileName: `${uuid()}.${mimeType.split('/')[1]}`,
           fileType: mimeType,
           path: 'company-links-page-logo/',
+          fileSizeLimit: IMAGE_LIMITS.baseLimit,
         });
 
         newLogoId = createdLogo.id;

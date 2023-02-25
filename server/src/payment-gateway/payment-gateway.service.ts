@@ -2,7 +2,7 @@
 
 import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { STRIPE_CLIENT, SUBSCRIPTION_PRODUCT_ID } from 'src/stripe/constants';
+import { STRIPE_CLIENT } from 'src/stripe/constants';
 import { SubscriptionService } from 'src/subscription/subscription.service';
 import Stripe from 'stripe';
 
@@ -16,7 +16,7 @@ export class PaymentGatewayService {
 
   async getSubscriptionProduct() {
     const product = await this.stripe.products.retrieve(
-      SUBSCRIPTION_PRODUCT_ID,
+      process.env.SUBSCRIPTION_PRODUCT_ID,
     );
     return product;
   }
