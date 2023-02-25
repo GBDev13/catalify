@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { ManageLinksDialog } from "src/components/pages/company/dashboard/links/manage-links-dialog";
@@ -13,6 +13,7 @@ import { ControlledColorPicker } from "src/components/ui/ColorPicker/controlled"
 import { ControlledFileUpload } from "src/components/ui/FileUpload/controlled";
 import { ControlledInput } from "src/components/ui/Input/controlled";
 import { ControlledToggleGroup } from "src/components/ui/ToggleGroup/controlled";
+import { LOCALHOST_URL } from "src/constants/config";
 import { IMAGE_MAX_SIZE, IMAGE_TYPES } from "src/constants/constants";
 import { companyKeys } from "src/constants/query-keys";
 import { isSubscriptionValid } from "src/helpers/isSubscriptionValid";
@@ -132,6 +133,11 @@ function ManageLinksPage() {
 
   const logo = formData?.logo?.[0] ? URL.createObjectURL(formData.logo[0]) : undefined;
 
+  const handleOpenLinksPage = useCallback(() => {
+    const linksPageUrl = process.env.NODE_ENV === "development" ? `http://${company?.slug}.${LOCALHOST_URL}/links` : `https://${company?.slug}.catalify.com.br/links`
+    window.open(linksPageUrl, "_blank")
+  }, [company?.slug])
+
   if(!hasSubscription) return (
     <>
       <PageTitle title="Gerenciar Página de Links" />
@@ -150,11 +156,9 @@ function ManageLinksPage() {
       <DashboardSEO title="Página de Links" />
 
       <PageTitle title="Gerenciar Página de Links">
-        <Link href={`/links/${company?.slug}`} target="_blank">
-          <Button variant="OUTLINE">
-            Acessar Página de Links
-          </Button>
-        </Link>
+        <Button variant="OUTLINE" onClick={handleOpenLinksPage}>
+          Acessar Página de Links
+        </Button>
       </PageTitle>
 
       <section className="w-full grid gap-4 grid-cols-1 lg:grid-cols-[1fr,400px] flex-1">

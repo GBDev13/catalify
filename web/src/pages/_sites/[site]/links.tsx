@@ -9,7 +9,7 @@ import { getPublicCompanyLinks } from "src/services/company"
 
 export default function CompanyLinks() {
   const router = useRouter()
-  const slug = router.query.companySlug as string
+  const slug = router.query.site as string
 
   const { data: pageData } = useQuery(companyKeys.companyPublicLinksPage(slug), () => getPublicCompanyLinks(slug));
 
@@ -56,7 +56,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const queryClient = new QueryClient()
 
-  const slug = params?.companySlug as string
+  const slug = params?.site as string
 
   await queryClient.prefetchQuery(companyKeys.companyPublicLinksPage(slug), () => getPublicCompanyLinks(slug))
   const data = queryClient.getQueryData(companyKeys.companyPublicLinksPage(slug))
