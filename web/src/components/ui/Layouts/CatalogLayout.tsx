@@ -33,17 +33,23 @@ export const CatalogLayout = ({ title, children, withoutLayout = false }: Catalo
     }
   });
 
+  const favicon = info?.config?.favicon;
+
   if(withoutLayout) return (
-    <>
+    <main className="w-screen min-h-screen h-screen bg-white overflow-y-auto flex flex-col">
       <NextSeo
         titleTemplate={`${info.name} - %s`}
         title={title}
       />
-      {children}
-    </>
-  )
 
-  const favicon = info?.config?.favicon;
+      {!!favicon && (
+        <Head>
+          <link rel="icon" href={favicon} />
+        </Head>
+      )}
+      {children}
+    </main>
+  )
 
   return (
     <>

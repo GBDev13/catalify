@@ -1,4 +1,5 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { dehydrate, QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { GetStaticPaths, GetStaticProps } from "next";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router"
@@ -6,10 +7,11 @@ import { toast } from "react-hot-toast";
 import { FaCheck, FaWhatsapp } from "react-icons/fa";
 import { FiCalendar, FiCheck, FiCheckCircle, FiUser } from "react-icons/fi";
 import { CatalogLayout } from "src/components/ui/Layouts/CatalogLayout";
-import { catalogKeys } from "src/constants/query-keys";
+import { catalogKeys, companyKeys } from "src/constants/query-keys";
 import { formatPrice } from "src/helpers/format-price";
 import { orderStatusToText } from "src/helpers/order-status-to-text";
 import { completeOrder, getOrderById } from "src/services/catalog";
+import { getPublicCompanyLinks } from "src/services/company";
 import { useCatalog } from "src/store/catalog";
 
 export default function OrderDetails() {
@@ -66,8 +68,8 @@ export default function OrderDetails() {
   return (
     <CatalogLayout title="Pedido" withoutLayout>
       <main className="w-full max-w-[800px] mx-auto px-4">
-        <Link className="mt-10 block" href="/">
-          {logo ? <img src={logo} className="max-h-[100px] max-w-[300px] object-contain mx-auto" /> : (
+        <Link className="mt-10 block w-max mx-auto" href="/">
+          {logo ? <img src={logo} className="max-h-[100px] max-w-[300px] object-contain" /> : (
             <h1 className="text-primary text-4xl font-semibold text-center">
               {name}
             </h1>
@@ -108,7 +110,7 @@ export default function OrderDetails() {
 
                 return (
                   <div key={`cart-item-${index}`} className="flex gap-4">
-                    <img className="w-24 h-24 border border-gray-100 rounded-md" src={item?.picture ?? "/images/product-placeholder.svg"} />
+                    <img className="w-24 min-w-[96px] h-24 border border-gray-100 rounded-md object-cover" src={item?.picture ?? "/images/product-placeholder.svg"} />
         
                     <div className="flex flex-col">
                       <strong className="font-normal text-gray-500 text-xl line-clamp-2">{`${item.quantity} x ${item.name}`}</strong>
@@ -140,4 +142,33 @@ export default function OrderDetails() {
       </main>
     </CatalogLayout>
   )
+}
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  return {
+    paths: [],
+    fallback: 'blocking',
+  }
+}
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const queryClient = new QueryClient()
+
+  const slug = params?.site as string
+
+  await queryClient.prefetchQuery(companyKeys.companyPublicLinksPage(slug), () => getPublicCompanyLinks(slug))
+  const data = queryClient.getQueryData(companyKeys.companyPublicLinksPage(slug))
+
+  if(!data) {
+    return {
+      notFound: true
+    }
+  }
+
+  return {
+    props: {
+      dehydratedState: dehydrate(queryClient),
+    },
+    revalidate: 60 * 60 * 24, // 24 hours
+  }
 }
