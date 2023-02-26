@@ -73,7 +73,7 @@ const sidebarItems = [
     subscriptionExplanation: {
       title: "Controle de Estoque",
       description: "O controle de estoque é uma ferramenta que permite que você gerencie o estoque de seus produtos. Você pode gerenciar estoque de produtos com ou sem variações.",
-      videoUrl: "https://youtu.be/xMh7BfqYTDc"
+      videoUrl: "https://youtu.be/3fev7BFCJ7c"
     },
     label: "Estoque",
     path: "/dashboard/stock",
@@ -86,7 +86,7 @@ const sidebarItems = [
     subscriptionExplanation: {
       title: "Página de Links",
       description: "A página de links é uma página que você pode compartilhar com seus clientes para que eles acessem links customizados de forma simples. Você pode customizar a página de links com o seu logo e cores.",
-      videoUrl: "https://youtu.be/xMh7BfqYTDc"
+      videoUrl: "https://youtu.be/Iogpio-nekc"
     }
   },
   {

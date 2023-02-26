@@ -67,9 +67,9 @@ export const CopyVariantsPopover = ({ onCopy }: CopyVariantsPopoverProps) => {
       e.preventDefault()
       e.stopPropagation()
       setShowSubscriptionRequiredDialog({
-        title: 'Copiar variações de outro produto',
+        title: 'Copiar Variações',
         description: "Com essa função, você pode economizar tempo e esforço ao criar novos produtos com variações semelhantes. Ao copiar as variações de um produto existente, você pode adicionar rapidamente novos produtos ao seu catálogo, sem precisar criar cada variação do zero.",
-        videoUrl: "https://youtu.be/xMh7BfqYTDc"
+        videoUrl: "https://youtu.be/pRjHQd1hBPQ"
       })
     }
   }, [hasSubscription])
