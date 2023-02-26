@@ -82,11 +82,22 @@ export class CatalogService {
       where: {
         slug: companySlug,
       },
+      include: {
+        subscription: {
+          where: {
+            status: {
+              in: ['ACTIVE', 'CANCELING'],
+            },
+          },
+        },
+      },
     });
 
     if (!company) {
       throw new HttpException('Empresa não encontrada', HttpStatus.NOT_FOUND);
     }
+
+    const companyHasSubscription = (company?.subscription?.length ?? 0) > 0;
 
     const highlightedProducts = await this.prisma.product.findMany({
       where: {
@@ -98,7 +109,7 @@ export class CatalogService {
         createdAt: 'desc',
       },
       include: {
-        stock: true,
+        stock: companyHasSubscription,
         pictures: {
           orderBy: {
             createdAt: 'desc',
@@ -124,17 +135,23 @@ export class CatalogService {
           },
           take: 1,
         },
-        stock: true,
+        stock: companyHasSubscription,
       },
       take: 8,
     });
 
-    const withStock = addStockFlag(products);
-    const highlightedWithStock = addStockFlag(highlightedProducts);
+    const withStock = companyHasSubscription
+      ? addStockFlag(products)
+      : products;
+    const highlightedWithStock = companyHasSubscription
+      ? addStockFlag(highlightedProducts)
+      : highlightedProducts;
 
     return {
-      products: withStock.map(productToWeb),
-      highlights: highlightedWithStock.map(productToWeb),
+      products: withStock.map((x) => productToWeb(x, companyHasSubscription)),
+      highlights: highlightedWithStock.map((x) =>
+        productToWeb(x, companyHasSubscription),
+      ),
     };
   }
 
@@ -156,6 +173,27 @@ export class CatalogService {
     companySlug: string,
     productSlug: string,
   ) {
+    const company = await this.prisma.company.findUnique({
+      where: {
+        slug: companySlug,
+      },
+      include: {
+        subscription: {
+          where: {
+            status: {
+              in: ['ACTIVE', 'CANCELING'],
+            },
+          },
+        },
+      },
+    });
+
+    if (!company) {
+      throw new HttpException('Empresa não encontrada', HttpStatus.NOT_FOUND);
+    }
+
+    const companyHasSubscription = (company?.subscription?.length ?? 0) > 0;
+
     const product = await this.prisma.product.findFirst({
       where: {
         slug: productSlug,
@@ -175,12 +213,14 @@ export class CatalogService {
             options: true,
           },
         },
-        stock: {
-          include: {
-            productVariantOption: true,
-            productVariantOption2: true,
+        ...(companyHasSubscription && {
+          stock: {
+            include: {
+              productVariantOption: true,
+              productVariantOption2: true,
+            },
           },
-        },
+        }),
       },
     });
 
@@ -199,11 +239,22 @@ export class CatalogService {
       where: {
         slug: companySlug,
       },
+      include: {
+        subscription: {
+          where: {
+            status: {
+              in: ['ACTIVE', 'CANCELING'],
+            },
+          },
+        },
+      },
     });
 
     if (!company) {
       throw new HttpException('Empresa não encontrada', HttpStatus.NOT_FOUND);
     }
+
+    const companyHasSubscription = (company?.subscription?.length ?? 0) > 0;
 
     const { page, categories, order, search } = filters;
 
@@ -254,7 +305,7 @@ export class CatalogService {
       where: whereQuery,
       orderBy: order ? orderMap[order] : undefined,
       include: {
-        stock: true,
+        stock: companyHasSubscription,
         pictures: {
           orderBy: {
             createdAt: 'desc',
@@ -266,11 +317,17 @@ export class CatalogService {
       take: PAGE_SIZE,
     });
 
+    const withStockFlag = companyHasSubscription
+      ? addStockFlag(products)
+      : products;
+
     return {
       total,
       offset: PAGE_SIZE * page,
       limit: PAGE_SIZE,
-      products: addStockFlag(products).map(productToWeb),
+      products: withStockFlag.map((x) =>
+        productToWeb(x, companyHasSubscription),
+      ),
     };
   }
 }

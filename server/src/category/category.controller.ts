@@ -56,6 +56,7 @@ export class CategoryController {
     return categories.map((category) => ({
       id: category.id,
       name: category.name,
+      isEditable: category.isEditable,
     }));
   }
 }

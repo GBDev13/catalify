@@ -15,7 +15,18 @@ export class OrderService {
       where: {
         slug: companySlug,
       },
+      include: {
+        subscription: {
+          where: {
+            status: {
+              in: ['ACTIVE', 'CANCELING'],
+            },
+          },
+        },
+      },
     });
+
+    const companyHasSubscription = (company?.subscription?.length ?? 0) > 0;
 
     if (!company) {
       throw new HttpException('Empresa não encontrada', HttpStatus.NOT_FOUND);
@@ -23,36 +34,40 @@ export class OrderService {
 
     const stockError = [];
 
-    for (const product of createOrderDto.products) {
-      if (product.selectedVariants.length <= 0) {
-        const productStock = await this.prisma.stock.findFirst({
-          where: {
-            productId: product.productId,
-          },
-        });
+    if (companyHasSubscription) {
+      for (const product of createOrderDto.products) {
+        if (product.selectedVariants.length <= 0) {
+          const productStock = await this.prisma.stock.findFirst({
+            where: {
+              productId: product.productId,
+            },
+          });
 
-        if (productStock && productStock.quantity < product.quantity) {
-          stockError.push(product.productId);
-        }
-      } else {
-        const productStock = await this.prisma.stock.findFirst({
-          where: {
-            productId: product.productId,
-            OR: [
-              {
-                productVariantOptionId: product.selectedVariants?.[0] ?? null,
-                productVariantOptionId2: product.selectedVariants?.[1] ?? null,
-              },
-              {
-                productVariantOptionId: product.selectedVariants?.[1] ?? null,
-                productVariantOptionId2: product.selectedVariants?.[0] ?? null,
-              },
-            ],
-          },
-        });
+          if (productStock && productStock.quantity < product.quantity) {
+            stockError.push(product.productId);
+          }
+        } else {
+          const productStock = await this.prisma.stock.findFirst({
+            where: {
+              productId: product.productId,
+              OR: [
+                {
+                  productVariantOptionId: product.selectedVariants?.[0] ?? null,
+                  productVariantOptionId2:
+                    product.selectedVariants?.[1] ?? null,
+                },
+                {
+                  productVariantOptionId: product.selectedVariants?.[1] ?? null,
+                  productVariantOptionId2:
+                    product.selectedVariants?.[0] ?? null,
+                },
+              ],
+            },
+          });
 
-        if (productStock.quantity < product.quantity) {
-          stockError.push(product.productId);
+          if (productStock.quantity < product.quantity) {
+            stockError.push(product.productId);
+          }
         }
       }
     }
@@ -159,12 +174,21 @@ export class OrderService {
           },
         },
         company: {
-          select: {
-            ownerId: true,
+          include: {
+            subscription: {
+              where: {
+                status: {
+                  in: ['ACTIVE', 'CANCELING'],
+                },
+              },
+            },
           },
         },
       },
     });
+
+    const companyHasSubscription =
+      (order?.company?.subscription?.length ?? 0) > 0;
 
     if (!order) {
       throw new HttpException('Pedido não encontrado', HttpStatus.NOT_FOUND);
@@ -184,56 +208,58 @@ export class OrderService {
       );
     }
 
-    order.products.forEach(async (product) => {
-      if (product.selectedVariants.length > 0) {
-        const ids = product.selectedVariants.map((x) => x.id);
+    if (companyHasSubscription) {
+      order.products.forEach(async (product) => {
+        if (product.selectedVariants.length > 0) {
+          const ids = product.selectedVariants.map((x) => x.id);
 
-        const stock = await this.prisma.stock.findFirst({
-          where: {
-            productId: product.productId,
-            OR: [
-              {
-                productVariantOptionId: ids?.[0] ?? null,
-                productVariantOptionId2: ids?.[1] ?? null,
-              },
-              {
-                productVariantOptionId2: ids?.[0] ?? null,
-                productVariantOptionId: ids?.[1] ?? null,
-              },
-            ],
-          },
-        });
-
-        if (stock) {
-          await this.prisma.stock.update({
+          const stock = await this.prisma.stock.findFirst({
             where: {
-              id: stock.id,
-            },
-            data: {
-              quantity: stock.quantity - product.quantity,
+              productId: product.productId,
+              OR: [
+                {
+                  productVariantOptionId: ids?.[0] ?? null,
+                  productVariantOptionId2: ids?.[1] ?? null,
+                },
+                {
+                  productVariantOptionId2: ids?.[0] ?? null,
+                  productVariantOptionId: ids?.[1] ?? null,
+                },
+              ],
             },
           });
-        }
-      }
 
-      if (product.selectedVariants.length <= 0) {
-        const productStock = await this.prisma.stock.findFirst({
-          where: {
-            productId: product.productId,
-          },
-        });
-        if (productStock) {
-          await this.prisma.stock.update({
+          if (stock) {
+            await this.prisma.stock.update({
+              where: {
+                id: stock.id,
+              },
+              data: {
+                quantity: stock.quantity - product.quantity,
+              },
+            });
+          }
+        }
+
+        if (product.selectedVariants.length <= 0) {
+          const productStock = await this.prisma.stock.findFirst({
             where: {
-              id: productStock.id,
-            },
-            data: {
-              quantity: productStock.quantity - product.quantity,
+              productId: product.productId,
             },
           });
+          if (productStock) {
+            await this.prisma.stock.update({
+              where: {
+                id: productStock.id,
+              },
+              data: {
+                quantity: productStock.quantity - product.quantity,
+              },
+            });
+          }
         }
-      }
-    });
+      });
+    }
 
     await this.prisma.order.update({
       where: {

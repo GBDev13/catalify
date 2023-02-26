@@ -74,6 +74,13 @@ export class CategoryService {
       );
     }
 
+    if (!categoryExists.isEditable) {
+      throw new HttpException(
+        'Esta categoria não pode ser editada',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
     if (categoryExists.companyId !== companyId) {
       throw new HttpException(
         'Você não tem permissão para atualizar esta categoria',

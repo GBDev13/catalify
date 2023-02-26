@@ -3,6 +3,7 @@ declare namespace Products {
     id: string
     name: string
     slug: string
+    isEditable?: boolean
   }
 
   export type Variation = {
@@ -35,6 +36,7 @@ declare namespace Products {
     variants: Products.Variant[]
     pictures?: Products.Picture[]
     isVisible: boolean
+    isEditable?: boolean
   }
 
   export type CatalogProduct = {

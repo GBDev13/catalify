@@ -21,7 +21,10 @@ type ProductType = Product & {
 
 type ProductDetailedType = ProductType & { category: Category };
 
-export const productToWeb = (product: ProductType) => {
+export const productToWeb = (
+  product: ProductType,
+  hasSubscription: boolean,
+) => {
   return {
     id: product.id,
     slug: product.slug,
@@ -31,12 +34,12 @@ export const productToWeb = (product: ProductType) => {
     picture: product?.pictures?.length
       ? product.pictures[0]?.fileUrl
       : undefined,
-    hasStock: product.hasStock,
+    hasStock: hasSubscription ? product.hasStock : true,
   };
 };
 
 export const productStockToWeb = (stock: DetailedStock[]) => {
-  if (stock.length <= 0) return null;
+  if (!stock || stock?.length <= 0) return null;
 
   const withoutVariants =
     stock.length === 1 &&
@@ -82,6 +85,6 @@ export const productDetailedToWeb = (
           name: product.category.name,
         }
       : undefined,
-    stock: productStockToWeb(product.stock),
+    stock: productStockToWeb(product?.stock),
   };
 };

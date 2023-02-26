@@ -141,6 +141,7 @@ export class ProductController {
           }
         : null,
       isVisible: product.isVisible,
+      isEditable: product.isEditable,
     }));
   }
 
@@ -154,6 +155,7 @@ export class ProductController {
       description: product.description,
       createdAt: product.createdAt,
       promoPrice: product?.promoPrice,
+      isEditable: product.isEditable,
       pictures: product.pictures.map((picture) => ({
         id: picture.id,
         url: picture.fileUrl,

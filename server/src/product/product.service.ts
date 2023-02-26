@@ -208,6 +208,13 @@ export class ProductService {
       );
     }
 
+    if (!productExists.isEditable) {
+      throw new HttpException(
+        'Este produto não pode ser editado',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     if (productExists.companyId !== companyId) {
       throw new HttpException(
         'Este produto não pertence a esta empresa',

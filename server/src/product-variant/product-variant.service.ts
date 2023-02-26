@@ -288,37 +288,6 @@ export class ProductVariantService {
             );
           });
         });
-
-        // const createDto = createdOptions.flatMap((optionOne) => {
-        //   return productStock.map((stock) => {
-        //     const optionTwo = stock.productVariantOption
-        //       ? stock.productVariantOption
-        //       : stock.productVariantOption2;
-
-        //     if (optionTwo?.productVariantId === optionOne.productVariantId)
-        //       return;
-
-        //     return {
-        //       companyId,
-        //       productId,
-        //       productVariantOptionId2: optionOne.id,
-        //       productVariantOptionId: optionTwo.id,
-        //       quantity: stock.quantity,
-        //     };
-        //   });
-        // });
-
-        // await this.prisma.stock.createMany({
-        //   data: createDto as any,
-        // });
-        // await this.prisma.stock.createMany({
-        //   data: createdOptions.map((option) => ({
-        //     companyId,
-        //     productId,
-        //     productVariantOptionId: option.id,
-        //     quantity: 0,
-        //   })),
-        // });
       }
     }
   }

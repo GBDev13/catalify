@@ -16,6 +16,7 @@ import { ControlledToggleGroup } from "src/components/ui/ToggleGroup/controlled"
 import { LOCALHOST_URL } from "src/constants/config";
 import { IMAGE_MAX_SIZE, IMAGE_TYPES } from "src/constants/constants";
 import { companyKeys } from "src/constants/query-keys";
+import { checkSubscriptionSSR } from "src/helpers/chck-subscription-ssr";
 import { isSubscriptionValid } from "src/helpers/isSubscriptionValid";
 import { urlToFile } from "src/helpers/url-to-file";
 import { withAuth } from "src/helpers/withAuth";
@@ -220,7 +221,7 @@ function ManageLinksPage() {
 }
 
 export const getServerSideProps = withAuth(async (context) => {
-  return { props: {} };
+  return checkSubscriptionSSR(context)
 });
 
 export default ManageLinksPage;

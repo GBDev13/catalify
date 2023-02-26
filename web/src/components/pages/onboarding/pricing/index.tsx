@@ -24,7 +24,7 @@ export const PLANS = [
       ...similarFeatures,
       'Até 10 produtos',
       'Até 5 categorias',
-      'Até 3 imagens por produto',
+      'Até 2 imagens por produto',
       'Até 1 variação por produto',
       'Até 2 links de contato',
       'Suporte básico'

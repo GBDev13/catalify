@@ -114,6 +114,7 @@ function CompanyProducts() {
         enableSorting: false,
         cell: (row) => {
           const isHighlighted = row.row.original?.isHighlighted
+          const isEditable = row.row.original?.isEditable
           const productId = String(row.getValue());
 
           return (
@@ -127,13 +128,21 @@ function CompanyProducts() {
                   </button>
                 </Tooltip>
               )}
-              <Tooltip content="Editar produto">
-                <Link href={`/dashboard/products/edit/${productId}`}>
-                  <Button variant="TEXT">
+              {isEditable ? (
+                <Tooltip content="Editar produto">
+                  <Link href={`/dashboard/products/edit/${productId}`}>
+                    <Button variant="TEXT">
+                      <FiEdit size={20} />
+                    </Button>
+                  </Link>
+                </Tooltip>
+              ) : (
+                <Tooltip content="A edição deste produto está desabilitada">
+                  <Button variant="TEXT" disabled>
                     <FiEdit size={20} />
                   </Button>
-                </Link>
-              </Tooltip>
+                </Tooltip>
+              )}
   
   
               <ConfirmationPopover onConfirm={() => handleDeleteProduct(productId)} message="Tem certeza que deseja deletar este produto?">

@@ -1,5 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
+import { getSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -12,17 +13,26 @@ import { Button } from "src/components/ui/Button";
 import { Table } from "src/components/ui/Table";
 import { Tooltip } from "src/components/ui/Tooltip";
 import { companyKeys, stockKeys } from "src/constants/query-keys";
+import { isSubscriptionValid } from "src/helpers/isSubscriptionValid";
 import { withAuth } from "src/helpers/withAuth";
+import { getCompanySubscriptionBySlug, getUserCompany } from "src/services/company";
 import { deleteProductStock, getCompanyStock } from "src/services/stock";
 import { useCompany } from "src/store/company";
+import api from 'src/lib/axios'
+import { checkSubscriptionSSR } from "src/helpers/chck-subscription-ssr";
 
 function CompanyStock() {
-  const { company } = useCompany();
+  const { company, currentSubscription } = useCompany();
   const companyId = company?.id!;
+  const hasSubscription = isSubscriptionValid(currentSubscription!)
 
   const { data: stock } = useQuery(companyKeys.companyStock(companyId), () => getCompanyStock(companyId), {
-    enabled: !!companyId
+    enabled: !!companyId && hasSubscription
   })
+
+  useEffect(() => {
+    console.log('currentSubscription', companyId, currentSubscription)
+  }, [companyId, currentSubscription])
 
   const queryClient = useQueryClient()
 
@@ -128,7 +138,7 @@ function CompanyStock() {
 }
 
 export const getServerSideProps = withAuth(async (context) => {
-  return { props: {} };
+  return checkSubscriptionSSR(context)
 });
 
 export default CompanyStock;

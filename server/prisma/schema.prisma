@@ -123,6 +123,8 @@ model Product {
   isVisible     Boolean  @default(true)
   isHighlighted Boolean? @default(false)
 
+  isEditable Boolean @default(true)
+
   category   Category? @relation(fields: [categoryId], references: [id])
   categoryId String?
 
@@ -145,6 +147,8 @@ model Category {
   name      String
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
+
+  isEditable Boolean @default(true)
 
   products  Product[]
   company   Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)

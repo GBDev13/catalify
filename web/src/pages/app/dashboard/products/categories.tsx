@@ -60,15 +60,23 @@ function CompanyProductsCategories() {
               </div>
             </ConfirmationPopover>
 
-            <CreateCategoryModal initialData={row.row.original}>
-              <div>
-                <Tooltip content="Editar categoria">
-                  <Button variant="TEXT">
-                    <FiEdit size={20} />
-                  </Button>
-                </Tooltip>
-              </div>
-            </CreateCategoryModal>
+            {row.row.original.isEditable ? (
+              <CreateCategoryModal initialData={row.row.original}>
+                <div>
+                  <Tooltip content="Editar categoria">
+                    <Button variant="TEXT">
+                      <FiEdit size={20} />
+                    </Button>
+                  </Tooltip>
+                </div>
+              </CreateCategoryModal>
+            ) : (
+              <Tooltip content="A edição desta categoria está desabilitada">
+                <Button variant="TEXT" disabled>
+                  <FiEdit size={20} />
+                </Button>
+              </Tooltip>
+            )}
           </div>
         )
       }

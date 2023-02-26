@@ -266,6 +266,25 @@ export class LinksPageService {
   }
 
   async getPageDataByCompanySlug(companySlug: string) {
+    const companyHasSubscription =
+      await this.prismaService.subscription.findFirst({
+        where: {
+          status: {
+            in: ['ACTIVE', 'CANCELING'],
+          },
+          company: {
+            slug: companySlug,
+          },
+        },
+      });
+
+    if (!companyHasSubscription) {
+      throw new HttpException(
+        'Esta empresa não possui uma assinatura premium',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     const linksPage = await this.prismaService.companyLinksPage.findFirst({
       where: {
         company: {

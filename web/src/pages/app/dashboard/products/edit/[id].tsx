@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -320,6 +320,22 @@ function EditProduct() {
 }
 
 export const getServerSideProps = withAuth(async (context) => {
+  const productId = context.params?.id as string;
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery(productsKey.single(productId!), () => getProductById(productId!))
+  const product = queryClient.getQueryData<Products.Product>(productsKey.single(productId!))
+
+  if(!product?.isEditable) {
+    return {
+      props: {},
+      redirect: {
+        destination: '/dashboard/products',
+        permanent: false,
+      },
+    }
+  }
+
   return { props: {} };
 });
 

@@ -31,6 +31,10 @@ const navLinks = [
     url: "/politica-de-privacidade"
   },
   {
+    name: "Política de cancelamento",
+    url: "/politica-de-cancelamento"
+  },
+  {
     name: "Termos de uso",
     url: "/termos-de-uso"
   }
