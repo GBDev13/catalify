@@ -46,6 +46,16 @@ function CompanyProductsCategories() {
         footer: 'Nome'
       },
       {
+        header: 'Criada em',
+        cell: (row) => (
+          <span className="block w-full">
+            {new Date(row?.row?.original?.createdAt!).toLocaleDateString('pt-BR')}
+          </span>
+        ),
+        accessorKey: 'createdAt',
+        sortingFn: (a, b) => new Date(a.original.createdAt!).getTime() - new Date(b.original.createdAt!).getTime(),
+      },
+      {
         header: () => <span className="block w-full text-right">Ações</span>,
         accessorKey: 'id',
         cell: (row) => (
@@ -81,7 +91,7 @@ function CompanyProductsCategories() {
         )
       }
     ],
-    []
+    [handleDeleteCategory]
   );
 
   const subscriptionIsValid = isSubscriptionValid(currentSubscription!)
@@ -109,7 +119,11 @@ function CompanyProductsCategories() {
       <Table emptyState={{
         title: 'Sem categorias',
         description: 'Assim que você adicionar uma categoria, ela aparecerá aqui',
-      }}  columns={cols} data={categories ?? []} />
+      }} columns={cols} data={categories ?? []} initialState={{
+        sorting: [
+          { id: 'createdAt', desc: true }
+        ]
+      }} />
     </>
   )
 }

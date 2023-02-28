@@ -4,7 +4,7 @@ import { SessionProvider } from "next-auth/react"
 import { Hydrate, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { renderLayoutByPath } from 'src/helpers/render-layout-by-path'
 import { GlobalState } from 'src/components/GlobalState'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { CustomToaster } from 'src/components/CustomToaster'
 import Script from 'next/script'
 import { CookiesPopup } from 'src/components/pages/shared/CookiesPopup'
@@ -24,21 +24,21 @@ export default function App({
   }))
   
   const isCatalogRoute = Object.keys(router?.components ?? {}).some(x => x.includes('/_sites/[site]'));
-      
+
   return (
     <QueryClientProvider client={queryClient}>
       <Hydrate state={pageProps.dehydratedState}>
         <SessionProvider session={session}>
           <CustomToaster />
-          <GlobalState>
+          <GlobalState isCatalogRoute={isCatalogRoute}>
             {renderLayoutByPath(router.pathname, <Component {...pageProps} />)}
           </GlobalState>
-          {!isCatalogRoute && (
-            <Script
-              strategy='lazyOnload'
-              src={process.env.NEXT_PUBLIC_CHAT_EMBED}
+          {/* {!isCatalogRoute && (
+            <TawkMessengerReact
+              propertyId="63f2c64331ebfa0fe7ee286e"
+              widgetId="1gpm5cuj0"
             />
-          )}
+          )} */}
           <CookiesPopup />
         </SessionProvider>
       </Hydrate>

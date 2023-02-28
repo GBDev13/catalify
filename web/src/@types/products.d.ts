@@ -4,6 +4,7 @@ declare namespace Products {
     name: string
     slug: string
     isEditable?: boolean
+    createdAt?: string
   }
 
   export type Variation = {

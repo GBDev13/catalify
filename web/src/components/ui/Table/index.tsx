@@ -1,7 +1,7 @@
 import { getCoreRowModel, useReactTable, flexRender, getPaginationRowModel, SortingState, getSortedRowModel, InitialTableState } from '@tanstack/react-table';
 import type { ColumnDef } from '@tanstack/react-table';
 import { PaginationButton } from './pagination-button';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { BsSortDown, BsSortUp } from 'react-icons/bs'
 interface ReactTableProps<T extends object> {
@@ -18,6 +18,11 @@ interface ReactTableProps<T extends object> {
 
 export const Table = <T extends object>({ data, columns, emptyState, showFooter = false, showNavigation = true, initialState }: ReactTableProps<T>) => {
   const [sorting, setSorting] = useState<SortingState>([])
+  
+  useEffect(() => {
+    if(!initialState?.sorting) return
+    setSorting(initialState.sorting)
+  }, [initialState?.sorting])
 
   const table = useReactTable({
    data,

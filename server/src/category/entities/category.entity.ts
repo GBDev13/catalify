@@ -5,4 +5,5 @@ export class Category implements Prisma.CategoryUncheckedCreateInput {
   name: string;
   companyId: string;
   isEditable?: boolean;
+  createdAt?: Date;
 }

@@ -10,7 +10,7 @@ import { CatalogLayout } from "src/components/ui/Layouts/CatalogLayout";
 import { catalogKeys, companyKeys } from "src/constants/query-keys";
 import { formatPrice } from "src/helpers/format-price";
 import { orderStatusToText } from "src/helpers/order-status-to-text";
-import { completeOrder, getOrderById } from "src/services/catalog";
+import { completeOrder, getCompanyCatalog, getOrderById } from "src/services/catalog";
 import { getPublicCompanyLinks } from "src/services/company";
 import { useCatalog } from "src/store/catalog";
 
@@ -152,23 +152,23 @@ export const getStaticPaths: GetStaticPaths = async () => {
 }
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
+  if(!params) {
+    return {
+      notFound: true,
+      revalidate: 60
+    }
+  }
+  
   const queryClient = new QueryClient()
 
   const slug = params?.site as string
 
-  await queryClient.prefetchQuery(companyKeys.companyPublicLinksPage(slug), () => getPublicCompanyLinks(slug))
-  const data = queryClient.getQueryData(companyKeys.companyPublicLinksPage(slug))
-
-  if(!data) {
-    return {
-      notFound: true
-    }
-  }
+  await queryClient.prefetchQuery(catalogKeys.companyCatalog(slug), () => getCompanyCatalog(slug))
 
   return {
     props: {
       dehydratedState: dehydrate(queryClient),
     },
-    revalidate: 60 * 60 * 24, // 24 hours
+    revalidate: 60 * 60 * 6, // 6 hours
   }
 }

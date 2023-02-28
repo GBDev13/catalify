@@ -57,6 +57,7 @@ export class CategoryController {
       id: category.id,
       name: category.name,
       isEditable: category.isEditable,
+      createdAt: category.createdAt,
     }));
   }
 }

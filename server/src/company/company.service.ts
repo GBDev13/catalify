@@ -540,8 +540,8 @@ export class CompanyService {
     }
 
     return {
-      imageFitMode: companyExists.siteDetail.imageFitMode,
-      withFloatingButton: companyExists.siteDetail.withFloatingButton,
+      imageFitMode: companyExists.siteDetail?.imageFitMode,
+      withFloatingButton: companyExists.siteDetail?.withFloatingButton,
       favicon: companyExists?.siteDetail?.favicon?.fileUrl,
     };
   }

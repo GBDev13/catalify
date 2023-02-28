@@ -1,8 +1,20 @@
 import Link from "next/link";
 import { DashboardSEO } from "src/components/pages/shared/DashboardSEO";
 import { Button } from "src/components/ui/Button";
+import ConfettiExplosion from 'react-confetti-explosion';
+import { useEffect, useState } from "react";
 
 export default function SuccessPage() {
+  const [isExploding, setIsExploding] = useState(false);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setIsExploding(true);
+    }, 400);
+
+    return () => clearTimeout(timeout);
+  }, [])
+
   return (
     <main className="min-h-screen flex items-center justify-center px-4 bg-[url('/images/success-pattern.png')]">
       <DashboardSEO title="Pedido Confirmado" />
@@ -16,6 +28,26 @@ export default function SuccessPage() {
         <Link href="/dashboard">
           <Button size="WIDE" className="mt-6">Continuar para o painel</Button>
         </Link>
+      </div>
+
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        {isExploding && (
+          <ConfettiExplosion
+            force={0.85}
+            duration={3000}
+            particleCount={300}
+            width={window.innerWidth}
+            colors={
+              [
+                "#6366f1",
+                "#818cf8",
+                "#c7d2fe",
+                "#4f46e5",
+                "#e0e7ff"
+              ]
+            }
+          />
+        )}
       </div>
     </main>
   )

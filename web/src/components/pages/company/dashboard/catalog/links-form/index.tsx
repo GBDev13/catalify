@@ -132,7 +132,7 @@ export const LinksForm = () => {
                 error={errors.links?.[index]?.value}
               />
 
-              <div className={clsx("grid grid-cols-1 gap-2", { "grid-cols-2": isLast })}>
+              <div className={clsx("grid grid-cols-1 gap-2", { "!grid-cols-2": isLast })}>
                 <Tooltip content={`Remover Link ${currentPos}`}>
                   <button className="h-7 w-7 rounded-full mt-[24px] flex items-center justify-center border border-indigo-500 transition-colors  text-indigo-500 hover:bg-indigo-500 hover:text-white" type="button" onClick={() => handleRemoveLink(index)}>
                     <FiX size={15} />
