@@ -40,7 +40,7 @@ export default async function middleware(req: NextRequest) {
   }
 
   // rewrite root application to `/home` folder
-  if (hostname === LOCALHOST_URL) {
+  if (hostname === LOCALHOST_URL || hostname === 'catalify.com.br') {
     return NextResponse.rewrite(new URL(`/home${path}`, req.url));
   }
 
