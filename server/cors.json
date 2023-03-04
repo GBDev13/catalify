@@ -1,6 +1,6 @@
 [
   {
-    "origin": ["http://localhost:3000", "http://test.com:3000", "http://app.test.com:3000"],
+    "origin": ["*"],
     "method": ["GET"],
     "responseHeader": ["Content-Type"],
     "maxAgeSeconds": 300
