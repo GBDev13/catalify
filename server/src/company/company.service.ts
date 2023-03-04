@@ -599,6 +599,23 @@ export class CompanyService {
         newFaviconId = createdFavicon.id;
       }
     }
+
+    if (!companyExists.siteDetail) {
+      await this.prisma.siteDetail.create({
+        data: {
+          imageFitMode,
+          withFloatingButton,
+          faviconFileId: newFaviconId,
+          company: {
+            connect: {
+              id: companyId,
+            },
+          },
+        },
+      });
+      return;
+    }
+
     await this.prisma.siteDetail.update({
       where: {
         id: companyExists.siteDetail.id,

@@ -51,6 +51,8 @@ export class SubscriptionService {
       },
     });
 
+    await this.enableDisabledPremiumBenefits(company.id);
+
     await this.linksPageService.create(company.id, {
       bgColor: company.themeColor,
       bgColor2: company.themeColor,
@@ -229,6 +231,28 @@ export class SubscriptionService {
         homeBanners.map((banner) => banner.pictureId),
       );
     }
+  }
+
+  async enableDisabledPremiumBenefits(companyId: string) {
+    await this.prisma.product.updateMany({
+      where: {
+        companyId,
+        isEditable: false,
+      },
+      data: {
+        isEditable: true,
+      },
+    });
+
+    await this.prisma.category.updateMany({
+      where: {
+        companyId,
+        isEditable: false,
+      },
+      data: {
+        isEditable: true,
+      },
+    });
   }
 
   async expireSubscription(customerId: string) {

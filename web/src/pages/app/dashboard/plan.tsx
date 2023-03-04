@@ -12,7 +12,7 @@ function Plan() {
       <PageTitle title="Gerenciar Plano">
         <a target="_blank" href={process.env.NEXT_PUBLIC_SUBSCRIPTION_MANAGE_URL} rel="noreferrer">
           <Button variant="OUTLINE">
-            Portal do cliente
+            Portal do Cliente
           </Button>
         </a>
       </PageTitle>

@@ -122,6 +122,18 @@ export class PaymentGatewayService {
               String(customer),
               updatedSubscription.cancel_at,
             );
+          } else {
+            console.log('atualizou');
+            const company = await this.prisma.company.findFirst({
+              where: {
+                customerId: String(updatedSubscription.customer),
+              },
+            });
+            if (company) {
+              await this.subscriptionService.enableDisabledPremiumBenefits(
+                company.id,
+              );
+            }
           }
         }
         break;
