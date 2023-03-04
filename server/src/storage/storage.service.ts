@@ -48,6 +48,7 @@ export class StorageService {
     // const compressedBuffer = await sharp(imageBuffer)
     //   .webp({ quality: IMAGE_COMPRESSION.quality })
     //   .toBuffer();
+
     const compressedBuffer = imageBuffer;
 
     const blobStream = blob.createWriteStream({
