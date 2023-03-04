@@ -52,6 +52,7 @@
     "slugify": "^1.6.5",
     "stripe": "^11.6.0",
     "stripe-event-types": "^1.0.2",
+    "util": "^0.12.5",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

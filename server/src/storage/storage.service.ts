@@ -9,6 +9,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { File } from '@prisma/client';
 import * as sharp from 'sharp';
 import { IMAGE_COMPRESSION } from 'src/config/image';
+import { promisify } from 'util';
 
 @Injectable()
 export class StorageService {
@@ -45,18 +46,20 @@ export class StorageService {
     const newFileName = fileName.replace(/\.[^/.]+$/, '') + '.webp';
     const blob = bucket.file(path + newFileName);
 
+    const compressedBuffer = imageBuffer;
     // const compressedBuffer = await sharp(imageBuffer)
     //   .webp({ quality: IMAGE_COMPRESSION.quality })
     //   .toBuffer();
-
-    const compressedBuffer = imageBuffer;
 
     const blobStream = blob.createWriteStream({
       resumable: false,
       contentType: 'image/webp',
     });
 
+    const endAsync = promisify(blobStream.end).bind(blobStream);
+
     const finishPromise = new Promise((resolve, reject) => {
+      blobStream.on('error', reject);
       blobStream.on('finish', async () => {
         const publicUrl = `https://storage.googleapis.com/${StorageConfig.mediaBucket}/${blob.name}`;
 
@@ -72,7 +75,7 @@ export class StorageService {
       });
     });
 
-    blobStream.end(compressedBuffer);
+    await endAsync(compressedBuffer);
 
     const fileStored = await finishPromise;
 
