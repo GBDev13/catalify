@@ -55,13 +55,7 @@ export class StorageService {
       contentType: 'image/webp',
     });
 
-    let isWritable = true;
-    blobStream.on('finish', () => {
-      isWritable = false;
-    });
-    blobStream.on('close', () => {
-      isWritable = false;
-    });
+    const endAsync = promisify(blobStream.end).bind(blobStream);
 
     const finishPromise = new Promise((resolve, reject) => {
       blobStream.on('error', reject);
@@ -80,9 +74,7 @@ export class StorageService {
       });
     });
 
-    if (isWritable) {
-      blobStream.end(compressedBuffer);
-    }
+    await endAsync(compressedBuffer);
 
     const fileStored = await finishPromise;
 
