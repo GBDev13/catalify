@@ -41,9 +41,10 @@ export default async function middleware(req: NextRequest) {
   }
 
   console.log('hostname', hostname)
+  console.log('currentHost', currentHost)
 
   // rewrite root application to `/home` folder
-  if (hostname === LOCALHOST_URL || hostname === 'catalify.com.br') {
+  if (hostname === LOCALHOST_URL || hostname === 'catalify.com.br' || hostname === 'www.catalify.com.br') {
     return NextResponse.rewrite(new URL(`/home${path}`, req.url));
   }
 
