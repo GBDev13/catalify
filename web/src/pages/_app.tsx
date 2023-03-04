@@ -4,9 +4,8 @@ import { SessionProvider } from "next-auth/react"
 import { Hydrate, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { renderLayoutByPath } from 'src/helpers/render-layout-by-path'
 import { GlobalState } from 'src/components/GlobalState'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { CustomToaster } from 'src/components/CustomToaster'
-import Script from 'next/script'
 import { CookiesPopup } from 'src/components/pages/shared/CookiesPopup'
 
 export default function App({
@@ -33,12 +32,6 @@ export default function App({
           <GlobalState isCatalogRoute={isCatalogRoute}>
             {renderLayoutByPath(router.pathname, <Component {...pageProps} />)}
           </GlobalState>
-          {/* {!isCatalogRoute && (
-            <TawkMessengerReact
-              propertyId="63f2c64331ebfa0fe7ee286e"
-              widgetId="1gpm5cuj0"
-            />
-          )} */}
           <CookiesPopup />
         </SessionProvider>
       </Hydrate>
