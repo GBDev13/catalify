@@ -184,9 +184,6 @@ function NewProduct() {
 
   useUnsavedChangesWarning(isDirty && !isSubmitting)
 
-  const finalSlashIndex = router.asPath.lastIndexOf('/')
-  const previousPath = router.asPath.slice(0, finalSlashIndex)
-
   const hasVariations = !!methods.watch('hasVariations')
   const hasPromoPrice = !!methods.watch('hasPromoPrice')
 
@@ -209,7 +206,7 @@ function NewProduct() {
       <DashboardSEO title="Adicionar Produto" />
 
       <PageTitle title="Adicionar Produto">
-        <Link passHref href={previousPath}>
+        <Link passHref href="/dashboard/products">
           <Button size="SMALL" variant="OUTLINE">
             <FiArrowLeft />
             Voltar

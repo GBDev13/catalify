@@ -45,9 +45,10 @@ export class StorageService {
     const newFileName = fileName.replace(/\.[^/.]+$/, '') + '.webp';
     const blob = bucket.file(path + newFileName);
 
-    const compressedBuffer = await sharp(imageBuffer)
-      .webp({ quality: IMAGE_COMPRESSION.quality })
-      .toBuffer();
+    // const compressedBuffer = await sharp(imageBuffer)
+    //   .webp({ quality: IMAGE_COMPRESSION.quality })
+    //   .toBuffer();
+    const compressedBuffer = imageBuffer;
 
     const blobStream = blob.createWriteStream({
       resumable: false,

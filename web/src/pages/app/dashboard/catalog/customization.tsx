@@ -15,9 +15,6 @@ import { useCompany } from "src/store/company";
 function CatalogCustomization() {
   const router = useRouter();
 
-  const finalSlashIndex = router.asPath.lastIndexOf('/')
-  const previousPath = router.asPath.slice(0, finalSlashIndex)
-
   const { currentSubscription } = useCompany();
   const subscriptionIsValid = isSubscriptionValid(currentSubscription!)
 
@@ -26,7 +23,7 @@ function CatalogCustomization() {
       <DashboardSEO title="Customizações" />
 
       <PageTitle title="Customizações">
-        <Link passHref href={previousPath}>
+        <Link passHref href='/dashboard'>
           <Button size="SMALL" variant="OUTLINE">
             <FiArrowLeft />
             Voltar
