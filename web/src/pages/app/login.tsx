@@ -33,23 +33,23 @@ export default function Login() {
   const router = useRouter()
 
   const handleLogin = async (data: LoginFormData) => {
-    signIn("credentials", {
+    const res = await signIn("credentials", {
       redirect: false,
       email: data.email,
       password: data.password
-    }).then(async (res) => {
-      if(res?.ok) {
-        const shouldShowPlans = !!localStorage.getItem("catalify:showPlans")
-        if(shouldShowPlans) {
-          localStorage.removeItem("catalify:showPlans")
-          await router.push("/onboarding/plans")
-          return
-        }
-        await router.push("/dashboard")
-      } else {
-        notify("error", res?.error ?? "Email ou senha incorretos")
-      }
     })
+
+    if(res?.ok) {
+      const shouldShowPlans = !!localStorage.getItem("catalify:showPlans")
+      if(shouldShowPlans) {
+        localStorage.removeItem("catalify:showPlans")
+        await router.push("/onboarding/plans")
+        return
+      }
+      await router.push("/dashboard")
+    } else {
+      notify("error", res?.error ?? "Email ou senha incorretos")
+    }
   }
 
   return (

@@ -27,7 +27,6 @@ export default async function middleware(req: NextRequest) {
       You can also use wildcard subdomains on .vercel.app links that are associated with your Vercel team slug
       in this case, our team slug is "platformize", thus *.platformize.vercel.app works. Do note that you'll
       still need to add "*.platformize.vercel.app" as a wildcard domain on your Vercel dashboard. */
-      console.log('process.env.VERCEL', process.env.VERCEL)
   const currentHost =
     process.env.NODE_ENV === "production" && process.env.VERCEL === "1"
       ? hostname
@@ -39,9 +38,6 @@ export default async function middleware(req: NextRequest) {
     url.pathname = `/app${url.pathname}`;
     return NextResponse.rewrite(url);
   }
-
-  console.log('hostname', hostname)
-  console.log('currentHost', currentHost)
 
   // rewrite root application to `/home` folder
   if (hostname === LOCALHOST_URL || hostname === 'catalify.com.br' || hostname === 'www.catalify.com.br') {

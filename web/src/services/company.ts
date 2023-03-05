@@ -99,7 +99,7 @@ export const updateCompanyLinksPageLinks = async (companyId: string, links: Upda
   return data
 }
 
-type PublicCompanyLinks = Company.LinksPageCustomization & {
+export type PublicCompanyLinks = Company.LinksPageCustomization & {
   links: Company.LinksPageLink[]
 }
 

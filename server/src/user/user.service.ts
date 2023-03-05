@@ -131,6 +131,9 @@ export class UserService {
     const user = await this.prisma.user.findUnique({ where: { id } });
 
     if (user) {
+      if (user.companyId) {
+        await this.companyService.deleteCompanyById(user.companyId);
+      }
       await this.prisma.user.delete({ where: { id } });
     }
   }

@@ -11,11 +11,16 @@ import Link from "next/link"
 import { getFormattedPrices } from "src/helpers/getFormattedPrices"
 import { useCart } from "src/store/cart"
 import { toast } from "react-hot-toast"
-import { useCatalog } from "src/store/catalog"
+import { CatalogInfo, useCatalog } from "src/store/catalog"
 import { useCallback, useMemo, useState } from "react"
 import clsx from "clsx"
 
-export default function Produto() {
+type ProductPageProps = {
+  companyCatalog: CatalogInfo
+  product: Products.Product
+}
+
+export default function Produto({ product, companyCatalog }: ProductPageProps) {
   const { query } = useRouter();
 
   const companySlug = useCatalog(state => state.info.slug);
@@ -137,7 +142,7 @@ export default function Produto() {
   }
 
   return (
-    <CatalogLayout title={productData?.name!}>
+    <CatalogLayout title={product.name} catalogData={companyCatalog}>
       <div className="grid grid-cols-1 md:grid-cols-[1fr,1.4fr] gap-16 mt-16">
         <ProductSlider pictures={pictures} />
         <section className="md:mt-10">
@@ -217,6 +222,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   await queryClient.prefetchQuery(catalogKeys.companyCategories(slug), () => getCompanyCatalogCategories(slug))
   await queryClient.prefetchQuery(catalogKeys.companyProduct(productSlug), () => getCompanyCatalogProductBySlug(slug, productSlug))
 
+  const company = queryClient.getQueryData(catalogKeys.companyCatalog(slug))
   const product = queryClient.getQueryData(catalogKeys.companyProduct(productSlug))
 
   if(!product) {
@@ -230,6 +236,8 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
   return {
     props: {
+      companyCatalog: company,
+      product,
       dehydratedState: dehydrate(queryClient),
     },
     revalidate: 60 * 60 * 6, // 6 hours

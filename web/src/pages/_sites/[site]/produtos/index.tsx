@@ -11,9 +11,13 @@ import { CatalogLayout } from "src/components/ui/Layouts/CatalogLayout"
 import { Spinner } from "src/components/ui/Spinner"
 import { catalogKeys } from "src/constants/query-keys"
 import { getCompanyCatalog, getCompanyCatalogCategories, getCompanyCatalogFilteredProducts } from "src/services/catalog"
-import { useCatalog } from "src/store/catalog"
+import { CatalogInfo, useCatalog } from "src/store/catalog"
 
-export default function Produtos() {
+type ProductsPageProps = {
+  companyCatalog: CatalogInfo
+}
+
+export default function ProductsPage({ companyCatalog }: ProductsPageProps) {
   const [page, setPage] = useState(0);
 
   const { info } = useCatalog();
@@ -69,7 +73,7 @@ export default function Produtos() {
   const hasCategories = categories && categories?.length > 0;
 
   return (
-    <CatalogLayout title="Produtos">
+    <CatalogLayout title="Produtos" catalogData={companyCatalog}>
       <header className="flex items-center justify-between flex-col-reverse gap-2 sm:gap-0 sm:flex-row">
         <p className="text-sm text-gray-500">
           <strong className="font-semibold text-gray-600">{`Mostrando ${showingLeftCount} - ${showingRightCount >= total ? total : showingRightCount} `}</strong>
@@ -157,9 +161,11 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
   await queryClient.prefetchQuery(catalogKeys.companyCatalog(slug), () => getCompanyCatalog(slug))
   await queryClient.prefetchQuery(catalogKeys.companyCategories(slug), () => getCompanyCatalogCategories(slug))
+  const company = queryClient.getQueryData(catalogKeys.companyCatalog(slug))
 
   return {
     props: {
+      companyCatalog: company,
       dehydratedState: dehydrate(queryClient),
     },
     revalidate: 60 * 60 * 6, // 6 hours

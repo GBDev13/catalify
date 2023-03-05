@@ -1,11 +1,7 @@
-import { ReactNode } from "react"
+import { ReactNode, useEffect } from "react"
 import { Footer } from "src/components/pages/catalog/footer"
 import { Header } from "src/components/pages/catalog/header"
-import { useRouter } from "next/router";
-import { useCatalog } from "src/store/catalog";
-import { getCompanyCatalog } from "src/services/catalog";
-import { useQuery } from "@tanstack/react-query";
-import { catalogKeys } from "src/constants/query-keys";
+import { CatalogInfo, useCatalog } from "src/store/catalog";
 import Head from "next/head";
 import { NextSeo } from 'next-seo';
 import dynamic from "next/dynamic";
@@ -17,28 +13,23 @@ type CatalogLayoutProps = {
   children: ReactNode
   title: string
   withoutLayout?: boolean
+  catalogData: CatalogInfo
 }
 
-export const CatalogLayout = ({ title, children, withoutLayout = false }: CatalogLayoutProps) => {
-  const router = useRouter();
-  const slug = String(router.query.site ?? '');
+export const CatalogLayout = ({ catalogData, title, children, withoutLayout = false }: CatalogLayoutProps) => {
+  const { setCatalogInfo, setCatalogColors } = useCatalog()
 
-  const { setCatalogInfo, setCatalogColors, info } = useCatalog()
+  useEffect(() => {
+    setCatalogInfo(catalogData)
+    setCatalogColors(catalogData.themeColor)
+  }, [catalogData, setCatalogColors, setCatalogInfo])
 
-  useQuery(catalogKeys.companyCatalog(slug), () => getCompanyCatalog(slug), {
-    enabled: !!slug,
-    onSuccess: (data) => {
-      setCatalogInfo(data)
-      setCatalogColors(data.themeColor)
-    }
-  });
-
-  const favicon = info?.config?.favicon;
+  const favicon = catalogData?.config?.favicon;
 
   if(withoutLayout) return (
     <main className="w-screen min-h-screen h-screen bg-white overflow-y-auto flex flex-col">
       <NextSeo
-        titleTemplate={`${info.name} - %s`}
+        titleTemplate={`${catalogData.name} - %s`}
         title={title}
       />
 
@@ -54,14 +45,14 @@ export const CatalogLayout = ({ title, children, withoutLayout = false }: Catalo
   return (
     <>
       <NextSeo
-        titleTemplate={`${info.name} - %s`}
+        titleTemplate={`${catalogData.name} - %s`}
         title={title}
       />
       <main className="w-screen min-h-screen h-screen bg-white overflow-y-auto flex flex-col">
-        {info.isExample && <ExampleBanner />}
+        {catalogData.isExample && <ExampleBanner />}
         <CartSidebar />
 
-        {info?.config?.withFloatingButton && <FloatingWhatsApp />}
+        {catalogData?.config?.withFloatingButton && <FloatingWhatsApp />}
 
         <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 flex flex-col">
           <Header />

@@ -8,8 +8,13 @@ import { ProductsList } from "src/components/pages/catalog/products-list"
 import { CatalogLayout } from "src/components/ui/Layouts/CatalogLayout"
 import { catalogKeys } from "src/constants/query-keys"
 import { getCompanyCatalog, getCompanyCatalogCategories, getCompanyCatalogProducts } from "src/services/catalog"
+import { CatalogInfo, useCatalog } from "src/store/catalog"
 
-export default function CompanyHome() {
+type CompanyHomeProps = {
+  companyCatalog: CatalogInfo
+}
+
+export default function CompanyHome({ companyCatalog }: CompanyHomeProps) {
   const { query } = useRouter()
   const slug = query.site as string
 
@@ -20,7 +25,7 @@ export default function CompanyHome() {
   const hasProducts = !!(productsList?.highlights?.length || productsList?.products?.length);
 
   return (
-    <CatalogLayout title="Início">
+    <CatalogLayout title="Início" catalogData={companyCatalog}>
       <HomeBanners />
       {productsList?.highlights && productsList?.highlights.length > 0 && <ProductsList products={productsList?.highlights} title="Destaques" />}
       {productsList?.products && productsList?.products.length > 0 && <ProductsList products={productsList?.products} title="Novidades" />}
@@ -74,6 +79,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
   return {
     props: {
+      companyCatalog: company,
       dehydratedState: dehydrate(queryClient),
     },
     revalidate: 60 * 60 * 1, // 6 hours

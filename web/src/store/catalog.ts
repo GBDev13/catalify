@@ -5,7 +5,7 @@ import { lighten } from 'polished'
 import { setCssVariable, setScrollColors } from 'src/helpers/set-css-variable'
 import { checkColorReadability } from 'src/helpers/check-color-readability'
 
-type CatalogInfo = {
+export type CatalogInfo = {
   slug: string;
   name: string
   logo: string
@@ -13,6 +13,7 @@ type CatalogInfo = {
   links: string[]
   isExample: boolean
   config: Company.SiteDetail
+  themeColor: string
 }
 
 type CatalogColors = {

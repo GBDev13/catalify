@@ -4,17 +4,20 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router"
 import { toast } from "react-hot-toast";
-import { FaCheck, FaWhatsapp } from "react-icons/fa";
-import { FiCalendar, FiCheck, FiCheckCircle, FiUser } from "react-icons/fi";
+import { FaWhatsapp } from "react-icons/fa";
+import { FiCalendar, FiCheckCircle, FiUser } from "react-icons/fi";
 import { CatalogLayout } from "src/components/ui/Layouts/CatalogLayout";
-import { catalogKeys, companyKeys } from "src/constants/query-keys";
+import { catalogKeys } from "src/constants/query-keys";
 import { formatPrice } from "src/helpers/format-price";
 import { orderStatusToText } from "src/helpers/order-status-to-text";
 import { completeOrder, getCompanyCatalog, getOrderById } from "src/services/catalog";
-import { getPublicCompanyLinks } from "src/services/company";
-import { useCatalog } from "src/store/catalog";
+import { CatalogInfo, useCatalog } from "src/store/catalog";
 
-export default function OrderDetails() {
+type OrderDetailsProps = {
+  companyCatalog: CatalogInfo
+}
+
+export default function OrderDetails({ companyCatalog }: OrderDetailsProps) {
   const router = useRouter();
   const orderId = router.query.id as string;
 
@@ -66,7 +69,7 @@ export default function OrderDetails() {
   const isAuthenticated = status === 'authenticated';
 
   return (
-    <CatalogLayout title="Pedido" withoutLayout>
+    <CatalogLayout title="Pedido" withoutLayout catalogData={companyCatalog}>
       <main className="w-full max-w-[800px] mx-auto px-4">
         <Link className="mt-10 block w-max mx-auto" href="/">
           {logo ? <img src={logo} className="max-h-[100px] max-w-[300px] object-contain" /> : (
@@ -164,9 +167,11 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   const slug = params?.site as string
 
   await queryClient.prefetchQuery(catalogKeys.companyCatalog(slug), () => getCompanyCatalog(slug))
+  const company = queryClient.getQueryData(catalogKeys.companyCatalog(slug))
 
   return {
     props: {
+      companyCatalog: company,
       dehydratedState: dehydrate(queryClient),
     },
     revalidate: 60 * 60 * 6, // 6 hours

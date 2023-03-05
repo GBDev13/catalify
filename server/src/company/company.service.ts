@@ -82,25 +82,32 @@ export class CompanyService {
     });
 
     if (logo) {
-      const mimeType = getMimeType(logo);
+      try {
+        const mimeType = getMimeType(logo);
 
-      if (mimeType) {
-        const createdLogo = await this.storageService.uploadBase64Image({
-          base64: logo,
-          fileName: `${uuid()}.${mimeType.split('/')[1]}`,
-          fileType: mimeType,
-          path: 'company-logos/',
-          fileSizeLimit: IMAGE_LIMITS.baseLimit,
-        });
+        if (mimeType) {
+          const createdLogo = await this.storageService.uploadBase64Image({
+            base64: logo,
+            fileName: `${uuid()}.${mimeType.split('/')[1]}`,
+            fileType: mimeType,
+            path: 'company-logos/',
+            fileSizeLimit: IMAGE_LIMITS.baseLimit,
+          });
 
-        await this.prisma.company.update({
-          where: {
-            id: createdCompany.id,
-          },
-          data: {
-            logoId: createdLogo.id,
-          },
-        });
+          await this.prisma.company.update({
+            where: {
+              id: createdCompany.id,
+            },
+            data: {
+              logoId: createdLogo.id,
+            },
+          });
+        }
+      } catch (error) {
+        throw new HttpException(
+          'Erro ao criar a  empresa',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
       }
     }
 
@@ -624,6 +631,42 @@ export class CompanyService {
         imageFitMode,
         withFloatingButton,
         faviconFileId: newFaviconId,
+      },
+    });
+  }
+
+  async deleteCompanyById(companyId: string) {
+    const companyExists = await this.prisma.company.findUnique({
+      where: {
+        id: companyId,
+      },
+      include: {
+        logo: true,
+        siteDetail: {
+          include: {
+            favicon: true,
+          },
+        },
+      },
+    });
+
+    if (!companyExists) {
+      throw new HttpException('Empresa não encontrada', HttpStatus.NOT_FOUND);
+    }
+
+    if (companyExists.logoId) {
+      await this.storageService.deleteFile(companyExists.logo.key);
+    }
+
+    if (companyExists.siteDetail?.faviconFileId) {
+      await this.storageService.deleteFile(
+        companyExists.siteDetail.favicon.key,
+      );
+    }
+
+    await this.prisma.company.delete({
+      where: {
+        id: companyId,
       },
     });
   }

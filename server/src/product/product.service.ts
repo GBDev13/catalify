@@ -26,6 +26,7 @@ export class ProductService {
     companyId: string,
     hasSubscription: boolean,
   ): Promise<Product> {
+    let productId: string;
     try {
       const companyExists = await this.prisma.company.findUnique({
         where: {
@@ -121,6 +122,8 @@ export class ProductService {
         },
       });
 
+      productId = createdProduct.id;
+
       if (variations) {
         const typedVariations = JSON.parse(
           variations,
@@ -162,7 +165,8 @@ export class ProductService {
 
       return createdProduct;
     } catch (error) {
-      console.log('error during product creation', error);
+      if (productId) await this.delete(companyId, productId);
+
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }

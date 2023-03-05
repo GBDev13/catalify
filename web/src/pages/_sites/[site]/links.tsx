@@ -2,17 +2,15 @@ import { dehydrate, QueryClient, useQuery } from "@tanstack/react-query"
 import { GetStaticPaths, GetStaticProps } from "next"
 import { NextSeo } from "next-seo"
 import Head from "next/head"
-import { useRouter } from "next/router"
 import { LinksPage } from "src/components/pages/shared/LinksPage"
 import { companyKeys } from "src/constants/query-keys"
-import { getPublicCompanyLinks } from "src/services/company"
+import { getPublicCompanyLinks, PublicCompanyLinks } from "src/services/company"
 
-export default function CompanyLinks() {
-  const router = useRouter()
-  const slug = router.query.site as string
+type CompanyLinksProps = {
+  pageData: PublicCompanyLinks
+}
 
-  const { data: pageData } = useQuery(companyKeys.companyPublicLinksPage(slug), () => getPublicCompanyLinks(slug));
-
+export default function CompanyLinks({ pageData }: CompanyLinksProps) {
   if(!pageData) return null
 
   return (
@@ -69,6 +67,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
   return {
     props: {
+      pageData: data,
       dehydratedState: dehydrate(queryClient),
     },
     revalidate: 60 * 60 * 24, // 24 hours
