@@ -17,7 +17,7 @@ import clsx from "clsx"
 
 type ProductPageProps = {
   companyCatalog: CatalogInfo
-  product: Products.Product
+  product: Products.CatalogProductDetails
 }
 
 export default function Produto({ product, companyCatalog }: ProductPageProps) {
@@ -143,12 +143,11 @@ export default function Produto({ product, companyCatalog }: ProductPageProps) {
 
   return (
     <CatalogLayout title={product.name} openGraph={{
-      description: product.description,
-      type: "website",
       ...(product.pictures && product.pictures.length > 0 && {
+        description: product.rawDescription,
         images: [
           {
-            url: product.pictures[0].url,
+            url: product.pictures[0],
             width: 800,
             height: 420,
             alt: product.name

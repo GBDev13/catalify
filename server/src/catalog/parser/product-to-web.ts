@@ -7,6 +7,8 @@ import {
   Stock,
 } from '@prisma/client';
 
+import { convert } from 'html-to-text';
+
 type DetailedStock = Stock & {
   productVariantOption: ProductVariantOption;
   productVariantOption2: ProductVariantOption;
@@ -68,6 +70,9 @@ export const productDetailedToWeb = (
     price: product.price,
     promoPrice: product?.promoPrice,
     description: product?.description,
+    ...(!!product?.description && {
+      rawDescription: convert(product.description),
+    }),
     pictures: product?.pictures?.map((x) => x.fileUrl),
     variants: product?.variants
       ? product.variants.map((variant) => ({
