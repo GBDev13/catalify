@@ -36,11 +36,9 @@ export const CatalogLayout = ({ catalogData, title, description, children, witho
         title={title}
       />
 
-      {!!favicon && (
-        <Head>
-          <link rel="icon" href={favicon} />
-        </Head>
-      )}
+      <Head>
+        <link rel="icon" href={!!favicon ? favicon : "/favicon.svg"} />
+      </Head>
       {children}
     </main>
   )
@@ -77,11 +75,9 @@ export const CatalogLayout = ({ catalogData, title, description, children, witho
         </div>
         <Footer />
 
-        {!!favicon && (
-          <Head>
-            <link rel="icon" href={favicon} />
-          </Head>
-        )}
+        <Head>
+          <link rel="icon" href={!!favicon ? favicon : "/favicon.svg"} />
+        </Head>
       </main>
     </>
   )
