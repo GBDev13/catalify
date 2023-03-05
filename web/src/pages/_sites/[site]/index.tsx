@@ -1,27 +1,20 @@
-import { dehydrate, QueryClient, useQuery } from "@tanstack/react-query"
+import { dehydrate, QueryClient } from "@tanstack/react-query"
 import { GetStaticPaths, GetStaticProps } from "next"
 import Link from "next/link"
-import { useRouter } from "next/router"
 import { MdOutlineProductionQuantityLimits } from "react-icons/md"
 import { HomeBanners } from "src/components/pages/catalog/home-banners"
 import { ProductsList } from "src/components/pages/catalog/products-list"
 import { CatalogLayout } from "src/components/ui/Layouts/CatalogLayout"
 import { catalogKeys } from "src/constants/query-keys"
-import { getCompanyCatalog, getCompanyCatalogCategories, getCompanyCatalogProducts } from "src/services/catalog"
-import { CatalogInfo, useCatalog } from "src/store/catalog"
+import { CatalogProductsResponse, getCompanyCatalog, getCompanyCatalogCategories, getCompanyCatalogProducts } from "src/services/catalog"
+import { CatalogInfo } from "src/store/catalog"
 
 type CompanyHomeProps = {
   companyCatalog: CatalogInfo
+  productsList: CatalogProductsResponse
 }
 
-export default function CompanyHome({ companyCatalog }: CompanyHomeProps) {
-  const { query } = useRouter()
-  const slug = query.site as string
-
-  const { data: productsList } = useQuery(catalogKeys.companyProducts(slug), () => getCompanyCatalogProducts(slug), {
-    enabled: !!slug
-  })
-
+export default function CompanyHome({ companyCatalog, productsList }: CompanyHomeProps) {
   const hasProducts = !!(productsList?.highlights?.length || productsList?.products?.length);
 
   return (
@@ -69,6 +62,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   await queryClient.prefetchQuery(catalogKeys.companyProducts(site), () => getCompanyCatalogProducts(site))
 
   const company = queryClient.getQueryData(catalogKeys.companyCatalog(site))
+  const products = queryClient.getQueryData(catalogKeys.companyProducts(site))
 
   if(!company) {
     return {
@@ -80,6 +74,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   return {
     props: {
       companyCatalog: company,
+      productsList: products,
       dehydratedState: dehydrate(queryClient),
     },
     revalidate: 60 * 60 * 1, // 6 hours

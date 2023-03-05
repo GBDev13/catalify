@@ -1,6 +1,6 @@
 import api from "src/lib/axios"
 
-type CatalogProductsResponse = {
+export type CatalogProductsResponse = {
   products: Products.CatalogProduct[]
   highlights: Products.CatalogProduct[]
 }
