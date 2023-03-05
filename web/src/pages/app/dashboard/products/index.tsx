@@ -21,10 +21,12 @@ import { ProductVisibilityToggle } from "src/components/pages/company/dashboard/
 import { DashboardSEO } from "src/components/pages/shared/DashboardSEO";
 import { withAuth } from "src/helpers/withAuth";
 import { ImportProductsModal } from "src/components/pages/company/dashboard/products/import-products-modal";
+import { revalidate } from "src/lib/revalidate";
 
 function CompanyProducts() {
   const { company, currentSubscription } = useCompany()
   const companyId = company?.id
+  const companySlug = company?.slug!
 
   const subscriptionIsValid = isSubscriptionValid(currentSubscription!)
 
@@ -39,8 +41,12 @@ function CompanyProducts() {
     success: 'Produto removido com sucesso!',
     error: 'Erro ao remover produto'
   }), {
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries(productsKey.all)
+      await revalidate(
+        `https://${companySlug}.catalify.com.br`,
+        companySlug
+      )
     }
   })
 
@@ -49,7 +55,11 @@ function CompanyProducts() {
     success: 'Destaque alterado com sucesso!',
     error: (err) => err.response?.data?.message || 'Erro ao alterar destaque'
   }), {
-    onSuccess(_, productId) {
+    onSuccess: async (_, productId) => {
+      await revalidate(
+        `https://${companySlug}.catalify.com.br`,
+        companySlug
+      )
       queryClient.setQueryData<Products.Product[]>(productsKey.all, (oldData) => {
         return oldData?.map(item => {
           if(item.id === productId) {
