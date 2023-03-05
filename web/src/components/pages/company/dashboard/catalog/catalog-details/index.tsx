@@ -13,7 +13,6 @@ import { companyKeys } from "src/constants/query-keys";
 import { urlToFile } from "src/helpers/url-to-file";
 import { revalidate } from "src/lib/revalidate";
 import { getCompanySiteDetails, updateCompanySiteDetails, UpdateSiteDetailsDto } from "src/services/company";
-import { revalidatePath } from "src/services/revalidate";
 import { useCompany } from "src/store/company";
 import { z } from "zod";
 

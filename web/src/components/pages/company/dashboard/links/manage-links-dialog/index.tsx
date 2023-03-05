@@ -10,9 +10,8 @@ import { Input } from "src/components/ui/Input";
 import { Tooltip } from "src/components/ui/Tooltip";
 import { LIMITS } from "src/constants/constants";
 import { companyKeys } from "src/constants/query-keys";
-import { isSubscriptionValid } from "src/helpers/isSubscriptionValid";
+import { revalidate } from "src/lib/revalidate";
 import { getCompanyLinksPageLinks, updateCompanyLinksPageLinks, UpdateLinksDto } from "src/services/company";
-import { revalidatePath } from "src/services/revalidate";
 import { useCompany } from "src/store/company";
 import { z } from "zod"
 
@@ -54,7 +53,7 @@ type LinksFormData = z.infer<typeof linksFormSchema>
 
 const ManageLinksForm = () => {
   const companyId = useCompany(s => s.company?.id);
-  const companySlug = useCompany(s => s.company?.slug);
+  const companySlug = useCompany(s => s.company?.slug)!;
   const { control, handleSubmit, register, reset, setError, formState: { errors, isDirty, isSubmitting } } = useForm<LinksFormData>({
     resolver: zodResolver(linksFormSchema)
   })
@@ -86,7 +85,11 @@ const ManageLinksForm = () => {
   }), {
     onSuccess: async () => {
       queryClient.invalidateQueries(companyKeys.companyLinksPageLinks(companyId!))
-      await revalidatePath(`/links/${companySlug}`)
+      await revalidate(
+        `https://${companySlug}.catalify.com.br`,
+        companySlug,
+        'links'
+      )
     }
   })
 

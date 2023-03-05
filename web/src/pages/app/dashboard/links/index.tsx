@@ -20,8 +20,8 @@ import { checkSubscriptionSSR } from "src/helpers/chck-subscription-ssr";
 import { isSubscriptionValid } from "src/helpers/isSubscriptionValid";
 import { urlToFile } from "src/helpers/url-to-file";
 import { withAuth } from "src/helpers/withAuth";
+import { revalidate } from "src/lib/revalidate";
 import { getCompanyLinksPageCustomization, getCompanyLinksPageLinks, updateCompanyLinksPageCustomization, UpdateLinksPageCustomizationDto } from "src/services/company";
-import { revalidatePath } from "src/services/revalidate";
 import { useCompany } from "src/store/company";
 import { z } from "zod";
 
@@ -106,7 +106,11 @@ function ManageLinksPage() {
   }), {
     onSuccess: async () => {
       await queryClient.invalidateQueries(companyKeys.companyLinksPageCustomization(companyId))
-      await revalidatePath(`/links/${company?.slug}`)
+      await revalidate(
+        `https://${company?.slug!}.catalify.com.br`,
+        company?.slug!,
+        'links'
+      )
     }
   })
 
