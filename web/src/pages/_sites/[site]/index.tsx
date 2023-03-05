@@ -6,7 +6,7 @@ import { HomeBanners } from "src/components/pages/catalog/home-banners"
 import { ProductsList } from "src/components/pages/catalog/products-list"
 import { CatalogLayout } from "src/components/ui/Layouts/CatalogLayout"
 import { catalogKeys } from "src/constants/query-keys"
-import { CatalogProductsResponse, getCompanyCatalog, getCompanyCatalogCategories, getCompanyCatalogProducts } from "src/services/catalog"
+import { CatalogProductsResponse, getAllCompanySlugs, getCompanyCatalog, getCompanyCatalogCategories, getCompanyCatalogProducts } from "src/services/catalog"
 import { CatalogInfo } from "src/store/catalog"
 
 type CompanyHomeProps = {
@@ -39,8 +39,13 @@ export default function CompanyHome({ companyCatalog, productsList }: CompanyHom
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
+  const slugs = await getAllCompanySlugs()
   return {
-    paths: [],
+    paths: slugs.map(slug => ({
+      params: {
+        site: slug
+      }
+    })),
     fallback: 'blocking',
   }
 }
@@ -63,6 +68,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
   const company = queryClient.getQueryData(catalogKeys.companyCatalog(site))
   const products = queryClient.getQueryData(catalogKeys.companyProducts(site))
+
 
   if(!company) {
     return {

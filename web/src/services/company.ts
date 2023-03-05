@@ -132,3 +132,8 @@ export const updateCompanySiteDetails = async (companyId: string, dto: UpdateSit
     favicon: companyFavicon ?? dto?.favicon,
   })
 }
+
+export const getAllLinksPageSlugs = async () => {
+  const { data } = await api.get<string[]>('/links-page/slugsWithPage')
+  return data
+}

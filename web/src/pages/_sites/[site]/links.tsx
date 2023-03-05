@@ -4,7 +4,7 @@ import { NextSeo } from "next-seo"
 import Head from "next/head"
 import { LinksPage } from "src/components/pages/shared/LinksPage"
 import { companyKeys } from "src/constants/query-keys"
-import { getPublicCompanyLinks, PublicCompanyLinks } from "src/services/company"
+import { getAllLinksPageSlugs, getPublicCompanyLinks, PublicCompanyLinks } from "src/services/company"
 
 type CompanyLinksProps = {
   pageData: PublicCompanyLinks
@@ -20,11 +20,9 @@ export default function CompanyLinks({ pageData }: CompanyLinksProps) {
         description={pageData?.headLine}
       />
 
-      {pageData?.logo && (
-        <Head>
-          <link rel="icon" href={pageData.logo} />
-        </Head>
-      )}
+      <Head>
+        <link rel="icon" href={pageData?.logo ? pageData.logo : '/favicon.svg'} />
+      </Head>
 
       <LinksPage
         background={pageData.bgColor}
@@ -45,8 +43,13 @@ export default function CompanyLinks({ pageData }: CompanyLinksProps) {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
+  const slugs = await getAllLinksPageSlugs()
   return {
-    paths: [],
+    paths: slugs.map(slug => ({
+      params: {
+        site: slug
+      }
+    })),
     fallback: 'blocking',
   }
 }

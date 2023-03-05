@@ -314,4 +314,23 @@ export class LinksPageService {
       })),
     };
   }
+
+  async getAllSlugsWithPage() {
+    const linksPages = await this.prismaService.company.findMany({
+      where: {
+        linksPage: {
+          some: {
+            id: {
+              not: undefined,
+            },
+          },
+        },
+      },
+      select: {
+        slug: true,
+      },
+    });
+
+    return linksPages.map((x) => x.slug);
+  }
 }

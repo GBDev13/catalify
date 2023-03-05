@@ -7,6 +7,12 @@ export class CatalogController {
   constructor(private readonly catalogService: CatalogService) {}
 
   @IsPublic()
+  @Get('/slugs')
+  getAllSlugs() {
+    return this.catalogService.getAllSlugs();
+  }
+
+  @IsPublic()
   @Get('/:companySlug')
   getCompanyCatalog(@Param('companySlug') companySlug: string) {
     return this.catalogService.getCompanyCatalog(companySlug);

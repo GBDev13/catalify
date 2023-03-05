@@ -330,4 +330,13 @@ export class CatalogService {
       ),
     };
   }
+
+  async getAllSlugs() {
+    const slugs = await this.prisma.company.findMany({
+      select: {
+        slug: true,
+      },
+    });
+    return slugs.map((x) => x.slug);
+  }
 }

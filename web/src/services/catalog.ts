@@ -83,3 +83,8 @@ export const completeOrder = async (orderId: string) => {
   const { data } = await api.patch(`/order/${orderId}/complete`)
   return data
 }
+
+export const getAllCompanySlugs = async () => {
+  const { data } = await api.get<string[]>(`/catalog/slugs`)
+  return data
+}
