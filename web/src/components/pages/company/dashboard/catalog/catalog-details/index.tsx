@@ -11,6 +11,7 @@ import { ControlledToggleGroup } from "src/components/ui/ToggleGroup/controlled"
 import { FAVICON_MAX_SIZE, IMAGE_TYPES } from "src/constants/constants";
 import { companyKeys } from "src/constants/query-keys";
 import { urlToFile } from "src/helpers/url-to-file";
+import { revalidate } from "src/lib/revalidate";
 import { getCompanySiteDetails, updateCompanySiteDetails, UpdateSiteDetailsDto } from "src/services/company";
 import { revalidatePath } from "src/services/revalidate";
 import { useCompany } from "src/store/company";
@@ -43,6 +44,7 @@ export const CatalogDetails = () => {
 
   const { company } = useCompany()
   const companyId = company?.id!
+  const companySlug = company?.slug! 
 
   const [defaultLogo, setDefaultLogo] = useState<File[]>([])
 
@@ -69,7 +71,10 @@ export const CatalogDetails = () => {
     onSuccess: async () => {
       setIsEditing(false)
       queryClient.invalidateQueries(companyKeys.companySiteDetails(companyId))
-      await revalidatePath(`/_sites/${company?.slug}`)
+      await revalidate(
+        `https://${companySlug}.catalify.com.br`,
+        companySlug
+      )
     }
   })
 
