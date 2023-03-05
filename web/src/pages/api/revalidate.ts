@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next"
+import CryptoJS from 'crypto-js';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   res.setHeader('Access-Control-Allow-Credentials', 'true')
@@ -13,10 +14,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return
   }
 
-  const { path } = req.body
+  try {
+    const { path, secret: encryptedSecret } = req.body
 
-  if (req.body.secret !== process.env.NEXT_PUBLIC_REVALIDATE_TOKEN) {
-    return res.status(401).json({ message: 'Invalid token' })
+  const decryptedToken = CryptoJS.AES.decrypt(encryptedSecret, process.env.NEXT_PUBLIC_REVALIDATE_TOKEN!).toString(CryptoJS.enc.Utf8);
+  const data = JSON.parse(decryptedToken);
+
+  // verifica se o token é válido (por exemplo, se o timestamp não é muito antigo e ainda não expirou)
+  const now = new Date().getTime();
+  if (now - data.timestamp > 30000 || now > data.expireTime) { // verifica se o token expirou
+    res.status(401).send('Invalid token');
+    return;
   }
 
   try {
@@ -24,8 +32,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     return res.status(200).json({ message: "OK" })
   } catch (err) {
-    return res.status(500).send({
+    return res.status(400).send({
       message: `Failed to revalidate ${path}`
+    })
+  }
+  } catch {
+    return res.status(400).send({
+      message: `Failed to revalidate`
     })
   }
 }

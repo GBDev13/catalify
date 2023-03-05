@@ -7,6 +7,7 @@ import { GlobalState } from 'src/components/GlobalState'
 import { useState } from 'react'
 import { CustomToaster } from 'src/components/CustomToaster'
 import { CookiesPopup } from 'src/components/pages/shared/CookiesPopup'
+import { LoadingScreen } from 'src/components/ui/LoadingScreen'
 
 export default function App({
   Component,
@@ -32,6 +33,7 @@ export default function App({
           <GlobalState isCatalogRoute={isCatalogRoute}>
             {renderLayoutByPath(router.pathname, <Component {...pageProps} />)}
           </GlobalState>
+          {!isCatalogRoute && <LoadingScreen />}
           <CookiesPopup />
         </SessionProvider>
       </Hydrate>
