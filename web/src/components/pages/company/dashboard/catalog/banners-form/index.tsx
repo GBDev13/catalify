@@ -8,6 +8,7 @@ import { FileUpload } from "src/components/ui/FileUpload"
 import { IMAGE_MAX_SIZE, IMAGE_TYPES, LIMITS } from "src/constants/constants"
 import { companyKeys } from "src/constants/query-keys"
 import { urlToFile } from "src/helpers/url-to-file"
+import { revalidate } from "src/lib/revalidate"
 import { getCompanyBanners, UpdateBannerDto, updateCompanyBanners } from "src/services/company"
 import { useCompany } from "src/store/company"
 import { z } from "zod"
@@ -29,7 +30,9 @@ const bannersFormSchema = z.object({
 export type BannerFormData = z.infer<typeof bannersFormSchema>
 
 export const BannersForm = () => {
-  const companyId = useCompany(state => state.company?.id)
+  const company = useCompany(state => state.company)
+  const companyId = company?.id!
+  const companySlug = company?.slug!
 
   const methods = useForm<BannerFormData>({
     resolver: zodResolver(bannersFormSchema)
@@ -55,6 +58,10 @@ export const BannersForm = () => {
       reset({
         banners
       })
+      await revalidate(
+        `https://${companySlug}.catalify.com.br`,
+        companySlug
+      )
     }
   })
 

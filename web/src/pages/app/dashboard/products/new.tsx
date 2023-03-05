@@ -23,6 +23,7 @@ import { productsKey } from "src/constants/query-keys";
 import { isSubscriptionValid } from "src/helpers/isSubscriptionValid";
 import { withAuth } from "src/helpers/withAuth";
 import { useUnsavedChangesWarning } from "src/hooks/useUnsavedChangesWarning";
+import { revalidate } from "src/lib/revalidate";
 import { createProduct, CreateProductDto, getCategories } from "src/services/products";
 import { useCompany } from "src/store/company";
 import { z } from "zod";
@@ -105,6 +106,7 @@ function NewProduct() {
   const subscriptionIsValid = isSubscriptionValid(currentSubscription!)
 
   const companyId = company?.id
+  const companySlug = company?.slug!
 
   const methods = useForm<NewProductFormData>({
     resolver: zodResolver(newProductFormSchema),
@@ -127,10 +129,15 @@ function NewProduct() {
     success: 'Produto criado com sucesso!',
     error: (err) => err.response?.data?.message || 'Erro ao criar produto'
   }), {
-    onSuccess: (createdProduct) => {
+    onSuccess: async (createdProduct) => {
       reset()
       queryClient.invalidateQueries(productsKey.all)
       setProductId(createdProduct.id)
+
+      await revalidate(
+        `https://${companySlug}.catalify.com.br`,
+        companySlug
+      )
 
       if(subscriptionIsValid) {
         setShowCreateStockModal(true)

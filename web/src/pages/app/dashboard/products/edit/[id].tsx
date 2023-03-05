@@ -26,6 +26,7 @@ import { ActionType, ChangeType, onChangeExistentVariation, ParseEditedResponse,
 import { urlToFile } from "src/helpers/url-to-file";
 import { withAuth } from "src/helpers/withAuth";
 import { useUnsavedChangesWarning } from "src/hooks/useUnsavedChangesWarning";
+import { revalidate } from "src/lib/revalidate";
 import { editProduct, EditProductDto, getCategories, getProductById } from "src/services/products";
 import { useCompany } from "src/store/company";
 import { z } from "zod";
@@ -112,6 +113,7 @@ function EditProduct() {
   const { company, currentSubscription } = useCompany()
   const subscriptionIsValid = isSubscriptionValid(currentSubscription!)
   const companyId = company?.id
+  const companySlug = company?.slug!
 
   const productId = String(router?.query?.id ?? '');
 
@@ -163,13 +165,18 @@ function EditProduct() {
     success: 'Produto editado com sucesso!',
     error: (err) => err?.response?.data?.message ?? 'Erro ao editar produto. Tente novamente mais tarde.'
   }), {
-    onSuccess: (_, variables) => {
+    onSuccess: async (_, variables) => {
       
       const variationsIsEmpty = Object.keys(variables?.variations ?? {}).map(key => (variables?.variations ?? {})[key as keyof ParseEditedResponse]).every(value => !value?.length)
 
       reset()
       queryClient.invalidateQueries(productsKey.all)
       queryClient.invalidateQueries(productsKey.single(productId))
+
+      await revalidate(
+        `https://${companySlug}.catalify.com.br`,
+        companySlug
+      )
 
       if(!variationsIsEmpty && subscriptionIsValid) {
         setShowEditStockModal(true)
@@ -256,7 +263,7 @@ function EditProduct() {
       <DashboardSEO title="Editar Produto" />
 
       <PageTitle title="Editar Produto">
-        <Link passHref href="../">
+        <Link passHref href="/dashboard/product">
           <Button size="SMALL" variant="OUTLINE">
             <FiArrowLeft />
             Voltar
