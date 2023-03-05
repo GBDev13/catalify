@@ -38,9 +38,9 @@ export const ExamplesSection = () => {
                 <h4 className="text-lg text-indigo-500">{example.title}</h4>
                 <div className="relative group rounded-lg overflow-hidden border border-indigo-500/20">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center bg-indigo-500/70 backdrop-blur-sm text-white">
-                    <Link href={`/${example.slug}`} target="_blank" className="bg-white/80 hover:bg-white/100 transition-all rounded-full text-indigo-500 px-4 py-2">
+                    <a href={`https://${example.slug}.catalify.com.br`} target="_blank" className="bg-white/80 hover:bg-white/100 transition-all rounded-full text-indigo-500 px-4 py-2" rel="noreferrer">
                       Ver catálogo
-                    </Link>
+                    </a>
                   </div>
                   <img src={`/images/examples/${example.imgName}`} alt={example.title} className="w-full h-full shadow-sm shadow-indigo-500/30" />
                 </div>

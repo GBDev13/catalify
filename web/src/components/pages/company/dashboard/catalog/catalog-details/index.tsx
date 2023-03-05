@@ -12,6 +12,7 @@ import { FAVICON_MAX_SIZE, IMAGE_TYPES } from "src/constants/constants";
 import { companyKeys } from "src/constants/query-keys";
 import { urlToFile } from "src/helpers/url-to-file";
 import { getCompanySiteDetails, updateCompanySiteDetails, UpdateSiteDetailsDto } from "src/services/company";
+import { revalidatePath } from "src/services/revalidate";
 import { useCompany } from "src/store/company";
 import { z } from "zod";
 
@@ -65,17 +66,16 @@ export const CatalogDetails = () => {
     success: 'Salvo com sucesso!',
     error: 'Erro ao salvar'
   }), {
-    onSuccess: () => {
+    onSuccess: async () => {
       setIsEditing(false)
       queryClient.invalidateQueries(companyKeys.companySiteDetails(companyId))
+      await revalidatePath(`/_sites/${company?.slug}`)
     }
   })
 
   const onSubmit = async (data: CatalogDetailsFormData) => {
     try {
-      console.log('dirtyFields', dirtyFields)
-      console.log('data', data)
-      handleUpdateCompanySiteDetails({
+      await handleUpdateCompanySiteDetails({
         imageFitMode: data.imageFitMode,
         withFloatingButton: data.withFloatingButton === "true",
         favicon: dirtyFields?.favicon ? data?.favicon?.length ? data.favicon[0] : null : undefined
