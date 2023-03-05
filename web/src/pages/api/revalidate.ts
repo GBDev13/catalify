@@ -1,6 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next"
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  res.setHeader("Access-Control-Allow-Origin", "https://app.catalify.com.br");
+  res.setHeader("Access-Control-Allow-Methods", "POST");
+
   if(req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' })
   }
