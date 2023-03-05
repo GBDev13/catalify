@@ -142,7 +142,20 @@ export default function Produto({ product, companyCatalog }: ProductPageProps) {
   }
 
   return (
-    <CatalogLayout title={product.name} catalogData={companyCatalog}>
+    <CatalogLayout title={product.name} openGraph={{
+      description: product.description,
+      type: "website",
+      ...(product.pictures && product.pictures.length > 0 && {
+        images: [
+          {
+            url: product.pictures[0].url,
+            width: 800,
+            height: 420,
+            alt: product.name
+          }
+        ]
+      })
+    }} catalogData={companyCatalog}>
       <div className="grid grid-cols-1 md:grid-cols-[1fr,1.4fr] gap-16 mt-16">
         <ProductSlider pictures={pictures} />
         <section className="md:mt-10">

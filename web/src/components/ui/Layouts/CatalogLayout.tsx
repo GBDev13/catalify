@@ -7,6 +7,7 @@ import { NextSeo } from 'next-seo';
 import dynamic from "next/dynamic";
 import { ExampleBanner } from "src/components/pages/catalog/example-banner";
 import { FloatingWhatsApp } from "src/components/pages/catalog/floating-whatsapp.";
+import { OpenGraph } from "next-seo/lib/types";
 const CartSidebar = dynamic(() => import("src/components/pages/shared/CartSidebar"), { ssr: false });
 
 type CatalogLayoutProps = {
@@ -14,9 +15,10 @@ type CatalogLayoutProps = {
   title: string
   withoutLayout?: boolean
   catalogData: CatalogInfo
+  openGraph?: OpenGraph
 }
 
-export const CatalogLayout = ({ catalogData, title, children, withoutLayout = false }: CatalogLayoutProps) => {
+export const CatalogLayout = ({ catalogData, title, children, withoutLayout = false, openGraph }: CatalogLayoutProps) => {
   const { setCatalogInfo, setCatalogColors } = useCatalog()
 
   useEffect(() => {
@@ -47,6 +49,18 @@ export const CatalogLayout = ({ catalogData, title, children, withoutLayout = fa
       <NextSeo
         titleTemplate={`${catalogData.name} - %s`}
         title={title}
+        openGraph={openGraph ?? {
+          ...(!!catalogData.logo && {
+            images: [
+              {
+                url: catalogData.logo,
+                width: 800,
+                height: 420,
+                alt: catalogData.name
+              }
+            ]
+          })
+        }}
       />
       <main className="w-screen min-h-screen h-screen bg-white overflow-y-auto flex flex-col">
         {catalogData.isExample && <ExampleBanner />}
