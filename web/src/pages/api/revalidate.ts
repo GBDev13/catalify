@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next"
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  res.setHeader('Access-Control-Allow-Credentials', true)
+  res.setHeader('Access-Control-Allow-Credentials', 'true')
   res.setHeader('Access-Control-Allow-Origin', '*')
   // another common pattern
   // res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
@@ -14,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.status(200).end()
     return
   }
-  
+
   const { path } = req.body
 
   if (req.body.secret !== process.env.NEXT_PUBLIC_REVALIDATE_TOKEN) {
