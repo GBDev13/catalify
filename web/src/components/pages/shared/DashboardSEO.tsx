@@ -19,7 +19,7 @@ export const DashboardSEO = ({ title }: DashboardSEOProps) => {
           type: "website",
           images: [
             {
-              url: "/images/og-image.png",
+              url: "https://storage.googleapis.com/catalify-images/static/og-image.png",
               width: 800,
               height: 420,
               alt: "Catalify"

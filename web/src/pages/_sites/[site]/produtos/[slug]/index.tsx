@@ -142,7 +142,7 @@ export default function Produto({ product, companyCatalog }: ProductPageProps) {
   }
 
   return (
-    <CatalogLayout title={product.name} openGraph={{
+    <CatalogLayout title={product.name} description={product.rawDescription} openGraph={{
       ...(product.pictures && product.pictures.length > 0 && {
         description: product.rawDescription,
         images: [

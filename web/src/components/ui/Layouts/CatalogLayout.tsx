@@ -16,9 +16,10 @@ type CatalogLayoutProps = {
   withoutLayout?: boolean
   catalogData: CatalogInfo
   openGraph?: OpenGraph
+  description?: string
 }
 
-export const CatalogLayout = ({ catalogData, title, children, withoutLayout = false, openGraph }: CatalogLayoutProps) => {
+export const CatalogLayout = ({ catalogData, title, description, children, withoutLayout = false, openGraph }: CatalogLayoutProps) => {
   const { setCatalogInfo, setCatalogColors } = useCatalog()
 
   useEffect(() => {
@@ -49,6 +50,7 @@ export const CatalogLayout = ({ catalogData, title, children, withoutLayout = fa
       <NextSeo
         titleTemplate={`${catalogData.name} - %s`}
         title={title}
+        description={description}
         openGraph={openGraph ?? {
           ...(!!catalogData.logo && {
             images: [
