@@ -1,4 +1,10 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+
+const envModule = ConfigModule.forRoot({
+  isGlobal: true,
+});
+
 import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
@@ -20,11 +26,10 @@ import { LinksPageModule } from './links-page/links-page.module';
 import { StockModule } from './stock/stock.module';
 import { TokenModule } from './token/token.module';
 import { MailModule } from './mail/mail.module';
-import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    envModule,
     PrismaModule,
     UserModule,
     AuthModule,
