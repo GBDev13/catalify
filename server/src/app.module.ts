@@ -20,9 +20,11 @@ import { LinksPageModule } from './links-page/links-page.module';
 import { StockModule } from './stock/stock.module';
 import { TokenModule } from './token/token.module';
 import { MailModule } from './mail/mail.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     PrismaModule,
     UserModule,
     AuthModule,

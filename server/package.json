@@ -29,6 +29,7 @@
   "dependencies": {
     "@google-cloud/storage": "^6.9.0",
     "@nestjs/common": "^9.0.0",
+    "@nestjs/config": "^2.3.1",
     "@nestjs/core": "^9.0.0",
     "@nestjs/jwt": "^10.0.1",
     "@nestjs/mapped-types": "*",
