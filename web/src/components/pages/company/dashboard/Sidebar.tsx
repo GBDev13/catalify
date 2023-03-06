@@ -270,7 +270,7 @@ export const Sidebar = () => {
               </Link>
               <div className="p-4 bg-indigo-900 flex items-center justify-between gap-4">
                 <div className="flex flex-col gap-1">
-                  <strong className="text-sm font-normal">{`${session?.user?.firstName} ${session?.user?.lastName ?? ''}`}</strong>
+                  <strong className="text-sm font-normal">{`${session?.user?.firstName ?? ''} ${session?.user?.lastName ?? ''}`}</strong>
                   <Tooltip content="Gerenciar Plano">
                     {subscriptionIsValid ? (
                       <Link className="text-slate-100 bg-indigo-500 hover:bg-indigo-400 transition-colors text-xs text-center py-0.5 px-1 rounded" href="/dashboard/plan">PLANO PREMIUM</Link>
