@@ -139,7 +139,15 @@ export class PaymentGatewayService {
           }
         }
         break;
+      case 'checkout.session.completed':
+        console.log('checkout.session.completed');
+        const checkoutData = event.data.object;
+        await this.subscriptionService.createSubscription(
+          String(checkoutData.customer),
+        );
+        break;
       default:
+        console.log(`Unhandled event type ${event.type}`);
         break;
     }
   }

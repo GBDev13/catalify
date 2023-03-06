@@ -14,7 +14,6 @@ export class SubscriptionService {
   ) {}
 
   async createSubscription(customerId: string) {
-    console.log('sucesso subscription');
     const company = await this.prisma.company.findFirst({
       where: {
         customerId,
@@ -33,7 +32,6 @@ export class SubscriptionService {
         companyId: company.id,
       },
     });
-    console.log('companyHasSubscription', companyHasSubscription);
 
     if (companyHasSubscription) {
       return await this.prisma.subscription.update({
@@ -52,8 +50,6 @@ export class SubscriptionService {
         status: SubscriptionStatus.ACTIVE,
       },
     });
-
-    console.log('criei a subscription');
 
     await this.enableDisabledPremiumBenefits(company.id);
 
