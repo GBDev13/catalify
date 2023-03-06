@@ -16,8 +16,8 @@ export const PricingSection = () => {
       </motion.div>
       <motion.div {...fadeAnimProps}>
         <Pricing
-          onClickFree={() => router.push('/onboarding?plan=free')}
-          onClickPaid={() => router.push('/onboarding?plan=premium')}
+          onClickFree={() => window.open('https://app.catalify.com.br/onboarding?plan=free')}
+          onClickPaid={() => window.open('https://app.catalify.com.br/onboarding?plan=premium')}
         />
       </motion.div>
     </section>
