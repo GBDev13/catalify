@@ -61,6 +61,8 @@ export class PaymentGatewayService {
       mode: 'subscription',
       currency: 'brl',
       customer: customerId,
+      locale: 'pt-BR',
+      allow_promotion_codes: true,
       line_items: [
         {
           price: String(subscription.default_price),
