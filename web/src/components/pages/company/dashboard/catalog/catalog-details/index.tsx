@@ -72,7 +72,8 @@ export const CatalogDetails = () => {
       queryClient.invalidateQueries(companyKeys.companySiteDetails(companyId))
       await revalidate(
         `https://${companySlug}.catalify.com.br`,
-        companySlug
+        companySlug,
+        'produtos'
       )
     }
   })
