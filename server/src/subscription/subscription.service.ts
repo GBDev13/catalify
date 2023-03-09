@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { SubscriptionStatus } from '@prisma/client';
 import { LIMITS } from 'src/config/limits';
 import { LinksPageService } from 'src/links-page/links-page.service';
+import { LogService } from 'src/log/log.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { StorageService } from 'src/storage/storage.service';
 
@@ -11,9 +12,14 @@ export class SubscriptionService {
     private readonly prisma: PrismaService,
     private readonly linksPageService: LinksPageService,
     private readonly storageService: StorageService,
+    private readonly logService: LogService,
   ) {}
 
   async createSubscription(customerId: string) {
+    await this.logService.log(
+      'Subscription',
+      `Creating subscription for ${customerId}`,
+    );
     const company = await this.prisma.company.findFirst({
       where: {
         customerId,
@@ -67,11 +73,23 @@ export class SubscriptionService {
   }
 
   async cancelSubscription(customerId: string, cancelAt?: number) {
+    await this.logService.log(
+      'Subscription',
+      `Canceling subscription for ${customerId}`,
+    );
     const company = await this.prisma.company.findFirst({
       where: {
         customerId,
       },
     });
+
+    if (!company) {
+      console.log('company not found', customerId);
+      throw new HttpException(
+        'Ocorreu um erro ao buscar sua empresa',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
     const companyHasSubscription = await this.prisma.subscription.findFirst({
       where: {
@@ -108,6 +126,10 @@ export class SubscriptionService {
   }
 
   async disablePremiumBenefits(companyId: string) {
+    await this.logService.log(
+      'Subscription',
+      `Disabling premium benefits for ${companyId}`,
+    );
     // unlimited products -> 10 products
     // disable older products edition
     const productsCount = await this.prisma.product.count({
@@ -234,6 +256,10 @@ export class SubscriptionService {
   }
 
   async enableDisabledPremiumBenefits(companyId: string) {
+    await this.logService.log(
+      'Subscription',
+      `Enabling disabled premium benefits for ${companyId}`,
+    );
     await this.prisma.product.updateMany({
       where: {
         companyId,
@@ -256,6 +282,10 @@ export class SubscriptionService {
   }
 
   async expireSubscription(customerId: string) {
+    await this.logService.log(
+      'Subscription',
+      `Expiring subscription for ${customerId}`,
+    );
     const company = await this.prisma.company.findFirst({
       where: {
         customerId,

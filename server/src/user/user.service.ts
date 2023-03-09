@@ -3,6 +3,7 @@ import { Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { OnboardingDto } from 'src/auth/dto/onboarding.dto';
 import { CompanyService } from 'src/company/company.service';
+import { LogService } from 'src/log/log.service';
 import { MailService } from 'src/mail/mail.service';
 import { TOKENS_DURATION } from 'src/stripe/constants';
 import { TokenService } from 'src/token/token.service';
@@ -17,6 +18,7 @@ export class UserService {
     private readonly companyService: CompanyService,
     private readonly mailService: MailService,
     private readonly tokenService: TokenService,
+    private readonly logService: LogService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -88,6 +90,11 @@ export class UserService {
 
   async onboard(onboardingDto: OnboardingDto) {
     let userId: string;
+
+    await this.logService.log(
+      'New user onboarding',
+      `Company: ${onboardingDto?.company?.name}`,
+    );
 
     try {
       const user = await this.create(onboardingDto.user);

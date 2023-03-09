@@ -1,3 +1,4 @@
+import { useIsFetching, useIsMutating } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react";
@@ -20,9 +21,14 @@ export const LoadingScreen = () => {
     }
   }, [router.events])
 
+  const isFetching = useIsFetching()
+  const isMutating = useIsMutating()
+
+  const reactQueryLoading = (isFetching > 0 || isMutating > 0);
+
   return (
     <AnimatePresence>
-      {isLoading && (
+      {(isLoading || reactQueryLoading) && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

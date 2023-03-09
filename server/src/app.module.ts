@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
 const envModule = ConfigModule.forRoot({
@@ -26,6 +26,11 @@ import { LinksPageModule } from './links-page/links-page.module';
 import { StockModule } from './stock/stock.module';
 import { TokenModule } from './token/token.module';
 import { MailModule } from './mail/mail.module';
+import { LogModule } from './log/log.module';
+import { SentryModule } from './sentry/sentry.module';
+
+import * as Sentry from '@sentry/node';
+import '@sentry/tracing';
 
 @Module({
   imports: [
@@ -51,6 +56,12 @@ import { MailModule } from './mail/mail.module';
     StockModule,
     TokenModule,
     MailModule,
+    LogModule,
+    SentryModule.forRoot({
+      dsn: process.env.SENTRY_DNS,
+      tracesSampleRate: 1.0,
+      debug: true,
+    }),
   ],
   providers: [
     {
@@ -59,4 +70,11 @@ import { MailModule } from './mail/mail.module';
     },
   ],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(Sentry.Handlers.requestHandler()).forRoutes({
+      path: '*',
+      method: RequestMethod.ALL,
+    });
+  }
+}

@@ -1,6 +1,7 @@
 /// <reference types="stripe-event-types" />
 
 import { HttpException, Inject, Injectable } from '@nestjs/common';
+import { LogService } from 'src/log/log.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { STRIPE_CLIENT } from 'src/stripe/constants';
 import { SubscriptionService } from 'src/subscription/subscription.service';
@@ -12,6 +13,7 @@ export class PaymentGatewayService {
     @Inject(STRIPE_CLIENT) private stripe: Stripe,
     private readonly prisma: PrismaService,
     private readonly subscriptionService: SubscriptionService,
+    private readonly logService: LogService,
   ) {}
 
   async getSubscriptionProduct() {
@@ -22,6 +24,10 @@ export class PaymentGatewayService {
   }
 
   async createSubscriptionCheckout(customerEmail: string) {
+    await this.logService.log(
+      'Payment Gateway',
+      `Creating subscription checkout for ${customerEmail}`,
+    );
     const user = await this.prisma.user.findUnique({
       where: {
         email: customerEmail,
