@@ -13,7 +13,7 @@ export default function OnboardingPlans() {
         <div className="w-full">
             <div className="self-start">
               <h2 className="font-semibold text-2xl"><span className="text-indigo-500">Olá!</span> Parece que esse é seu primeiro acesso</h2>
-              <p className="text-slate-500">Por favor, escolha entre o nossos planos para aproveitar ao máximo nossos recursos e ferramentas. </p>
+              <p className="text-slate-500">Por favor, escolha entre os nossos planos para aproveitar ao máximo nossos recursos e ferramentas.</p>
             </div>
 
             <Pricing />

@@ -299,7 +299,7 @@ function EditProduct() {
                 </div>
 
                 <div className="my-2">
-                  <ControlledCheckbox fieldName="hasPromoPrice" control={control} label="O produto possui está em promoção?" />
+                  <ControlledCheckbox fieldName="hasPromoPrice" control={control} label="O produto está em promoção?" />
                 </div>
 
                 <ControlledSelect isClearable control={control} fieldName="category" label="Categoria (Opcional)" options={categoriesOptions} />

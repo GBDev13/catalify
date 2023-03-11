@@ -65,6 +65,7 @@
     "react-hook-form": "^7.41.3",
     "react-hot-toast": "^2.4.0",
     "react-icons": "^4.7.1",
+    "react-image-file-resizer": "^0.4.8",
     "react-paginate": "^8.1.4",
     "react-phone-input-2": "^2.15.1",
     "react-player": "^2.11.2",

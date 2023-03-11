@@ -56,7 +56,7 @@ const sidebarItems = [
   },
   {
     icon: <CgWebsite size={20} />,
-    label: "Catálogo",
+    label: "Configurar Catálogo",
     path: "/dashboard/catalog",
     subItems: [
       {
