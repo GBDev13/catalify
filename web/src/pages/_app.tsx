@@ -8,6 +8,7 @@ import { useState } from 'react'
 import { CustomToaster } from 'src/components/CustomToaster'
 import { CookiesPopup } from 'src/components/pages/shared/CookiesPopup'
 import { LoadingScreen } from 'src/components/ui/LoadingScreen'
+import { Analytics } from '@vercel/analytics/react';
 
 export default function App({
   Component,
@@ -32,6 +33,7 @@ export default function App({
           <CustomToaster />
           <GlobalState isCatalogRoute={isCatalogRoute}>
             {renderLayoutByPath(router.pathname, <Component {...pageProps} />)}
+            <Analytics />
           </GlobalState>
           {!isCatalogRoute && <LoadingScreen />}
           <CookiesPopup />
