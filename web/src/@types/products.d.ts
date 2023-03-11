@@ -33,7 +33,7 @@ declare namespace Products {
     price: number
     promoPrice?: number
     isHighlighted?: boolean
-    category: Products.Category
+    categories: Products.Category[]
     variants: Products.Variant[]
     pictures?: Products.Picture[]
     isVisible: boolean
@@ -55,10 +55,10 @@ declare namespace Products {
     rawDescription: string
     pictures: string[]
     variants: Products.Variant[]
-    category?: {
+    categories?: {
       name: string;
       slug: string
-    }
+    }[]
     stock: number | {
       quantity: number;
       variants: string[]

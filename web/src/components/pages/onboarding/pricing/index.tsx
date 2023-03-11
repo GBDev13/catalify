@@ -25,6 +25,7 @@ export const PLANS = [
       'Até 10 produtos',
       'Até 5 categorias',
       'Até 2 imagens por produto',
+      'Até 2 categorias por produto',
       'Até 1 variação por produto',
       'Até 2 links de contato',
       'Suporte básico'
@@ -39,6 +40,7 @@ export const PLANS = [
       'Produtos ilimitados',
       'Categorias ilimitadas',
       'Até 5 imagens por produto',
+      'Até 5 categorias por produto',
       'Até 2 variações por produto',
       'Até 10 links de contato',
       'Suporte prioritário',
@@ -106,7 +108,7 @@ export const Pricing = ({ hideFree, onClickFree, onClickPaid }: PricingProps) =>
         const showButton = hideFree ? isPaid : true
 
         return (
-          <div key={plan.name} className="bg-white px-6 py-10 rounded-lg shadow-sm flex flex-col w-full">
+          <div key={plan.name} className="bg-white px-6 pt-10 pb-8 rounded-lg shadow-sm flex flex-col w-full">
             <div className="min-h-[150px]">
               <div className="flex items-center gap-1 mb-4">
                 <strong className={clsx("text-3xl font-normal", {
@@ -120,7 +122,7 @@ export const Pricing = ({ hideFree, onClickFree, onClickPaid }: PricingProps) =>
 
             <div className="mt-4 sm:mt-10">
               <h4>Funcionalidades:</h4>
-              <ul className="flex flex-col gap-1.5 mt-2 min-h-[365px]">
+              <ul className="flex flex-col gap-1.5 mt-2 min-h-[385px]">
                 {plan.features.map((feature, index) => (
                   <li key={feature} className="text-slate-400 text-sm font-light flex items-center gap-1">
                     {isPaid ? index > similarFeatures.length - 1 ? (

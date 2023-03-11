@@ -75,12 +75,12 @@ const editProductFormSchema = z.object({
   }).min(0.01, {
     message: "O preço do produto deve ser maior que R$ 0,01",
   }),
-  category: z.object({
+  categories: z.array(z.object({
     value: z.string(),
     label: z.string(),
-  })
-    .nullable()
-    .default(null),
+  }))
+  .nullable()
+  .default(null),
   images: z.array(z.custom<File>()).optional(),
   hasVariations: z.boolean().optional(),
   hasPromoPrice: z.boolean().optional(),
@@ -125,7 +125,7 @@ function EditProduct() {
     }
   })
 
-  const { control, handleSubmit, reset, setValue, formState: { isSubmitting, isDirty } } = methods
+  const { control, handleSubmit, reset, setValue, setError, clearErrors, formState: { isSubmitting, isDirty } } = methods
 
   const { isFetching: isLoadingProduct, data: product } = useQuery(productsKey.single(productId!), () => getProductById(productId!), {
     enabled: !!productId && !!company,
@@ -134,10 +134,10 @@ function EditProduct() {
         name: data.name,
         description: data.description,
         price: Math.trunc(Math.abs(data.price * 100)),
-        category: data?.category ? {
-          value: data.category.id,
-          label: data.category.name,
-        } : undefined,
+        categories: data?.categories?.map(category => ({
+          value: category.id,
+          label: category.name,
+        })),
         hasVariations: !!data.variants?.length,
         hasPromoPrice: !!data.promoPrice,
         promoPrice: data?.promoPrice ? Math.trunc(Math.abs(data.promoPrice * 100)) : 0,
@@ -210,7 +210,7 @@ function EditProduct() {
         } : parseEditedVariations(variationsChangesToSave, data.variations),
         images: data?.images ? data.images.filter(image => !removedImages.includes(image.name) && !product?.pictures?.some(x => x.id === image.name)) : undefined,
         imagesToRemove: removedImages,
-        categoryId: data?.category?.value ?? undefined
+        categoriesIds: data?.categories?.map(category => category.value) ?? []
       })
     } catch {}
   }
@@ -257,13 +257,27 @@ function EditProduct() {
   }, [hasPromoPrice, setValue])
 
   const maxImages = subscriptionIsValid ? LIMITS.PREMIUM.MAX_IMAGES_PER_PRODUCT : LIMITS.FREE.MAX_IMAGES_PER_PRODUCT;
+  const maxCategories = subscriptionIsValid ? LIMITS.PREMIUM.MAX_CATEGORIES_PER_PRODUCT : LIMITS.FREE.MAX_CATEGORIES_PER_PRODUCT;
+
+  const currentCategories = methods.watch('categories')
+
+  useEffect(() => {
+    if((currentCategories?.length ?? 0) > maxCategories) {
+      setError('categories', {
+        message: `Você atingiu o limite de ${maxCategories} categorias por produto.`,
+        type: 'manual'
+      })
+    } else {
+      clearErrors('categories')
+    }
+  }, [clearErrors, currentCategories?.length, maxCategories, setError])
 
   return (
     <>
       <DashboardSEO title="Editar Produto" />
 
       <PageTitle title="Editar Produto">
-        <Link passHref href="/dashboard/product">
+        <Link passHref href="/dashboard/products">
           <Button size="SMALL" variant="OUTLINE">
             <FiArrowLeft />
             Voltar
@@ -302,7 +316,7 @@ function EditProduct() {
                   <ControlledCheckbox fieldName="hasPromoPrice" control={control} label="O produto está em promoção?" />
                 </div>
 
-                <ControlledSelect isClearable control={control} fieldName="category" label="Categoria (Opcional)" options={categoriesOptions} />
+                <ControlledSelect isClearable isMulti control={control} fieldName="categories" label="Categorias (Opcional)" options={categoriesOptions} />
 
                 <div className="mt-2">
                   <ControlledCheckbox fieldName="hasVariations" control={control} label="O produto possui variações?" />

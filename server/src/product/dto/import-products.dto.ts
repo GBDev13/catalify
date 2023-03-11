@@ -30,9 +30,9 @@ class ImportProductItemDto {
   @IsOptional()
   promoPrice: number;
 
-  @IsString()
+  @IsString({ each: true })
   @IsOptional()
-  categoryName: string;
+  categoriesNames: string[];
 
   @IsBoolean()
   visible: boolean;

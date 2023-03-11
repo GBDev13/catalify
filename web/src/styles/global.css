@@ -77,6 +77,14 @@
   @apply !text-primary
 }
 
+.react-select__multi-value {
+  @apply !bg-indigo-200 !font-light
+}
+
+.react-select__multi-value__remove {
+  @apply hover:!bg-indigo-500 hover:!text-white
+}
+
 /* Phone input */
 
 .form-control  {

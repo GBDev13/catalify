@@ -6,7 +6,10 @@ import { useCatalog } from 'src/store/catalog'
 export const Footer = () => {
   const { name, links, phone } = useCatalog(s => s.info)
 
-  const linksWithPhone = [...(links ?? []), `https://wa.me/${phone}`]
+  const linksWithPhone = [
+    ...(links ?? []),
+    ...(links?.some(x => x.includes('wa.me') || x.includes('whatsapp')) ? [] : [`https://wa.me/${phone}`])
+  ]
   
   return (
    <footer className="w-full mt-auto">

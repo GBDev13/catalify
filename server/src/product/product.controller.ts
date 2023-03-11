@@ -134,12 +134,13 @@ export class ProductController {
           name: option.name,
         })),
       })),
-      category: product?.category
-        ? {
-            id: product.category.id,
-            name: product.category.name,
-          }
-        : null,
+      categories:
+        product?.categories?.length > 0
+          ? product?.categories?.map((category) => ({
+              id: category.id,
+              name: category.name,
+            }))
+          : null,
       isVisible: product.isVisible,
       isEditable: product.isEditable,
     }));
@@ -168,12 +169,13 @@ export class ProductController {
           name: option.name,
         })),
       })),
-      category: product?.category
-        ? {
-            id: product.category.id,
-            name: product.category.name,
-          }
-        : null,
+      categories:
+        product?.categories?.length > 0
+          ? product?.categories?.map((category) => ({
+              id: category.id,
+              name: category.name,
+            }))
+          : null,
     };
   }
 

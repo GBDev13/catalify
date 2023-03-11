@@ -105,10 +105,24 @@ function CompanyProducts() {
         footer: 'Preço'
       },
       {
-        header: 'Categoria',
-        cell: (row) => row.row.original?.category?.name ?? 'Sem categoria',
-        accessorKey: 'category',
-        footer: 'Categoria'
+        header: 'Categorias',
+        cell: (row) => {
+          const categories = row.row.original?.categories ?? [];
+          return categories.length <= 0 ? 'Sem categoria' : categories.length === 1 ? categories[1].name : (
+            <Tooltip content={categories.map((category, i) => (
+              <>
+                {i !== 0 && <br/> }
+                {category.name}
+              </>
+            ))}>
+              <span>
+                {`${categories[1].name} e +${categories.length - 1}`}
+              </span>
+            </Tooltip>
+          )
+        },
+        accessorKey: 'categories',
+        footer: 'Categorias'
       },
       {
         header: "Visível",

@@ -23,9 +23,9 @@ export const deleteCategory = async (categoryId: string, companyId: string) => {
   return api.delete(`/category/${companyId}/${categoryId}`)
 }
 
-export type CreateProductDto = Omit<Products.Product, 'category' | 'id' | 'variants' | 'pictures' | 'isVisible'> & {
+export type CreateProductDto = Omit<Products.Product, 'categories' | 'id' | 'variants' | 'pictures' | 'isVisible'> & {
   images?: File[]
-  categoryId?: string
+  categoriesIds?: string[]
   variations?: Products.Variation[]
 }
 
@@ -38,7 +38,11 @@ export const createProduct = async (createProductDto: CreateProductDto, companyI
 
   if(createProductDto?.promoPrice) formData.append('promoPrice', createProductDto.promoPrice.toString())
 
-  if (createProductDto?.categoryId) formData.append('categoryId', createProductDto.categoryId)
+  if (createProductDto?.categoriesIds) {
+    createProductDto.categoriesIds.forEach((category) => {
+      formData.append('categoriesIds', category)
+    })
+  }
 
   if(createProductDto?.variations) {
     formData.append('variations', JSON.stringify(createProductDto.variations))
@@ -55,9 +59,9 @@ export const createProduct = async (createProductDto: CreateProductDto, companyI
   return data
 }
 
-export type EditProductDto = Omit<Products.Product, 'category' | 'id' | 'variants' | 'pictures' | 'isVisible'> & {
+export type EditProductDto = Omit<Products.Product, 'categories' | 'id' | 'variants' | 'pictures' | 'isVisible'> & {
   variations?: ParseEditedResponse
-  categoryId?: string
+  categoriesIds?: string[]
   images?: File[]
   imagesToRemove: string[]
 }
@@ -69,7 +73,11 @@ export const editProduct = async (productId: string, companyId: string, editProd
   formData.append('price', editProductDto.price.toString())
   formData.append('description', editProductDto.description)
   if (editProductDto?.promoPrice) formData.append('promoPrice', editProductDto.promoPrice.toString())
-  if (editProductDto?.categoryId) formData.append('categoryId', editProductDto.categoryId)
+  if (editProductDto?.categoriesIds) {
+    editProductDto.categoriesIds.forEach((category) => {
+      formData.append('categoriesIds', category)
+    })
+  }
   if(editProductDto?.variations) formData.append('variations', JSON.stringify(editProductDto.variations))
 
   if(editProductDto.imagesToRemove?.length > 0) {
@@ -108,7 +116,7 @@ export const toggleVisibility = async (productId: string, companyId: string) => 
 }
 
 export type ImportProduct = {
-  categoryName?: string;
+  categoriesNames?: string[];
   description: string;
   highlight: boolean
   name: string

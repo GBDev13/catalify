@@ -33,7 +33,9 @@ export default function App({
           <CustomToaster />
           <GlobalState isCatalogRoute={isCatalogRoute}>
             {renderLayoutByPath(router.pathname, <Component {...pageProps} />)}
-            <Analytics />
+            <Analytics
+              debug={process.env.NODE_ENV === 'development'}
+            />
           </GlobalState>
           {!isCatalogRoute && <LoadingScreen />}
           <CookiesPopup />

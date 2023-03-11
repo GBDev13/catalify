@@ -48,10 +48,10 @@ const newProductFormSchema = z.object({
   }).min(0.01, {
     message: "O preço do produto deve ser maior que R$ 0,01",
   }),
-  category: z.object({
+  categories: z.array(z.object({
     value: z.string(),
     label: z.string(),
-  })
+  }))
   .nullable()
   .default(null),
   images: z.array(z.custom<File>()).optional(),
@@ -117,7 +117,7 @@ function NewProduct() {
     }
   })
 
-  const { control, handleSubmit, reset, setValue, setError, formState: { isSubmitting, isDirty }} = methods
+  const { control, handleSubmit, reset, setValue, setError, clearErrors, formState: { isSubmitting, isDirty }} = methods
 
   const queryClient = useQueryClient()
 
@@ -162,7 +162,7 @@ function NewProduct() {
       }
 
       await handleCreateProduct({
-        categoryId: data.category?.value,
+        categoriesIds: data.categories?.map(category => category.value),
         description: data.description,
         images: data.images,
         name: data.name,
@@ -207,6 +207,19 @@ function NewProduct() {
   }, [hasPromoPrice, setValue])
 
   const maxImages = subscriptionIsValid ? LIMITS.PREMIUM.MAX_IMAGES_PER_PRODUCT : LIMITS.FREE.MAX_IMAGES_PER_PRODUCT;
+  const maxCategories = subscriptionIsValid ? LIMITS.PREMIUM.MAX_CATEGORIES_PER_PRODUCT : LIMITS.FREE.MAX_CATEGORIES_PER_PRODUCT;
+
+  const currentCategories = methods.watch('categories')
+
+  useEffect(() => {
+    if((currentCategories?.length ?? 0) > maxCategories) {
+      setError('categories', {
+        message: `Você atingiu o limite de ${maxCategories} categorias por produto.`
+      })
+    } else {
+      clearErrors('categories')
+    }
+  }, [clearErrors, currentCategories?.length, maxCategories, setError])
 
   return (
     <>
@@ -250,7 +263,14 @@ function NewProduct() {
                   <ControlledCheckbox fieldName="hasPromoPrice" control={control} label="O produto está em promoção?" />
                 </div>
 
-                <ControlledSelect isClearable control={control} fieldName="category" label="Categoria (Opcional)" options={categoriesOptions} />
+                <ControlledSelect
+                  isClearable
+                  isMulti
+                  control={control}
+                  fieldName="categories"
+                  label="Categorias (Opcional)"
+                  options={categoriesOptions}
+                />
 
                 <div className="mt-2">
                   <ControlledCheckbox fieldName="hasVariations" control={control} label="O produto possui variações?" />

@@ -53,7 +53,6 @@ export default function Onboarding() {
 
   const { mutateAsync: handleVerifyEmail } = useMutation((token: string) => verifyEmail(token), {
     onSuccess: () => {
-      console.log('setei')
       localStorage.setItem("catalify:showPlans", "true")
     },
     onError: () => {

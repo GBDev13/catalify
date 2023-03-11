@@ -207,7 +207,7 @@ export class CatalogService {
             createdAt: 'desc',
           },
         },
-        category: true,
+        categories: true,
         variants: {
           include: {
             options: true,
@@ -289,9 +289,11 @@ export class CatalogService {
         },
       }),
       ...(categories && {
-        category: {
-          slug: {
-            in: categories,
+        categories: {
+          some: {
+            slug: {
+              in: categories,
+            },
           },
         },
       }),

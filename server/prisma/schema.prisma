@@ -127,8 +127,7 @@ model Product {
 
   isEditable Boolean @default(true)
 
-  category   Category? @relation(fields: [categoryId], references: [id])
-  categoryId String?
+  categories Category[]
 
   company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
   companyId String

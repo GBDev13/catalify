@@ -19,9 +19,10 @@ type ProductType = Product & {
   variants: (ProductVariant & { options: ProductVariantOption[] })[];
   stock: DetailedStock[];
   hasStock: boolean;
+  categories: Category[];
 };
 
-type ProductDetailedType = ProductType & { category: Category };
+type ProductDetailedType = ProductType;
 
 export const productToWeb = (
   product: ProductType,
@@ -84,12 +85,13 @@ export const productDetailedToWeb = (
           })),
         }))
       : undefined,
-    category: product?.category?.name
-      ? {
-          slug: product.category.slug,
-          name: product.category.name,
-        }
-      : undefined,
+    categories:
+      product?.categories?.length > 0
+        ? product?.categories?.map((category) => ({
+            slug: category.slug,
+            name: category.name,
+          }))
+        : undefined,
     stock: productStockToWeb(product?.stock),
   };
 };

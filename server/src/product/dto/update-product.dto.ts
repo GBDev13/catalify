@@ -39,9 +39,9 @@ export class UpdateProductDto {
   @MaxLength(800)
   description: string;
 
-  @IsString()
+  @IsString({ each: true })
   @IsOptional()
-  categoryId: string;
+  categoriesIds: string[];
 
   @IsString()
   @IsOptional()

@@ -56,7 +56,23 @@ export class ProductService {
         }
       }
 
-      const { images, variations, ...dto } = createProductDto;
+      const { images, variations, categoriesIds, ...dto } = createProductDto;
+      const categoriesLength = categoriesIds?.length ?? 0;
+
+      if (
+        !hasSubscription &&
+        categoriesLength > LIMITS.FREE.MAX_CATEGORIES_PER_PRODUCT
+      ) {
+        throw new HttpException(
+          `Você atingiu o limite de categorias por produto para sua conta gratuita. (${LIMITS.FREE.MAX_CATEGORIES_PER_PRODUCT} categorias por produto)`,
+          HttpStatus.BAD_REQUEST,
+        );
+      } else if (categoriesLength > LIMITS.PREMIUM.MAX_CATEGORIES_PER_PRODUCT) {
+        throw new HttpException(
+          `Você atingiu o limite de categorias por produto. (${LIMITS.PREMIUM.MAX_CATEGORIES_PER_PRODUCT} categorias por produto)`,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
 
       if (
         !hasSubscription &&
@@ -118,6 +134,9 @@ export class ProductService {
       const createdProduct = await this.prisma.product.create({
         data: {
           ...dto,
+          categories: {
+            connect: categoriesIds?.map((id) => ({ id })),
+          },
           companyId,
         },
       });
@@ -177,7 +196,7 @@ export class ProductService {
         companyId,
       },
       include: {
-        category: true,
+        categories: true,
         variants: {
           include: {
             options: true,
@@ -202,6 +221,7 @@ export class ProductService {
       include: {
         pictures: true,
         variants: true,
+        categories: true,
       },
     });
 
@@ -226,8 +246,25 @@ export class ProductService {
       );
     }
 
-    const { variations, images, imagesToRemove, ...updateDto } =
+    const { variations, images, imagesToRemove, categoriesIds, ...updateDto } =
       updateProductDto;
+
+    const categoriesLength = categoriesIds?.length ?? 0;
+
+    if (
+      !hasSubscription &&
+      categoriesLength > LIMITS.FREE.MAX_CATEGORIES_PER_PRODUCT
+    ) {
+      throw new HttpException(
+        `Você atingiu o limite de categorias por produto para sua conta gratuita. (${LIMITS.FREE.MAX_CATEGORIES_PER_PRODUCT} categorias por produto)`,
+        HttpStatus.BAD_REQUEST,
+      );
+    } else if (categoriesLength > LIMITS.PREMIUM.MAX_CATEGORIES_PER_PRODUCT) {
+      throw new HttpException(
+        `Você atingiu o limite de categorias por produto. (${LIMITS.PREMIUM.MAX_CATEGORIES_PER_PRODUCT} categorias por produto)`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
     if (imagesToRemove) {
       await this.storageService.deleteFilesByIds(
@@ -357,7 +394,12 @@ export class ProductService {
       },
       data: {
         ...updateDto,
-        categoryId: updateDto?.categoryId || null,
+        categories: {
+          disconnect: productExists.categories.map((category) => ({
+            id: category.id,
+          })),
+          connect: categoriesIds?.map((id) => ({ id })),
+        },
         promoPrice: updateDto?.promoPrice || null,
       },
     });
@@ -412,7 +454,7 @@ export class ProductService {
         id: productId,
       },
       include: {
-        category: true,
+        categories: true,
         variants: {
           orderBy: {
             createdAt: 'asc',
@@ -521,6 +563,26 @@ export class ProductService {
       );
     }
 
+    // Check all categories length
+    importDto.products.forEach((product) => {
+      const categoriesLength = product.categoriesNames?.length ?? 0;
+
+      if (
+        !hasSubscription &&
+        categoriesLength > LIMITS.FREE.MAX_CATEGORIES_PER_PRODUCT
+      ) {
+        throw new HttpException(
+          `Você atingiu o limite de categorias por produto para sua conta gratuita. (${LIMITS.FREE.MAX_CATEGORIES_PER_PRODUCT} categorias por produto)`,
+          HttpStatus.BAD_REQUEST,
+        );
+      } else if (categoriesLength > LIMITS.PREMIUM.MAX_CATEGORIES_PER_PRODUCT) {
+        throw new HttpException(
+          `Você atingiu o limite de categorias por produto. (${LIMITS.PREMIUM.MAX_CATEGORIES_PER_PRODUCT} categorias por produto)`,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
     const companyExists = await this.prisma.company.findUnique({
       where: {
         id: companyId,
@@ -564,39 +626,47 @@ export class ProductService {
           },
         });
 
-        if (product?.categoryName) {
-          let categoryId = null;
+        if (product?.categoriesNames) {
+          await Promise.all(
+            product.categoriesNames.map(async (categoryName) => {
+              let categoryId = null;
 
-          const category = await this.prisma.category.findFirst({
-            where: {
-              companyId,
-              name: product.categoryName,
-            },
-          });
+              const category = await this.prisma.category.findFirst({
+                where: {
+                  companyId,
+                  name: categoryName,
+                },
+              });
 
-          if (category) {
-            categoryId = category.id;
-          }
+              if (category) {
+                categoryId = category.id;
+              }
 
-          if (!categoryId) {
-            const createdCategory = await this.prisma.category.create({
-              data: {
-                name: product.categoryName,
-                companyId,
-              },
-            });
+              if (!categoryId) {
+                const createdCategory = await this.prisma.category.create({
+                  data: {
+                    name: categoryName,
+                    companyId,
+                  },
+                });
 
-            categoryId = createdCategory.id;
-          }
+                categoryId = createdCategory.id;
+              }
 
-          await this.prisma.product.update({
-            where: {
-              id: createdProduct.id,
-            },
-            data: {
-              categoryId,
-            },
-          });
+              await this.prisma.product.update({
+                where: {
+                  id: createdProduct.id,
+                },
+                data: {
+                  categories: {
+                    connect: {
+                      id: categoryId,
+                    },
+                  },
+                },
+              });
+            }),
+          );
         }
       }),
     );

@@ -2,7 +2,7 @@ import { ReactNode, useCallback, useEffect, useState } from "react"
 import { Button } from "src/components/ui/Button"
 import { Dialog } from "src/components/ui/Dialog"
 import { FileUpload } from "src/components/ui/FileUpload"
-import { SHEETS_MAX_SIZE, SHEETS_TYPES } from "src/constants/constants"
+import { LIMITS, SHEETS_MAX_SIZE, SHEETS_TYPES } from "src/constants/constants"
 import * as XLSX from 'xlsx';
 import Papa from 'papaparse';
 import { toast } from "react-hot-toast"
@@ -10,6 +10,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { ImportProduct, importProducts } from "src/services/products"
 import { useCompany } from "src/store/company"
 import { productsKey } from "src/constants/query-keys"
+import { isSubscriptionValid } from "src/helpers/isSubscriptionValid"
 
 type ImportProductsModalProps = {
   children: ReactNode
@@ -37,8 +38,8 @@ const SHEET_COLUMNS = [
     required: false,
   },
   {
-    name: 'Categoria',
-    key: 'category',
+    name: 'Categorias',
+    key: 'categories',
     required: false,
   },
   {
@@ -65,7 +66,7 @@ type SheetData = {
   description: string
   price: number
   promoPrice?: number
-  category?: string
+  categories?: string
   visible: string
   highlight: string
 }
@@ -75,12 +76,15 @@ type ImportProductsModalContentProps = {
 }
 
 const ImportProductsModalContent = ({ onSuccess }: ImportProductsModalContentProps) => {
-  const { company } = useCompany()
+  const { company, currentSubscription } = useCompany()
   const companyId = company?.id!
 
   const [files, setFiles] = useState<File[]>([])
   const [sheetData, setSheetData] = useState<SheetData[]>([])
   const [sheetErrors, setSheetErrors] = useState<SheetError[]>([])
+
+  const subscriptionIsValid = isSubscriptionValid(currentSubscription!);
+  const maxCategories = subscriptionIsValid ? LIMITS.PREMIUM.MAX_CATEGORIES_PER_PRODUCT : LIMITS.FREE.MAX_CATEGORIES_PER_PRODUCT;
 
   const buttonIsDisabled = sheetData.length <= 0 || sheetErrors.length > 0
 
@@ -94,10 +98,14 @@ const ImportProductsModalContent = ({ onSuccess }: ImportProductsModalContentPro
       acc[error.row].push(error.column)
       return acc
     }, {} as Record<number, string[]>)
-    toast.error(`Alguns campos obrigatórios não foram preenchidos. Verifique as seguintes linhas e campos:\n${Object.keys(aggregatedErrors).map((row) => `Linha ${row}: ${aggregatedErrors[row as any].join(', ')}`).join('\n')} `, {
+    toast.error(`Alguns campos obrigatórios não foram preenchidos ou estão com problemas. Verifique as seguintes linhas e campos:\n${Object.keys(aggregatedErrors).map((row) => `Linha ${row}: ${aggregatedErrors[row as any].join(', ')}`).join('\n')} `, {
       duration: 10000,
     })
   }, [sheetErrors])
+
+  const parseCategories = (categories: string) => {
+    return (categories?.replace(', ', ',')?.split(',') ?? [])?.map((category) => category.trim())
+  }
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
 
@@ -132,6 +140,18 @@ const ImportProductsModalContent = ({ onSuccess }: ImportProductsModalContentPro
                 row: rowIndex + 1,
                 column: column.name,
               })
+            }
+            if(column.key === 'categories') {
+              const quantity = parseCategories(value)?.length ?? 0;
+              if(quantity > maxCategories) {
+                errors.push({
+                  row: rowIndex + 2,
+                  column: column.name,
+                })
+                toast.error(
+                  `Você ultrapassou o limite de ${maxCategories} categorias por produto. Verifique a linha ${rowIndex + 2}`
+                )
+              }
             }
             acc[column.key] = value ?? column.defaultValue
             return acc
@@ -171,6 +191,18 @@ const ImportProductsModalContent = ({ onSuccess }: ImportProductsModalContentPro
                     column: column.name,
                   })
                 }
+                if(column.key === 'categories') {
+                  const quantity = parseCategories(value)?.length ?? 0;
+                  if(quantity > maxCategories) {
+                    errors.push({
+                      row: rowIndex + 2,
+                      column: column.name,
+                    })
+                    toast.error(
+                      `Você ultrapassou o limite de ${maxCategories} categorias por produto. Verifique a linha ${rowIndex + 2}`
+                    )
+                  }
+                }
                 acc[column.key] = value ?? column.defaultValue
                 return acc
               }, {} as Record<string, unknown>)
@@ -201,7 +233,7 @@ const ImportProductsModalContent = ({ onSuccess }: ImportProductsModalContentPro
   const { mutateAsync: handleImportProducts, isLoading } = useMutation((dto: ImportProduct[]) => toast.promise(importProducts(companyId, dto), {
     loading: 'Importando produtos...',
     success: 'Produtos importados com sucesso!',
-    error: 'Erro ao importar produtos',
+    error: (err) => err?.response?.data?.message ?? 'Erro ao importar produtos. Tente novamente mais tarde.'
   }), {
     onSuccess: () => {
       queryClient.invalidateQueries(productsKey.all)
@@ -216,11 +248,11 @@ const ImportProductsModalContent = ({ onSuccess }: ImportProductsModalContentPro
 
     try {
       const importDto: ImportProduct[] = sheetData?.map((row) => ({
-        price: Number(row.price),
-        promoPrice: row?.promoPrice ? Number(row.promoPrice): undefined,
+        price: Number(String(row.price)?.replace(',','.')),
+        promoPrice: row?.promoPrice ? Number(String(row.promoPrice)?.replace(',','.')): undefined,
         visible: row?.visible === 'S',
         highlight: row?.highlight === 'S',
-        categoryName: row?.category,
+        categoriesNames: parseCategories(row?.categories!),
         description: row?.description,
         name: row.name,
       }))
