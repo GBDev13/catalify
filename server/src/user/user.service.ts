@@ -94,6 +94,7 @@ export class UserService {
     await this.logService.log(
       'New user onboarding',
       `Company: ${onboardingDto?.company?.name}`,
+      `https://${onboardingDto?.company?.slug}.catalify.com.br`,
     );
 
     try {

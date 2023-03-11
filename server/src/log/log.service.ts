@@ -5,7 +5,7 @@ import { firstValueFrom } from 'rxjs';
 @Injectable()
 export class LogService {
   constructor(private readonly httpService: HttpService) {}
-  async log(title: string, message: string) {
+  async log(title: string, message: string, url?: string) {
     try {
       const messageData = {
         embeds: [
@@ -18,6 +18,7 @@ export class LogService {
                 value: message,
               },
             ],
+            url,
           },
         ],
       };
