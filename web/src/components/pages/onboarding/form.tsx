@@ -45,8 +45,8 @@ export const OnboardingForm = ({ step, setStep }: OnboardingFormProps) => {
         user: {
           firstName: data.personal.firstName,
           lastName: data.personal.lastName,
-          email: data.personal.email,
-          password: data.personal.password,
+          email: data.personal.email.trim(),
+          password: data.personal.password.trim(),
         },
         company: {
           name: data.company.companyName,
