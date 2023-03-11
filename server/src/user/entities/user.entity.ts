@@ -7,4 +7,5 @@ export class User implements Prisma.UserUncheckedCreateInput {
   email: string;
   password: string;
   emailVerifiedAt?: Date;
+  isSuperAdmin?: boolean;
 }

@@ -37,3 +37,8 @@ export const stockKeys = {
   stockOptions: (companyId: string) => [companyId, 'stock-options'],
   productStock: (companyId: string, productId: string) => [companyId, 'product-stock', productId],
 }
+
+export const adminKeys = {
+  getCompanies: ['admin-companies'],
+  getFiles: ['admin-files'],
+}

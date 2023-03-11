@@ -208,6 +208,7 @@ export class CompanyService {
       },
       include: {
         logo: true,
+        users: true,
       },
     });
 
@@ -218,9 +219,16 @@ export class CompanyService {
       );
     }
 
+    const { users, ...companyData } = company;
+
+    const hasAdmin = company?.users.some((user) => user.isSuperAdmin);
+
     return {
-      ...company,
-      logo: company?.logo?.fileUrl,
+      ...companyData,
+      logo: companyData?.logo?.fileUrl,
+      ...(hasAdmin && {
+        isAdmin: true,
+      }),
     };
   }
 

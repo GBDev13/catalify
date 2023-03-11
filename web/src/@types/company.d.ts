@@ -7,6 +7,7 @@ declare namespace Company {
     themeColor: string
     phone: string
     logo?: string
+    isAdmin?: boolean
   }
 
   export type Link = {

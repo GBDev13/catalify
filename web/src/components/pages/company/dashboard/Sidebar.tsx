@@ -20,6 +20,7 @@ import { TfiReceipt } from 'react-icons/tfi'
 import { onSignOut } from 'src/helpers/sign-out'
 import { LOCALHOST_URL } from 'src/constants/config'
 import { QRCodeDialog } from './catalog/qr-code-dialog'
+import { MdSecurity } from 'react-icons/md'
 
 const sidebarItems = [
   {
@@ -98,6 +99,24 @@ const sidebarItems = [
     icon: <AiOutlineDollar size={20} />,
     label: "Gerenciar Plano",
     path: "/dashboard/plan"
+  },
+]
+
+const adminItems = [
+  {
+    icon: <MdSecurity size={20} />,
+    label: "Admin",
+    path: "/dashboard/super",
+    subItems: [
+      {
+        label: "Empresas",
+        path: "/dashboard/super/companies"
+      },
+      {
+        label: "Arquivos",
+        path: "/dashboard/super/files"
+      }
+    ]
   },
 ]
 
@@ -234,6 +253,16 @@ export const Sidebar = () => {
     return process.env.NODE_ENV === "development" ? `http://${company?.slug}.${LOCALHOST_URL}` : `https://${company?.slug}.catalify.com.br`
   }, [company?.slug])
 
+  const sideList = useMemo(() => {
+    const items = sidebarItems;
+
+    if(company?.isAdmin) {
+      return [...items, ...adminItems]
+    }
+
+    return items
+  }, [company?.isAdmin])
+
   return (
     <>
       <SubscriptionRequiredDialog open={subscriptionRequiredDialogOpen} setOpen={setSubscriptionRequiredDialogOpen} />
@@ -278,7 +307,7 @@ export const Sidebar = () => {
             <Divider className="bg-indigo-700" />
     
             <div className="fle flex-col gap-2 px-4">
-              {sidebarItems.map((item) => (
+              {sideList.map((item) => (
                 <SidebarItem item={item} key={item.label} onOpenSubscriptionRequired={setSubscriptionRequiredDialogOpen} />
               ))}
             </div>

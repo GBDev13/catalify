@@ -19,6 +19,8 @@ model User {
 
   emailVerifiedAt DateTime?
 
+  isSuperAdmin Boolean @default(false)
+
   company   Company? @relation(fields: [companyId], references: [id])
   companyId String?
   tokens    Tokens[]
