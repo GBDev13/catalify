@@ -56,7 +56,16 @@ export class ProductService {
         }
       }
 
-      const { images, variations, categoriesIds, ...dto } = createProductDto;
+      const {
+        images,
+        variations,
+        categoriesIds: categoriesIdsDto,
+        ...dto
+      } = createProductDto;
+      const categoriesIds = Array.isArray(categoriesIdsDto)
+        ? categoriesIdsDto
+        : [categoriesIdsDto];
+
       const categoriesLength = categoriesIds?.length ?? 0;
 
       if (
@@ -246,8 +255,16 @@ export class ProductService {
       );
     }
 
-    const { variations, images, imagesToRemove, categoriesIds, ...updateDto } =
-      updateProductDto;
+    const {
+      variations,
+      images,
+      imagesToRemove,
+      categoriesIds: categoriesIdsDto,
+      ...updateDto
+    } = updateProductDto;
+    const categoriesIds = Array.isArray(categoriesIdsDto)
+      ? categoriesIdsDto
+      : [categoriesIdsDto];
 
     const categoriesLength = categoriesIds?.length ?? 0;
 

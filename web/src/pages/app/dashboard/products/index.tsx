@@ -108,7 +108,7 @@ function CompanyProducts() {
         header: 'Categorias',
         cell: (row) => {
           const categories = row.row.original?.categories ?? [];
-          return categories.length <= 0 ? 'Sem categoria' : categories.length === 1 ? categories[1].name : (
+          return categories.length <= 0 ? 'Sem categoria' : categories.length === 1 ? categories?.[0]?.name : (
             <Tooltip content={categories.map((category, i) => (
               <>
                 {i !== 0 && <br/> }
@@ -116,7 +116,7 @@ function CompanyProducts() {
               </>
             ))}>
               <span>
-                {`${categories[1].name} e +${categories.length - 1}`}
+                {`${categories?.[0]?.name} e +${categories.length - 1}`}
               </span>
             </Tooltip>
           )
