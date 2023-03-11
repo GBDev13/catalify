@@ -201,10 +201,13 @@ export class CompanyService {
     });
   }
 
-  async getByUserId(userId: string): Promise<Company> {
+  async getByUserId(userId: string) {
     const company = await this.prisma.company.findFirst({
       where: {
         ownerId: userId,
+      },
+      include: {
+        logo: true,
       },
     });
 
@@ -215,7 +218,10 @@ export class CompanyService {
       );
     }
 
-    return company;
+    return {
+      ...company,
+      logo: company?.logo?.fileUrl,
+    };
   }
 
   async getLinks(companyId: string) {

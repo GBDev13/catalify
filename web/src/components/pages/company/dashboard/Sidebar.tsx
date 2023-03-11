@@ -19,6 +19,7 @@ import { Logo } from 'src/assets/Logo'
 import { TfiReceipt } from 'react-icons/tfi'
 import { onSignOut } from 'src/helpers/sign-out'
 import { LOCALHOST_URL } from 'src/constants/config'
+import { QRCodeDialog } from './catalog/qr-code-dialog'
 
 const sidebarItems = [
   {
@@ -64,6 +65,10 @@ const sidebarItems = [
       {
         label: "Customizações",
         path: "/dashboard/catalog/customization"
+      },
+      {
+        label: "QR Code",
+        Wrapper: QRCodeDialog
       }
     ]
   },
@@ -165,6 +170,21 @@ const SidebarItem = ({ item, onOpenSubscriptionRequired }: SidebarItemProps) => 
           }}
         >
           {item.subItems?.map((subItem, i) => {
+            const { Wrapper } = subItem;
+
+            if(Wrapper) {
+              return (
+                <Wrapper key={subItem.label}>
+                  <button
+                  className={clsx("text-left p-2 hover:bg-indigo-700 rounded-md transition-all", {
+                    "rounded-t-none": i === 0,
+                  })}
+                  >{subItem.label}
+                  </button>
+                </Wrapper>
+              )
+            }
+
             const isSubActive = routerPathname === subItem.path
 
             return (

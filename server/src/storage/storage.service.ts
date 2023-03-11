@@ -44,7 +44,11 @@ export class StorageService {
 
     const bucket = this.storage.bucket(StorageConfig.mediaBucket);
     const newFileName = fileName.replace(/\.[^/.]+$/, '') + '.webp';
-    const blob = bucket.file(path + newFileName);
+    const blob = bucket.file(
+      process.env.NODE_ENV === 'development'
+        ? 'development/' + path
+        : path + newFileName,
+    );
 
     const compressedBuffer = await sharp(imageBuffer)
       .webp({ quality: IMAGE_COMPRESSION.quality })
@@ -131,7 +135,11 @@ export class StorageService {
 
     const file = this.storage
       .bucket(StorageConfig.mediaBucket)
-      .file(path + newFileName);
+      .file(
+        process.env.NODE_ENV === 'development'
+          ? 'development/' + path
+          : path + newFileName,
+      );
 
     await file.save(compressedBuffer);
 
