@@ -324,6 +324,17 @@ export class LinksPageService {
               not: undefined,
             },
           },
+          every: {
+            company: {
+              subscription: {
+                some: {
+                  status: {
+                    in: ['ACTIVE', 'CANCELING'],
+                  },
+                },
+              },
+            },
+          },
         },
       },
       select: {

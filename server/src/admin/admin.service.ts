@@ -46,7 +46,15 @@ export class AdminService {
   }
 
   async getFiles() {
-    const files = await this.prismaService.file.findMany();
+    const files = await this.prismaService.file.findMany({
+      where: {
+        company: {
+          none: {
+            isExample: true,
+          },
+        },
+      },
+    });
     return files;
   }
 }
