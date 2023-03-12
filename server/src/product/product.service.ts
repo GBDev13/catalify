@@ -62,9 +62,9 @@ export class ProductService {
         categoriesIds: categoriesIdsDto,
         ...dto
       } = createProductDto;
-      const categoriesIds = Array.isArray(categoriesIdsDto)
-        ? categoriesIdsDto
-        : [categoriesIdsDto];
+      const categoriesIds = (
+        Array.isArray(categoriesIdsDto) ? categoriesIdsDto : [categoriesIdsDto]
+      ).filter(Boolean);
 
       const categoriesLength = categoriesIds?.length ?? 0;
 
@@ -262,9 +262,9 @@ export class ProductService {
       categoriesIds: categoriesIdsDto,
       ...updateDto
     } = updateProductDto;
-    const categoriesIds = Array.isArray(categoriesIdsDto)
-      ? categoriesIdsDto
-      : [categoriesIdsDto];
+    const categoriesIds = (
+      Array.isArray(categoriesIdsDto) ? categoriesIdsDto : [categoriesIdsDto]
+    ).filter(Boolean);
 
     const categoriesLength = categoriesIds?.length ?? 0;
 
