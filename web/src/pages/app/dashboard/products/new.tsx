@@ -243,7 +243,7 @@ function NewProduct() {
       />
 
       <FormProvider {...methods}>
-        <form className="grid bg-slate-100 rounded grid-cols-1 gap-6 p-4 lg:gap-16 lg:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
+        <form className="grid bg-slate-100 rounded grid-cols-1 gap-6 p-4 !gap-y-4 lg:gap-8 lg:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
           <div>
             <h4 className="text-2xl font-semibold text-slate-500 border-b border-b-slate-300 pb-4 mb-6">Informações do Produto</h4>
             
@@ -282,9 +282,13 @@ function NewProduct() {
           <div className="flex flex-col gap-4">
             <h4 className="text-2xl font-semibold text-slate-500 border-b border-b-slate-300 pb-4 mb-6">Fotos do Produto</h4>
             <ControlledFileUpload control={control} fieldName="images" withPreview isMultiple maxFiles={maxImages} acceptedTypes={IMAGE_TYPES} maxSize={IMAGE_MAX_SIZE} />
-            
-            {hasVariations && <ProductVariations />}
           </div>
+
+          {hasVariations && (
+            <div className="col-span-full">
+              <ProductVariations />
+            </div>
+          )}
 
           <Button isLoading={isSubmitting} type="submit" className="col-span-full ml-auto">Criar Produto</Button>
         </form>

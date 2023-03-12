@@ -355,7 +355,7 @@ model SiteDetail {
   faviconFileId String?
 
   withFloatingButton Boolean @default(true)
-  imageFitMode       String  @default("cover")
+  imageFitMode       String  @default("contain")
 
   @@map("site_details")
 }

@@ -168,10 +168,10 @@ const AddStockForm = ({ selectedProductId, onSuccess }: AddStockFormProps) => {
       }
 
       const sortedData = data.sort((a, b) => {
-        const aDate = new Date(a.productVariantOption?.createdAt!)
-        const bDate = new Date(b.productVariantOption?.createdAt!)
+        const aName = [a.productVariantOption?.name, a?.productVariantOption2?.name].filter(Boolean).join(' - ')
+        const bName = [b.productVariantOption?.name, b?.productVariantOption2?.name].filter(Boolean).join(' - ')
 
-        return aDate.getTime() - bDate.getTime()
+        return aName.localeCompare(bName)
       })
 
       reset({

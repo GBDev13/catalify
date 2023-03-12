@@ -46,6 +46,7 @@ export const OptionItem = ({ nestIndex, control, register, onChangeExistent, exi
 
               <Input
                 className="flex-1"
+                placeholder="Ex: Azul"
                 label={`Opção ${currPos}`}
                 {...register(`variations.${nestIndex}.options.${k}.value` as const, {
                   onBlur: (value: any) => {
@@ -62,12 +63,14 @@ export const OptionItem = ({ nestIndex, control, register, onChangeExistent, exi
                 error={errors.variations?.[nestIndex]?.options?.[k]?.value}
               />
 
-              <div className={clsx("grid grid-cols-1 gap-2", { "!grid-cols-2": isLast })}>
-                <Tooltip content={`Remover Opção ${currPos}`}>
-                  <button className="h-6 w-6 rounded-full mt-[26px] flex items-center justify-center border border-indigo-500 transition-colors  text-indigo-500 hover:bg-indigo-500 hover:text-white" type="button" onClick={() => handleRemoveVariationOption(k)}>
-                    <FiX size={15} />
-                  </button>
-                </Tooltip>
+              <div className={clsx("grid grid-cols-1 gap-2", { "!grid-cols-2": (isLast && fields.length > 1) })}>
+                {fields.length > 1 && (
+                  <Tooltip content={`Remover Opção ${currPos}`}>
+                    <button className="h-6 w-6 rounded-full mt-[26px] flex items-center justify-center border border-indigo-500 transition-colors  text-indigo-500 hover:bg-indigo-500 hover:text-white" type="button" onClick={() => handleRemoveVariationOption(k)}>
+                      <FiX size={15} />
+                    </button>
+                  </Tooltip>
+                )}
                 {isLast && (
                 <Tooltip content={`Adicionar nova opção`}>
                   <button className="h-6 w-6 rounded-full mt-[26px] flex items-center justify-center border border-indigo-500 transition-colors  text-indigo-500 hover:bg-indigo-500 hover:text-white" type="button" onClick={handleAddVariationOption}>

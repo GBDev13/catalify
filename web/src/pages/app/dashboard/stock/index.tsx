@@ -105,7 +105,7 @@ function CompanyStock() {
 
   const handleOpenChange = (isOpen: boolean) => {
     if(productStockId) {
-      router.replace('/dashboard/stock', undefined, { shallow: true })
+      router.replace('/dashboard/stock', undefined)
     }
     setManageIsOpen(isOpen)
   }

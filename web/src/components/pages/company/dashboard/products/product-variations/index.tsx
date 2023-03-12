@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import React, { MouseEvent, useCallback } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { toast } from "react-hot-toast";
@@ -76,11 +77,11 @@ export default function ProductVariations({ onChangeExistent }: ProductVariation
 
   return (
     <>
-      <div className="flex items-center justify-between border-b border-b-slate-300 pb-4 mt-6">
+      <div className="flex items-center justify-between border-b border-b-slate-300 pb-4 my-6">
         <h4 className="text-2xl font-semibold text-slate-500">Variações do Produto</h4>
       </div>
 
-      <div className="grid mt-2 grid-cols-1 !gap-y-3 gap-2 sm:gap-4 lg:grid-cols-2">
+      <div className="grid mt-2 grid-cols-1 !gap-y-3 gap-2 sm:gap-4 lg:grid-cols-2 mb-4">
         <VariantModelSelectorPopover onSelectModel={handleAddModelVariation}>
           <Button className="min-h-0 py-2.5 text-sm" size="WIDE" onClick={handleOpenModelSelector}>Adicionar modelo</Button>
         </VariantModelSelectorPopover>
@@ -88,7 +89,9 @@ export default function ProductVariations({ onChangeExistent }: ProductVariation
         <CopyVariantsPopover onCopy={handleAddCopyVariation} />
       </div>
 
-      <section className="flex flex-col gap-8">
+      <section className={clsx("grid grid-cols-1 gap-4", {
+        "md:!grid-cols-2": fields.length > 1,
+      })}>
         {fields.map((item, index) => {
           return (
             <div className="flex flex-col gap-2 " key={item.id}>
@@ -96,7 +99,7 @@ export default function ProductVariations({ onChangeExistent }: ProductVariation
                 <Input
                   className="flex-1"
                   label={`Nome da variação ${index + 1}`}
-                  placeholder="Ex: Tamanho, Cor, Sabor, etc."
+                  placeholder="Ex: Cor, Tamanho, Sabor, etc..."
                   {...register(`variations.${index}.name` as const, {
                     onBlur: (value) => {
                       if(onChangeExistent) {
