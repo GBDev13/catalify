@@ -1,11 +1,8 @@
-import { useRouter } from "next/router"
 import { Pricing } from "../onboarding/pricing"
 import { motion } from "framer-motion";
 import { fadeAnimProps } from "src/lib/animations";
 
 export const PricingSection = () => {
-  const router = useRouter();
-
   return (
     <section className="home-container py-16" id="pricing">
       <motion.div className="text-center sm:px-14 -mb-2" {...fadeAnimProps}>
@@ -18,6 +15,7 @@ export const PricingSection = () => {
         <Pricing
           onClickFree={() => window.open('https://app.catalify.com.br/onboarding?plan=free')}
           onClickPaid={() => window.open('https://app.catalify.com.br/onboarding?plan=premium')}
+          freeButtonText="Continuar Gratis"
         />
       </motion.div>
     </section>

@@ -78,9 +78,12 @@ export const Header = () => {
 
       <nav className="items-center gap-4 flex lg:gap-6 mx-auto my-4 sm:hidden">
         <Link href="/produtos" className="text-gray-500 hover:text-primary transition-colors">Produtos</Link>
-        <Popover className="!bg-white shadow-lg border border-gray-200" content={<CategoriesList />}>
-          <button className="text-gray-500 flex items-center gap-2 group hover:text-primary transition-colors">Categorias <FiChevronDown className="group-data-[state='open']:rotate-180 transition-all" /></button>
-        </Popover>
+
+        {categories && categories?.length > 0 && (
+          <Popover className="!bg-white shadow-lg border border-gray-200" content={<CategoriesList />}>
+            <button className="text-gray-500 flex items-center gap-2 group hover:text-primary transition-colors">Categorias <FiChevronDown className="group-data-[state='open']:rotate-180 transition-all" /></button>
+          </Popover>
+        )}
       </nav>
 
       <section className="flex items-center gap-4 w-full sm:w-auto">

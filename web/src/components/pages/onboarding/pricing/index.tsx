@@ -57,9 +57,10 @@ type PricingProps = {
   hideFree?: boolean
   onClickFree?: () => void
   onClickPaid?: () => void
+  freeButtonText?: string
 }
 
-export const Pricing = ({ hideFree, onClickFree, onClickPaid }: PricingProps) => {
+export const Pricing = ({ hideFree, onClickFree, onClickPaid, freeButtonText = 'Continuar' }: PricingProps) => {
   const { data: session } = useSession()
 
   const { mutate: handleCheckoutPremium, isLoading } = useMutation(() => toast.promise(createSubscriptionCheckout(session?.user?.email!), {
@@ -139,7 +140,7 @@ export const Pricing = ({ hideFree, onClickFree, onClickPaid }: PricingProps) =>
 
               {showButton && (
                 <Button onClick={() => onCheckout(isPaid)} isLoading={isLoading} variant={isPaid ? "PRIMARY" : "OUTLINE"} size="WIDE" className="mt-6">
-                  {isPaid ? 'Assinar agora' : 'Continuar'}
+                  {isPaid ? 'Assinar agora' : freeButtonText}
                 </Button>
               )}
             </div>

@@ -26,9 +26,9 @@ export const Footer = () => {
         </div>
 
       </div>
-      <p className="w-full flex items-center justify-center gap-2 text-center border-t border-readable py-4 px-2">Desenvolvido por <Link className="font-bold" href="/">
+      <p className="w-full flex items-center justify-center gap-2 text-center border-t border-readable py-4 px-2">Desenvolvido por <a className="font-bold" href="https://catalify.com.br">
         <Logo className="text-readable w-[80px]" />
-      </Link></p>
+      </a></p>
     </section>
    </footer> 
   )
