@@ -109,7 +109,6 @@ export class ProductVariantService {
             HttpStatus.BAD_REQUEST,
           );
         } else if (newCount > LIMITS.PREMIUM.MAX_OPTIONS_PER_VARIATION) {
-          console.log('caiu 2');
           throw new HttpException(
             `Você atingiu o limite de ${LIMITS.PREMIUM.MAX_OPTIONS_PER_VARIATION} opções por variação para sua conta.`,
             HttpStatus.BAD_REQUEST,

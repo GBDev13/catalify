@@ -109,12 +109,10 @@ export class PaymentGatewayService {
         );
         break;
       case 'customer.subscription.updated':
-        console.log('customer.subscription.updated');
         const updatedSubscription = event.data.object;
         const { status, customer } = updatedSubscription;
 
         if (status === 'canceled') {
-          console.log('cancelou');
           await this.subscriptionService.cancelSubscription(String(customer));
         } else if (status === 'active') {
           const isExpired =
@@ -122,16 +120,13 @@ export class PaymentGatewayService {
             new Date();
 
           if (isExpired) {
-            console.log('expirou');
             await this.subscriptionService.expireSubscription(String(customer));
           } else if (updatedSubscription.cancel_at_period_end) {
-            console.log('cancelou 2');
             await this.subscriptionService.cancelSubscription(
               String(customer),
               updatedSubscription.cancel_at,
             );
           } else {
-            console.log('atualizou');
             const company = await this.prisma.company.findFirst({
               where: {
                 customerId: String(updatedSubscription.customer),
@@ -146,7 +141,6 @@ export class PaymentGatewayService {
         }
         break;
       case 'checkout.session.completed':
-        console.log('checkout.session.completed');
         const checkoutData = event.data.object;
         await this.subscriptionService.createSubscription(
           String(checkoutData.customer),
